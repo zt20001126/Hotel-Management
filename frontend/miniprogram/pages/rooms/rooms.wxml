@@ -6,36 +6,9 @@
     <swiper-item><image class="rooms-hero-image" src="/assets/images/chinese-style/banners/banner-night-baijianlou.webp" mode="aspectFill"></image></swiper-item>
   </swiper>
   <view class="rooms-title">房型列表<text class="rooms-seal">民宿</text></view>
-  <!-- 筛选栏 -->
-  <view class="filter-bar card">
-    <image class="filter-corner corner-tl" src="/images/keyfret.svg" mode="aspectFit"></image>
-    <image class="filter-corner corner-tr" src="/images/keyfret.svg" mode="aspectFit"></image>
-    <view class="filter-item">
-      <picker mode="date" value="{{checkInDate}}" start="{{today}}" bindchange="onCheckInChange">
-        <view class="picker-text"><text class="calendar-icon">▦</text><text>{{checkInDate || '入住日期'}}</text></view>
-      </picker>
-    </view>
-    <text class="filter-separator">至</text>
-    <view class="filter-item">
-      <picker mode="date" value="{{checkOutDate}}" start="{{minCheckOut || today}}" bindchange="onCheckOutChange">
-        <view class="picker-text"><text class="calendar-icon">▦</text><text>{{checkOutDate || '退房日期'}}</text></view>
-      </picker>
-    </view>
-    <image class="filter-corner corner-bl" src="/images/keyfret.svg" mode="aspectFit"></image>
-    <image class="filter-corner corner-br" src="/images/keyfret.svg" mode="aspectFit"></image>
-  </view>
-
   <!-- 加载状态 -->
   <view class="loading" wx:if="{{loading}}">
-    <text>搜索中...</text>
-  </view>
-  
-  <!-- 未选择日期时的提示 -->
-  <view class="empty-date" wx:if="{{!loading && !checkInDate && !checkOutDate}}">
-    <view class="empty-date-content">
-      <text class="empty-date-icon">📅</text>
-      <text class="empty-date-text">请在上方选择入住和退房日期</text>
-    </view>
+    <text>加载中...</text>
   </view>
   
   <!-- 房型列表 -->
@@ -62,9 +35,9 @@
   </view>
   
   <!-- 空状态 -->
-  <view class="empty" wx:if="{{!loading && isEmpty && checkInDate && checkOutDate}}">
+  <view class="empty" wx:if="{{!loading && isEmpty}}">
     <text class="empty-icon">🏠</text>
-    <text class="empty-text">暂无可用房型</text>
-    <text class="empty-tip">请尝试调整搜索条件</text>
+    <text class="empty-text">暂无房型</text>
+    <text class="empty-tip">当前暂无上架房型</text>
   </view>
 </view>

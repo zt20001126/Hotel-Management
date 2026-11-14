@@ -1,7 +1,12 @@
 <view class="container">
   <view class="room-info card">
     <view class="room-name">{{roomType.name}}</view>
-    <view class="date-info">{{checkInDate}} 至 {{checkOutDate}} · {{nights}}晚</view>
+    <view class="date-info">
+      <picker mode="date" value="{{checkInDate}}" start="{{today}}" bindchange="onCheckInChange">入住 {{checkInDate}}</picker>
+      <text> 至 </text>
+      <picker mode="date" value="{{checkOutDate}}" start="{{minCheckOut}}" bindchange="onCheckOutChange">退房 {{checkOutDate}}</picker>
+      <text> · {{nights}}晚</text>
+    </view>
   </view>
   
   <view class="form-card card">

@@ -5,6 +5,8 @@ Page({
     roomTypeId: '',
     checkInDate: '',
     checkOutDate: '',
+    today: '',
+    minCheckOut: '',
     roomType: {},
     nights: 1,
     totalPrice: 0,
@@ -18,10 +20,17 @@ Page({
   },
 
   onLoad(options) {
+    const today = this.formatDate(new Date())
+    const tomorrowDate = new Date()
+    tomorrowDate.setDate(tomorrowDate.getDate() + 1)
+    const defaultCheckIn = options.checkInDate || today
+    const defaultCheckOut = options.checkOutDate || this.formatDate(tomorrowDate)
     this.setData({
       roomTypeId: options.roomTypeId,
-      checkInDate: options.checkInDate,
-      checkOutDate: options.checkOutDate,
+      today,
+      minCheckOut: this.getMinCheckOut(defaultCheckIn),
+      checkInDate: defaultCheckIn,
+      checkOutDate: defaultCheckOut > defaultCheckIn ? defaultCheckOut : this.getMinCheckOut(defaultCheckIn),
       guestIndex: Math.max(0, (parseInt(options.guestCount) || 2) - 1)
     })
     this.loadRoomType()
@@ -32,11 +41,7 @@ Page({
     try {
       const res = await app.request({ url: `/roomType/${this.data.roomTypeId}` })
       const roomType = res.data
-      const nights = this.calculateNights()
-      const totalPrice = (roomType.basePrice * nights).toFixed(2)
-      const deposit = (totalPrice * this.data.depositRate).toFixed(2)
-      const grandTotal = (parseFloat(totalPrice) + parseFloat(deposit)).toFixed(2)
-      this.setData({ roomType, nights, totalPrice, deposit, grandTotal })
+      this.setData({ roomType }, () => this.updatePrice())
     } catch (err) {
       console.error(err)
     }
@@ -47,18 +52,56 @@ Page({
       const res = await app.request({ url: '/config/deposit_rate' })
       if (res.data) {
         const depositRate = parseFloat(res.data)
-        const deposit = (this.data.totalPrice * depositRate).toFixed(2)
-        const grandTotal = (parseFloat(this.data.totalPrice) + parseFloat(deposit)).toFixed(2)
-        this.setData({ depositRate, deposit, grandTotal })
+        this.setData({ depositRate }, () => this.updatePrice())
       }
     } catch (err) {}
   },
 
   calculateNights() {
     const { checkInDate, checkOutDate } = this.data
-    const start = new Date(checkInDate)
-    const end = new Date(checkOutDate)
-    return Math.max(1, Math.ceil((end - start) / 86400000))
+    const toDayNumber = value => {
+      const [year, month, day] = value.split('-').map(Number)
+      return Date.UTC(year, month - 1, day) / 86400000
+    }
+    return Math.max(1, toDayNumber(checkOutDate) - toDayNumber(checkInDate))
+  },
+
+  formatDate(date) {
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+  },
+
+  getMinCheckOut(checkInDate) {
+    const date = new Date(`${checkInDate}T00:00:00`)
+    date.setDate(date.getDate() + 1)
+    return this.formatDate(date)
+  },
+
+  updatePrice() {
+    if (!this.data.roomType.basePrice) return
+    const nights = this.calculateNights()
+    const totalPrice = (this.data.roomType.basePrice * nights).toFixed(2)
+    const deposit = (totalPrice * this.data.depositRate).toFixed(2)
+    const grandTotal = (parseFloat(totalPrice) + parseFloat(deposit)).toFixed(2)
+    this.setData({ nights, totalPrice, deposit, grandTotal })
+  },
+
+  onCheckInChange(e) {
+    const checkInDate = e.detail.value
+    const minCheckOut = this.getMinCheckOut(checkInDate)
+    const checkOutDate = this.data.checkOutDate > checkInDate ? this.data.checkOutDate : minCheckOut
+    this.setData({ checkInDate, minCheckOut, checkOutDate }, () => this.updatePrice())
+  },
+
+  onCheckOutChange(e) {
+    const checkOutDate = e.detail.value
+    if (checkOutDate <= this.data.checkInDate) {
+      wx.showToast({ title: '退房日期必须晚于入住日期', icon: 'none' })
+      return
+    }
+    this.setData({ checkOutDate }, () => this.updatePrice())
   },
 
   onInput(e) {
@@ -72,6 +115,10 @@ Page({
 
   async submitOrder() {
     const { form, guestOptions, guestIndex, roomTypeId, checkInDate, checkOutDate } = this.data
+    if (!checkInDate || !checkOutDate || checkOutDate <= checkInDate) {
+      wx.showToast({ title: '请选择有效的入住和退房日期', icon: 'none' })
+      return
+    }
     if (!form.guestName) { wx.showToast({ title: '请输入姓名', icon: 'none' }); return }
     if (!form.guestPhone) { wx.showToast({ title: '请输入手机号', icon: 'none' }); return }
 
