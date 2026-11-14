@@ -8,7 +8,6 @@
     "pages/order-detail/order-detail",
     "pages/profile/profile",
     "pages/login/login",
-    "pages/register/register",
     "pages/profile-edit/profile-edit",
     "pages/order-modify/order-modify",
     "pages/contact/contact",

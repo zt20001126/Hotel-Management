@@ -511,8 +511,9 @@ INSERT INTO `sys_employee_role` VALUES (6, 6, 3, '2025-12-30 03:28:24');
 DROP TABLE IF EXISTS `sys_guest`;
 CREATE TABLE `sys_guest`  (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '宾客ID',
-  `username` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '用户名',
-  `password` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '密码(明文)',
+  `openid` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '微信小程序用户标识',
+  `username` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '兼容旧账号的用户名',
+  `password` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '兼容旧账号的密码',
   `nickname` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '昵称',
   `real_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '真实姓名',
   `phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '手机号',
@@ -525,19 +526,19 @@ CREATE TABLE `sys_guest`  (
   `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` tinyint(4) NULL DEFAULT 0 COMMENT '删除标记',
   PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `uk_sys_guest_openid`(`openid` ASC) USING BTREE,
   UNIQUE INDEX `username`(`username` ASC) USING BTREE,
-  INDEX `idx_username`(`username` ASC) USING BTREE,
-  INDEX `idx_phone`(`phone` ASC) USING BTREE
+  UNIQUE INDEX `uk_sys_guest_phone`(`phone` ASC) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '宾客表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_guest
 -- ----------------------------
-INSERT INTO `sys_guest` VALUES (1, 'guest1', '123456', '旅行者小王', '王建国', '13900000001', 'wangjianguo@qq.com', NULL, '110101199001011234', 1, 1, '2025-12-30 03:28:24', '2025-12-30 03:28:24', 0);
-INSERT INTO `sys_guest` VALUES (2, 'guest2', '123456', '快乐出游', '李梅', '13900000002', 'limei@qq.com', NULL, '110101199202022345', 2, 1, '2025-12-30 03:28:24', '2025-12-30 03:28:24', 0);
-INSERT INTO `sys_guest` VALUES (3, 'guest3', '123456', '商旅达人', '张伟', '13900000003', 'zhangwei@qq.com', NULL, '110101198803033456', 1, 1, '2025-12-30 03:28:24', '2025-12-30 03:28:24', 0);
-INSERT INTO `sys_guest` VALUES (4, 'guest4', '123456', '度假小公主', '陈静', '13900000004', 'chenjing@qq.com', NULL, '110101199504044567', 2, 1, '2025-12-30 03:28:24', '2025-12-30 03:28:24', 0);
-INSERT INTO `sys_guest` VALUES (5, 'guest5', '123456', '背包客', '刘洋', '13900000005', 'liuyang@qq.com', NULL, '110101199205055678', 1, 1, '2025-12-30 03:28:24', '2025-12-30 03:28:24', 0);
+INSERT INTO `sys_guest` VALUES (1, NULL, NULL, NULL, '旅行者小王', '王建国', '13900000001', 'wangjianguo@qq.com', NULL, '110101199001011234', 1, 1, '2025-12-30 03:28:24', '2025-12-30 03:28:24', 0);
+INSERT INTO `sys_guest` VALUES (2, NULL, NULL, NULL, '快乐出游', '李梅', '13900000002', 'limei@qq.com', NULL, '110101199202022345', 2, 1, '2025-12-30 03:28:24', '2025-12-30 03:28:24', 0);
+INSERT INTO `sys_guest` VALUES (3, NULL, NULL, NULL, '商旅达人', '张伟', '13900000003', 'zhangwei@qq.com', NULL, '110101198803033456', 1, 1, '2025-12-30 03:28:24', '2025-12-30 03:28:24', 0);
+INSERT INTO `sys_guest` VALUES (4, NULL, NULL, NULL, '度假小公主', '陈静', '13900000004', 'chenjing@qq.com', NULL, '110101199504044567', 2, 1, '2025-12-30 03:28:24', '2025-12-30 03:28:24', 0);
+INSERT INTO `sys_guest` VALUES (5, NULL, NULL, NULL, '背包客', '刘洋', '13900000005', 'liuyang@qq.com', NULL, '110101199205055678', 1, 1, '2025-12-30 03:28:24', '2025-12-30 03:28:24', 0);
 
 -- ----------------------------
 -- Table structure for sys_operation_log

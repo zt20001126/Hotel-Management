@@ -28,30 +28,22 @@ Page({
   },
 
   async login() {
-    const { username, password, loginType } = this.data
+    const { username, password } = this.data
     if (!username) { wx.showToast({ title: '请输入用户名', icon: 'none' }); return }
     if (!password) { wx.showToast({ title: '请输入密码', icon: 'none' }); return }
 
     this.setData({ loading: true })
     try {
-      const url = loginType === 'employee' ? '/auth/employee/login' : '/auth/guest/login'
       const res = await app.request({
-        url: url,
+        url: '/auth/employee/login',
         method: 'POST',
         data: { username, password }
       })
       app.login(res.data.token, res.data.userInfo)
       wx.showToast({ title: '登录成功', icon: 'success' })
       
-      // 根据登录类型跳转到不同页面
       setTimeout(() => {
-        if (loginType === 'employee') {
-          // 员工登录后跳转到工作台
-          wx.redirectTo({ url: '/pages/employee/workbench/workbench' })
-        } else {
-          // 客户登录后返回上一页
-          wx.navigateBack()
-        }
+        wx.redirectTo({ url: '/pages/employee/workbench/workbench' })
       }, 1000)
     } catch (err) {
       console.error(err)
@@ -60,12 +52,40 @@ Page({
     }
   },
 
-  goRegister() {
-    // 只有客户可以注册
-    if (this.data.loginType === 'employee') {
-      wx.showToast({ title: '员工账号请联系管理员', icon: 'none' })
+  async onGetPhoneNumber(event) {
+    const phoneCode = event.detail && event.detail.code
+    if (!phoneCode) {
+      wx.showToast({ title: '需要授权手机号才能登录', icon: 'none' })
       return
     }
-    wx.navigateTo({ url: '/pages/register/register' })
+
+    this.setData({ loading: true })
+    try {
+      const loginResult = await new Promise((resolve, reject) => {
+        wx.login({
+          success: resolve,
+          fail: reject
+        })
+      })
+      if (!loginResult.code) {
+        throw new Error('未能获取微信登录凭证')
+      }
+
+      const result = await app.request({
+        url: '/auth/wechat/phone-login',
+        method: 'POST',
+        data: {
+          loginCode: loginResult.code,
+          phoneCode
+        }
+      })
+      app.login(result.data.token, result.data.userInfo)
+      wx.showToast({ title: '登录成功', icon: 'success' })
+      setTimeout(() => wx.navigateBack(), 800)
+    } catch (error) {
+      console.error('微信手机号登录失败', error)
+    } finally {
+      this.setData({ loading: false })
+    }
   }
 })

@@ -56,14 +56,6 @@ Page({
   async save() {
     const { form } = this.data
     
-    if (!form.phone) {
-      wx.showToast({ title: '请输入手机号', icon: 'none' })
-      return
-    }
-    if (!/^1[3-9]\d{9}$/.test(form.phone)) {
-      wx.showToast({ title: '请输入正确的手机号', icon: 'none' })
-      return
-    }
     if (form.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
       wx.showToast({ title: '请输入正确的邮箱', icon: 'none' })
       return
@@ -77,7 +69,6 @@ Page({
         data: {
           nickname: form.nickname,
           realName: form.realName,
-          phone: form.phone,
           email: form.email,
           idCard: form.idCard,
           gender: form.gender

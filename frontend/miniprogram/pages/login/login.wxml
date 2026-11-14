@@ -19,13 +19,24 @@
       </view>
     </view>
     
-    <view class="form-item">
-      <input class="input" placeholder="请输入用户名" value="{{username}}" bindinput="onUsernameInput" />
-    </view>
-    <view class="form-item">
-      <input class="input" placeholder="请输入密码" password value="{{password}}" bindinput="onPasswordInput" />
-    </view>
-    <button class="btn-login btn-primary" bindtap="login" loading="{{loading}}">登 录</button>
-    <view class="register-link" bindtap="goRegister" wx:if="{{loginType === 'guest'}}">没有账号？立即注册</view>
+    <block wx:if="{{loginType === 'guest'}}">
+      <view class="form-item login-tip">使用微信绑定手机号快捷登录</view>
+      <button class="btn-login btn-primary"
+              open-type="getPhoneNumber"
+              bindgetphonenumber="onGetPhoneNumber"
+              loading="{{loading}}"
+              disabled="{{loading}}">
+        微信手机号快捷登录
+      </button>
+    </block>
+    <block wx:else>
+      <view class="form-item">
+        <input class="input" placeholder="请输入员工用户名" value="{{username}}" bindinput="onUsernameInput" />
+      </view>
+      <view class="form-item">
+        <input class="input" placeholder="请输入密码" password value="{{password}}" bindinput="onPasswordInput" />
+      </view>
+      <button class="btn-login btn-primary" bindtap="login" loading="{{loading}}">员 工 登 录</button>
+    </block>
   </view>
 </view>

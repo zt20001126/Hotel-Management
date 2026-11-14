@@ -14,7 +14,7 @@ Page({
     this.setData({
       isLogin: app.checkLogin(),
       userInfo: userInfo,
-      avatarUrl: userInfo.avatar || 'https://dummyimage.com/150x150/667eea/ffffff.png&text=Avatar',
+      avatarUrl: userInfo.avatar || '/images/logo.png',
       isEmployee: isEmployee
     })
     // 如果已登录，刷新用户信息
@@ -30,7 +30,7 @@ Page({
   onAvatarError() {
     // 如果头像加载失败，使用网络占位图
     this.setData({
-      avatarUrl: 'https://dummyimage.com/150x150/667eea/ffffff.png&text=Avatar'
+      avatarUrl: '/images/logo.png'
     })
   },
 
@@ -41,7 +41,7 @@ Page({
       app.login(app.globalData.token, userData)
       this.setData({ 
         userInfo: userData,
-        avatarUrl: userData.avatar || 'https://dummyimage.com/150x150/667eea/ffffff.png&text=Avatar',
+        avatarUrl: userData.avatar || '/images/logo.png',
         isEmployee: false
       })
     } catch (err) {
@@ -56,7 +56,7 @@ Page({
       app.login(app.globalData.token, userData)
       this.setData({ 
         userInfo: userData,
-        avatarUrl: userData.avatar || 'https://dummyimage.com/150x150/667eea/ffffff.png&text=Avatar',
+        avatarUrl: userData.avatar || '/images/logo.png',
         isEmployee: true
       })
     } catch (err) {

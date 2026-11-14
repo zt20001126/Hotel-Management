@@ -107,7 +107,7 @@ homestay-business-management/
 ## 快速开始
 
 ### 环境要求
-- JDK 17+
+- JDK 21+
 - Maven 3.6+
 - Node.js 16+
 - MySQL 8.0+
@@ -164,7 +164,11 @@ npm run dev
 
 1. 使用微信开发者工具打开 `frontend/miniprogram` 目录
 2. 修改 `app.js` 中的 `baseUrl` 为实际后端地址
-3. 编译运行
+3. 在微信公众平台配置已认证的小程序，并在 `backend/src/main/resources/application.yml` 的 `wechat.mini-program` 节点填写 AppID 和 AppSecret
+4. 用户点击手机号快捷登录并授权后，后端按手机号登录或创建宾客账号
+5. 编译运行
+
+现有数据库执行一次迁移脚本：`backend/sql/migrations/V2__wechat_phone_login.sql`。新建数据库则可直接执行 `backend/sql/homestay_db.sql`。
 
 ## 测试账号
 
@@ -177,17 +181,13 @@ npm run dev
 | 房务 | housekeeper1 | 123456 |
 
 ### 宾客端
-| 用户名 | 密码 |
-|--------|------|
-| guest1 | 123456 |
-| guest2 | 123456 |
+用户点击小程序中的手机号快捷登录并授权后即可登录；员工用户名密码登录保持不变。
 
 ## API接口说明
 
 ### 认证接口
 - `POST /api/auth/employee/login` - 员工登录
-- `POST /api/auth/guest/login` - 宾客登录
-- `POST /api/auth/guest/register` - 宾客注册
+- `POST /api/auth/wechat/phone-login` - 微信手机号登录或首次创建宾客账号
 
 ### 房间管理
 - `GET /api/roomType/available` - 获取可用房型

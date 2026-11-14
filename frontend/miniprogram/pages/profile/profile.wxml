@@ -4,7 +4,7 @@
       <image class="avatar" src="{{avatarUrl}}" mode="aspectFill" binderror="onAvatarError"></image>
     </view>
     <view class="user-info">
-      <view class="nickname">{{userInfo.nickname || userInfo.username}}</view>
+      <view class="nickname">{{userInfo.nickname || '微信用户'}}</view>
       <view class="phone">{{userInfo.phone || '未绑定手机'}}</view>
     </view>
   </view>
