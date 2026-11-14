@@ -5,5 +5,8 @@
 # Maven build output
 **/target/
 
+# Installed frontend dependencies and generated bundler cache
+**/node_modules/
+
 # WeChat Developer Tools machine-specific settings
 **/project.private.config.json
