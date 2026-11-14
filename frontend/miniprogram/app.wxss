@@ -1,82 +1,26 @@
 page {
-  background-color: #f5f7fa;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-}
-
-/* 全局按钮文字居中 */
-button {
-  text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.container {
-  padding: 20rpx;
-}
-
-.card {
-  background: #fff;
-  border-radius: 16rpx;
-  padding: 24rpx;
-  margin-bottom: 20rpx;
-  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.05);
-}
-
-.btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: #fff;
-  border: none;
-  border-radius: 8rpx;
-  padding: 20rpx 40rpx;
+  min-height: 100%;
+  background: #f8f1e5;
+  color: #30271f;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
   font-size: 28rpx;
-  text-align: center;
 }
 
-.btn-primary::after {
-  border: none;
-}
+button { display: flex; align-items: center; justify-content: center; text-align: center; }
+button::after { border: 0; }
+.container { min-height: 100vh; padding: 24rpx 28rpx 40rpx; box-sizing: border-box; }
+.card { background: #fff9ef; border: 1rpx solid #e4cfad; border-radius: 24rpx; box-shadow: 0 8rpx 24rpx rgba(91, 63, 35, .08); }
+.btn-primary { color: #fff9ef; background: #a83e2a; border: 0; border-radius: 999rpx; font-size: 30rpx; font-weight: 600; }
+.btn-primary:active, .btn-book:active { background: #8e3022; opacity: .92; }
+.text-primary { color: #a83e2a; }
+.text-success { color: #55715b; }
+.text-warning { color: #b99462; }
+.text-danger { color: #a83e2a; }
+.text-gray { color: #978a7a; }
+.text-bold { font-weight: 600; }
+.flex { display: flex; }
+.flex-between { display: flex; justify-content: space-between; align-items: center; }
+.flex-center { display: flex; justify-content: center; align-items: center; }
 
-.btn-primary:active {
-  opacity: 0.9;
-}
-
-.text-primary {
-  color: #667eea;
-}
-
-.text-success {
-  color: #67c23a;
-}
-
-.text-warning {
-  color: #e6a23c;
-}
-
-.text-danger {
-  color: #f56c6c;
-}
-
-.text-gray {
-  color: #909399;
-}
-
-.text-bold {
-  font-weight: bold;
-}
-
-.flex {
-  display: flex;
-}
-
-.flex-between {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.flex-center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+/* Local paper grain and low contrast ink hills, shared by mini program pages only. */
+.container::before { content: ""; position: fixed; z-index: -1; left: 0; right: 0; top: 0; height: 300rpx; pointer-events: none; opacity: .28; background: radial-gradient(ellipse at 78% 90%, #c8bea8 0 3%, transparent 3.5%), radial-gradient(ellipse at 67% 100%, #d4cbb8 0 12%, transparent 12.5%), radial-gradient(ellipse at 40% 100%, #ded4c0 0 20%, transparent 20.5%), linear-gradient(180deg, #f5ead8, rgba(248,241,229,0)); }

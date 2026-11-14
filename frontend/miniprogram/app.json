@@ -22,13 +22,15 @@
   ],
   "window": {
     "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#667eea",
+    "navigationBarBackgroundColor": "#f8f1e5",
     "navigationBarTitleText": "悦居民宿",
-    "navigationBarTextStyle": "white"
+    "navigationBarTextStyle": "black"
   },
   "tabBar": {
-    "color": "#999",
-    "selectedColor": "#667eea",
+    "color": "#897966",
+    "selectedColor": "#a83e2a",
+    "backgroundColor": "#fff9ef",
+    "borderStyle": "white",
     "list": [
       {
         "pagePath": "pages/index/index",
