@@ -1,35 +1,25 @@
-<view class="container">
+<view class="container rooms-page">
+  <view class="rooms-hero" aria-hidden="true"><image class="rooms-plum" src="/images/plum-branch.svg" mode="aspectFit"></image><view class="rooms-sun"></view><view class="rooms-mountain rooms-mountain-back"></view><view class="rooms-mountain rooms-mountain-front"></view><image class="rooms-pavilion" src="/images/pavilion.svg" mode="aspectFit"></image></view>
+  <view class="rooms-title">房型列表<text class="rooms-seal">民宿</text></view>
   <!-- 筛选栏 -->
-  <view class="filter-bar">
+  <view class="filter-bar card">
+    <image class="filter-corner corner-tl" src="/images/keyfret.svg" mode="aspectFit"></image>
+    <image class="filter-corner corner-tr" src="/images/keyfret.svg" mode="aspectFit"></image>
     <view class="filter-item">
       <picker mode="date" value="{{checkInDate}}" start="{{today}}" bindchange="onCheckInChange">
-        <view class="picker-text">{{checkInDate || '入住日期'}}</view>
+        <view class="picker-text"><text class="calendar-icon">▦</text><text>{{checkInDate || '入住日期'}}</text></view>
       </picker>
     </view>
     <text class="filter-separator">至</text>
     <view class="filter-item">
       <picker mode="date" value="{{checkOutDate}}" start="{{minCheckOut || today}}" bindchange="onCheckOutChange">
-        <view class="picker-text">{{checkOutDate || '退房日期'}}</view>
+        <view class="picker-text"><text class="calendar-icon">▦</text><text>{{checkOutDate || '退房日期'}}</text></view>
       </picker>
     </view>
-    <view class="filter-item">
-      <picker mode="selector" range="{{guestOptions}}" value="{{guestIndex}}" bindchange="onGuestChange">
-        <view class="picker-text">{{guestOptions[guestIndex]}}人</view>
-      </picker>
-    </view>
+    <image class="filter-corner corner-bl" src="/images/keyfret.svg" mode="aspectFit"></image>
+    <image class="filter-corner corner-br" src="/images/keyfret.svg" mode="aspectFit"></image>
   </view>
 
-  <!-- 偏好筛选栏 -->
-  <view class="preference-bar" wx:if="{{roomTypes.length > 0}}">
-    <view class="preference-label">排序：</view>
-    <picker mode="selector" range="{{sortOptions}}" value="{{sortIndex}}" bindchange="onSortChange">
-      <view class="preference-item">
-        <text class="preference-text">{{sortOptions[sortIndex]}}</text>
-        <text class="preference-arrow">▼</text>
-      </view>
-    </picker>
-  </view>
-  
   <!-- 加载状态 -->
   <view class="loading" wx:if="{{loading}}">
     <text>搜索中...</text>
@@ -39,21 +29,7 @@
   <view class="empty-date" wx:if="{{!loading && !checkInDate && !checkOutDate}}">
     <view class="empty-date-content">
       <text class="empty-date-icon">📅</text>
-      <text class="empty-date-text">请选择入住和退房日期</text>
-      <view class="date-picker-group">
-        <picker mode="date" value="{{checkInDate}}" start="{{today}}" bindchange="onCheckInChange">
-          <view class="date-picker-btn">
-            <text class="date-picker-label">入住日期</text>
-            <text class="date-picker-value">{{checkInDate || '请选择'}}</text>
-          </view>
-        </picker>
-        <picker mode="date" value="{{checkOutDate}}" start="{{minCheckOut || today}}" bindchange="onCheckOutChange">
-          <view class="date-picker-btn">
-            <text class="date-picker-label">退房日期</text>
-            <text class="date-picker-value">{{checkOutDate || '请选择'}}</text>
-          </view>
-        </picker>
-      </view>
+      <text class="empty-date-text">请在上方选择入住和退房日期</text>
     </view>
   </view>
   
@@ -62,6 +38,7 @@
     <view class="room-card card" wx:for="{{roomTypes}}" wx:key="id" bindtap="goDetail" data-id="{{item.id}}">
       <image class="room-image" src="{{item.images[0] || 'https://dummyimage.com/400x300/667eea/ffffff.png&text=Room'}}" mode="aspectFill" binderror="onImageError" data-index="{{index}}"></image>
       <view class="room-info">
+        <image class="room-cloud" src="/images/cloud.svg" mode="aspectFit"></image>
         <view class="room-name">{{item.name}}</view>
         <view class="room-tags">
           <text class="tag">{{item.bedType}}</text>

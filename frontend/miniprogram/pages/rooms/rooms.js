@@ -5,18 +5,15 @@ Page({
     checkInDate: '',
     checkOutDate: '',
     guestCount: 2,
-    guestIndex: 0,
-    guestOptions: [1, 2, 3, 4, 5, 6],
     roomTypes: [],
     loading: false,
     isEmpty: false,
     today: '',
-    minCheckOut: '',
-    sortOptions: ['默认', '价格从低到高', '价格从高到低'],
-    sortIndex: 0
+    minCheckOut: ''
   },
 
   onLoad(options) {
+    this._searchRequestId = 0
     // 设置今天的日期
     const today = new Date()
     const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
@@ -34,13 +31,10 @@ Page({
     const searchParams = app.globalData.searchParams
     if (searchParams) {
       const guestCount = parseInt(searchParams.guestCount) || 2
-      const guestIndex = Math.max(0, guestCount - 1)
-      
       this.setData({
         checkInDate: searchParams.checkInDate || '',
         checkOutDate: searchParams.checkOutDate || '',
         guestCount: guestCount,
-        guestIndex: guestIndex,
         minCheckOut: this.getMinCheckOut(searchParams.checkInDate)
       })
       
@@ -71,56 +65,17 @@ Page({
   onCheckInChange(e) {
     const checkInDate = e.detail.value
     const minCheckOut = this.getMinCheckOut(checkInDate)
-    this.setData({ 
-      checkInDate: checkInDate,
-      checkOutDate: '', // 重置退房日期
-      minCheckOut: minCheckOut
-    })
+    const checkOutDate = this.data.checkOutDate >= minCheckOut ? this.data.checkOutDate : minCheckOut
+    this.setData({ checkInDate, checkOutDate, minCheckOut }, () => this.loadRoomTypes())
   },
   
   onCheckOutChange(e) {
     const checkOutDate = e.detail.value
-    this.setData({ checkOutDate: checkOutDate })
-    // 如果入住日期已选择，自动搜索
-    if (this.data.checkInDate) {
-      this.loadRoomTypes()
+    if (!this.data.checkInDate || checkOutDate <= this.data.checkInDate) {
+      wx.showToast({ title: '退房日期必须晚于入住日期', icon: 'none' })
+      return
     }
-  },
-  
-  onGuestChange(e) {
-    const guestIndex = parseInt(e.detail.value)
-    const guestCount = this.data.guestOptions[guestIndex]
-    this.setData({ 
-      guestIndex: guestIndex,
-      guestCount: guestCount
-    })
-    // 如果日期已选择，自动搜索
-    if (this.data.checkInDate && this.data.checkOutDate) {
-      this.loadRoomTypes()
-    }
-  },
-
-  onSortChange(e) {
-    const sortIndex = parseInt(e.detail.value)
-    this.setData({ sortIndex })
-    // 对当前列表进行排序
-    const sortedRoomTypes = this.sortRoomTypes([...this.data.roomTypes])
-    this.setData({ roomTypes: sortedRoomTypes })
-  },
-
-  sortRoomTypes(roomTypes) {
-    const { sortIndex } = this.data
-    if (sortIndex === 0) {
-      // 默认排序，保持原顺序
-      return roomTypes
-    } else if (sortIndex === 1) {
-      // 价格从低到高
-      return roomTypes.sort((a, b) => parseFloat(a.basePrice) - parseFloat(b.basePrice))
-    } else if (sortIndex === 2) {
-      // 价格从高到低
-      return roomTypes.sort((a, b) => parseFloat(b.basePrice) - parseFloat(a.basePrice))
-    }
-    return roomTypes
+    this.setData({ checkOutDate }, () => this.loadRoomTypes())
   },
 
   async loadRoomTypes() {
@@ -128,7 +83,6 @@ Page({
     
     // 验证日期
     if (!checkInDate || !checkOutDate) {
-      wx.showToast({ title: '请选择入住和退房日期', icon: 'none' })
       return
     }
     
@@ -137,6 +91,7 @@ Page({
       return
     }
     
+    const requestId = ++this._searchRequestId
     this.setData({ loading: true, isEmpty: false })
     
     try {
@@ -151,7 +106,7 @@ Page({
       })
       
       // 解析图片列表
-      let roomTypes = (res.data || []).map(roomType => {
+      const roomTypes = (res.data || []).map(roomType => {
         if (roomType.images) {
           try {
             roomType.images = typeof roomType.images === 'string' 
@@ -170,8 +125,7 @@ Page({
         return roomType
       })
       
-      // 根据排序偏好排序
-      roomTypes = this.sortRoomTypes(roomTypes)
+      if (requestId !== this._searchRequestId) return
       
       this.setData({ 
         roomTypes,
@@ -183,6 +137,7 @@ Page({
         wx.showToast({ title: '暂无可用房型', icon: 'none' })
       }
     } catch (err) {
+      if (requestId !== this._searchRequestId) return
       console.error('搜索房型失败:', err)
       this.setData({ loading: false, isEmpty: true })
       wx.showToast({ 

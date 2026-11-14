@@ -1,7 +1,23 @@
-.filter-bar, .preference-bar { display: flex; align-items: center; padding: 18rpx; margin-bottom: 18rpx; background: #fff9ef; border: 1rpx solid #e9dcc9; border-radius: 20rpx; color: #655548; }
-.filter-item { flex: 1; display: flex; justify-content: center; }
-.picker-text { padding: 12rpx 10rpx; background: #f8f1e5; border: 1rpx solid #eadcc7; border-radius: 12rpx; color: #30271f; font-size: 24rpx; text-align: center; }
-.filter-separator { margin: 0 6rpx; color: #978a7a; font-size: 22rpx; }
+.rooms-page { position:relative; padding-top:300rpx; }
+.rooms-hero { position:absolute; top:0; left:-28rpx; right:-28rpx; height:320rpx; overflow:hidden; background:linear-gradient(180deg,#fbf3e6 0%,rgba(248,241,229,.28) 72%,#f8f1e5 100%); pointer-events:none; }
+.rooms-mountain { position:absolute; left:-8%; width:116%; height:160rpx; bottom:12rpx; opacity:.26; background:linear-gradient(160deg,transparent 0 14%,#9e9b8e 14.5% 18%,transparent 18.5% 28%,#b1aa9a 28.5% 34%,transparent 34.5% 45%,#aaa596 45.5% 50%,transparent 50.5% 63%,#bbb3a1 63.5% 70%,transparent 70.5%); clip-path:polygon(0 78%,10% 36%,16% 62%,28% 17%,38% 72%,50% 30%,63% 72%,76% 10%,85% 55%,94% 24%,100% 75%,100% 100%,0 100%); }
+.rooms-mountain-front { bottom:0; height:125rpx; opacity:.18; transform:scaleX(-1); }
+.rooms-sun { position:absolute; top:160rpx; left:35%; width:46rpx; height:46rpx; border-radius:50%; background:#edc58d; opacity:.72; }
+.rooms-plum { position:absolute; z-index:2; top:66rpx; left:0; width:300rpx; height:185rpx; }
+.rooms-pavilion { position:absolute; z-index:2; right:-10rpx; bottom:14rpx; width:225rpx; height:165rpx; }
+.rooms-title { position:absolute; z-index:3; top:65rpx; left:0; right:0; text-align:center; color:#241f19; font-family:"STKaiti","KaiTi",serif; font-size:48rpx; font-weight:700; letter-spacing:4rpx; }
+.rooms-seal { display:inline-flex; vertical-align:middle; align-items:center; justify-content:center; width:30rpx; height:42rpx; margin-left:8rpx; background:#a83e2a; border-radius:7rpx; color:#fff2df; font-family:"KaiTi",serif; font-size:17rpx; letter-spacing:0; writing-mode:vertical-rl; }
+.filter-bar { position:relative; display:flex; align-items:center; padding:22rpx 34rpx; margin-bottom:24rpx; overflow:hidden; background:#fff9ef; border:2rpx solid #c8a46f; border-radius:24rpx; color:#655548; box-shadow:0 8rpx 20rpx rgba(91,63,35,.08); }
+.filter-item { display:flex; flex:1; min-width:0; justify-content:center; }
+.filter-item picker { width:100%; }
+.picker-text { box-sizing:border-box; display:flex; align-items:center; justify-content:center; min-height:84rpx; padding:12rpx 8rpx; background:#fbf3e7; border:2rpx solid #f0dfc8; border-radius:999rpx; color:#30271f; font-size:23rpx; white-space:nowrap; }
+.calendar-icon { margin-right:8rpx; color:#9d613b; font-size:28rpx; }
+.filter-separator { width:52rpx; color:#655548; font-size:28rpx; text-align:center; }
+.filter-corner { position:absolute; z-index:2; width:54rpx; height:54rpx; pointer-events:none; }
+.corner-tl { top:0; left:0; }
+.corner-tr { top:0; right:0; transform:scaleX(-1); }
+.corner-bl { bottom:0; left:0; transform:scaleY(-1); }
+.corner-br { bottom:0; right:0; transform:scale(-1); }
 .preference-label { margin-right: 18rpx; color: #978a7a; }
 .preference-item { display: flex; align-items: center; padding: 10rpx 18rpx; background: #f8f1e5; border: 1rpx solid #e9dcc9; border-radius: 12rpx; color: #655548; }
 .preference-text { font-size: 26rpx; }
@@ -9,6 +25,8 @@
 .room-card { padding: 0; overflow: hidden; margin-bottom: 22rpx; }
 .room-image { display: block; width: 100%; height: 330rpx; background: #e9dcc9; }
 .room-info { padding: 20rpx 24rpx 24rpx; }
+.room-info { position:relative; }
+.room-cloud { position:absolute; top:55rpx; right:0; width:140rpx; height:65rpx; opacity:.24; pointer-events:none; }
 .room-name { margin-bottom: 14rpx; font-size: 32rpx; font-weight: 600; }
 .room-tags { margin-bottom: 18rpx; }
 .room-tags .tag { display: inline-block; padding: 7rpx 14rpx; margin-right: 10rpx; background: #f1e5d3; border-radius: 999rpx; color: #806951; font-size: 22rpx; }
