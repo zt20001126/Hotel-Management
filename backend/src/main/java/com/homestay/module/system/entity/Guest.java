@@ -13,6 +13,8 @@ public class Guest implements Serializable {
     @TableId(type = IdType.AUTO)
     private Long id;
 
+    private String openid;
+
     private String username;
 
     private String password;

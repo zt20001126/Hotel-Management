@@ -29,10 +29,13 @@ public class JwtUtil {
     public String generateToken(Long userId, String username, String userType, String role) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", userId);
-        claims.put("username", username);
+        if (username != null) {
+            claims.put("username", username);
+        }
         claims.put("userType", userType);
         claims.put("role", role);
-        return createToken(claims, username);
+        String subject = username != null ? username : userType + ":" + userId;
+        return createToken(claims, subject);
     }
 
     private String createToken(Map<String, Object> claims, String subject) {

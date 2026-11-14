@@ -9,7 +9,6 @@ import com.homestay.module.system.entity.Guest;
 import com.homestay.module.system.service.GuestService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -66,17 +65,4 @@ public class GuestController {
         return Result.success();
     }
 
-    @Operation(summary = "修改密码")
-    @PutMapping("/password")
-    public Result<Void> updatePassword(@RequestBody PasswordRequest request) {
-        Long userId = UserContextHolder.getUserId();
-        guestService.updatePassword(userId, request.getOldPassword(), request.getNewPassword());
-        return Result.success();
-    }
-
-    @Data
-    public static class PasswordRequest {
-        private String oldPassword;
-        private String newPassword;
-    }
 }
