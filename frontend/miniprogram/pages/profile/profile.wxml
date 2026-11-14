@@ -1,5 +1,8 @@
 <view class="container">
+  <image class="profile-top-art" src="/images/profile-header.png" mode="aspectFill"></image>
+  <image class="profile-bottom-art" src="/images/profile-landscape.png" mode="aspectFill"></image>
   <view class="user-card card" wx:if="{{isLogin}}">
+    <image class="user-mountain-art" src="/images/profile-gold-mountains.png" mode="aspectFill"></image>
     <view class="avatar-wrap">
       <image class="avatar" src="{{avatarUrl}}" mode="aspectFill" binderror="onAvatarError"></image>
     </view>
@@ -15,30 +18,34 @@
   </view>
   
   <view class="menu-card card">
+    <image class="menu-corner menu-tl" src="/images/keyfret.svg" mode="aspectFit"></image>
+    <image class="menu-corner menu-tr" src="/images/keyfret.svg" mode="aspectFit"></image>
+    <image class="menu-corner menu-bl" src="/images/keyfret.svg" mode="aspectFit"></image>
+    <image class="menu-corner menu-br" src="/images/keyfret.svg" mode="aspectFit"></image>
     <view class="menu-item" wx:if="{{isEmployee}}" bindtap="goWorkbench">
-      <text class="menu-icon">💼</text>
+      <image class="menu-icon" src="/images/profile-icon-orders.svg" mode="aspectFit"></image>
       <text class="menu-text">工作台</text>
-      <text class="menu-arrow">></text>
+      <text class="menu-arrow">›</text>
     </view>
     <view class="menu-item" wx:if="{{!isEmployee}}" bindtap="goOrders">
-      <text class="menu-icon">📋</text>
+      <image class="menu-icon" src="/images/profile-icon-orders.svg" mode="aspectFit"></image>
       <text class="menu-text">我的订单</text>
-      <text class="menu-arrow">></text>
+      <text class="menu-arrow">›</text>
     </view>
     <view class="menu-item" wx:if="{{isLogin}}" bindtap="goEditProfile">
-      <text class="menu-icon">👤</text>
+      <image class="menu-icon" src="/images/profile-icon-user.svg" mode="aspectFit"></image>
       <text class="menu-text">个人信息</text>
-      <text class="menu-arrow">></text>
+      <text class="menu-arrow">›</text>
     </view>
     <view class="menu-item" bindtap="goContact">
-      <text class="menu-icon">📞</text>
+      <image class="menu-icon" src="/images/profile-icon-service.svg" mode="aspectFit"></image>
       <text class="menu-text">联系客服</text>
-      <text class="menu-arrow">></text>
+      <text class="menu-arrow">›</text>
     </view>
     <view class="menu-item" bindtap="goAbout">
-      <text class="menu-icon">ℹ️</text>
+      <image class="menu-icon" src="/images/profile-icon-about.svg" mode="aspectFit"></image>
       <text class="menu-text">关于我们</text>
-      <text class="menu-arrow">></text>
+      <text class="menu-arrow">›</text>
     </view>
   </view>
   

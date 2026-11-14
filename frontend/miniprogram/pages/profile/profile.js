@@ -16,7 +16,7 @@ Page({
     this.setData({
       isLogin: app.checkLogin(),
       userInfo: userInfo,
-      avatarUrl: userInfo.avatar || '/images/logo.png',
+      avatarUrl: userInfo.avatar || '/images/avatar-ink.png',
       isEmployee: isEmployee
     })
     // 如果已登录，刷新用户信息
@@ -30,9 +30,9 @@ Page({
   },
 
   onAvatarError() {
-    // 如果头像加载失败，使用网络占位图
+    // 图片地址无效时回退为本地国风默认头像。
     this.setData({
-      avatarUrl: '/images/logo.png'
+      avatarUrl: '/images/avatar-ink.png'
     })
   },
 
@@ -43,7 +43,7 @@ Page({
       app.login(app.globalData.token, userData)
       this.setData({ 
         userInfo: userData,
-        avatarUrl: userData.avatar || '/images/logo.png',
+        avatarUrl: userData.avatar || '/images/avatar-ink.png',
         isEmployee: false
       })
     } catch (err) {
@@ -58,7 +58,7 @@ Page({
       app.login(app.globalData.token, userData)
       this.setData({ 
         userInfo: userData,
-        avatarUrl: userData.avatar || '/images/logo.png',
+        avatarUrl: userData.avatar || '/images/avatar-ink.png',
         isEmployee: true
       })
     } catch (err) {
