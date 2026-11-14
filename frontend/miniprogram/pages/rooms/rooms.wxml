@@ -1,5 +1,10 @@
 <view class="container rooms-page">
-  <view class="rooms-hero" aria-hidden="true"><image class="rooms-plum" src="/images/plum-branch.svg" mode="aspectFit"></image><view class="rooms-sun"></view><view class="rooms-mountain rooms-mountain-back"></view><view class="rooms-mountain rooms-mountain-front"></view><image class="rooms-pavilion" src="/images/pavilion.svg" mode="aspectFit"></image></view>
+  <swiper class="rooms-hero" autoplay="{{true}}" interval="6500" duration="1000" circular="{{true}}" indicator-dots="{{false}}" aria-hidden="true">
+    <swiper-item><image class="rooms-hero-image" src="/assets/images/chinese-style/banners/banner-plum-riverside.webp" mode="aspectFill"></image></swiper-item>
+    <swiper-item><image class="rooms-hero-image" src="/assets/images/chinese-style/banners/banner-stone-bridge-canal.webp" mode="aspectFill"></image></swiper-item>
+    <swiper-item><image class="rooms-hero-image" src="/assets/images/chinese-style/banners/banner-golden-landscape-lines.webp" mode="aspectFill"></image></swiper-item>
+    <swiper-item><image class="rooms-hero-image" src="/assets/images/chinese-style/banners/banner-night-baijianlou.webp" mode="aspectFill"></image></swiper-item>
+  </swiper>
   <view class="rooms-title">房型列表<text class="rooms-seal">民宿</text></view>
   <!-- 筛选栏 -->
   <view class="filter-bar card">

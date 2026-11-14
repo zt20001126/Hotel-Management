@@ -1,10 +1,16 @@
 page {
   height: 100%;
-  background-color: #f5f7fa;
+  background-color: #f5efe3;
+  background-image: url("/assets/images/chinese-style/backgrounds/background-bottom-water-town.webp");
+  background-size: 100% 100vh;
+  background-position: center bottom;
+  background-repeat: no-repeat;
   overflow-y: auto;
 }
 
 .container {
+  position: relative;
+  isolation: isolate;
   padding: 0;
   padding-bottom: 140rpx;
   box-sizing: border-box;
@@ -15,7 +21,10 @@ page {
   width: 100%;
   height: 500rpx;
   position: relative;
+  z-index: 1;
 }
+
+.info-card, .detail-card { position:relative; z-index:1; }
 
 .room-image {
   width: 100%;
@@ -95,6 +104,8 @@ page {
   color: #606266;
   padding: 15rpx 0;
 }
+
+.bridge-ornament { position:fixed; z-index:0; right:8rpx; bottom:calc(118rpx + env(safe-area-inset-bottom)); width:340rpx; height:180rpx; opacity:.25; pointer-events:none; }
 
 .bottom-bar {
   position: fixed;

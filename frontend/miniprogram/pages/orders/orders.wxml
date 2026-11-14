@@ -1,4 +1,6 @@
 <view class="container">
+  <image class="orders-town-art" src="/assets/images/chinese-style/decorations/decoration-baijianlou-houses.webp" mode="aspectFit" aria-hidden="true"></image>
+  <view class="orders-banner" aria-hidden="true"><image src="/assets/images/chinese-style/banners/banner-golden-landscape-lines.webp" mode="aspectFill"></image></view>
   <view class="order-card card" wx:for="{{orders}}" wx:key="id" bindtap="goDetail" data-id="{{item.id}}">
     <view class="order-header">
       <text class="order-no">{{item.orderNo}}</text>

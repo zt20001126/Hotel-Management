@@ -1,6 +1,10 @@
 .container {
   padding: 20rpx;
   padding-bottom: calc(128rpx + env(safe-area-inset-bottom));
+  background-image: url("/assets/images/chinese-style/backgrounds/background-gold-landscape.webp");
+  background-size: 100% 100vh;
+  background-position: center bottom;
+  background-repeat: no-repeat;
 }
 
 .status-card {
@@ -30,7 +34,7 @@
   color: #303133;
   margin-bottom: 20rpx;
   padding-left: 15rpx;
-  border-left: 6rpx solid #667eea;
+  border-left: 6rpx solid #a83e2a;
 }
 
 .info-row {

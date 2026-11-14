@@ -1,8 +1,9 @@
 <view class="container">
-  <image class="profile-top-art" src="/images/profile-header.png" mode="aspectFill"></image>
-  <image class="profile-bottom-art" src="/images/profile-landscape.png" mode="aspectFill"></image>
+  <image class="profile-top-art" src="/assets/images/chinese-style/profile/profile-paper-plum.webp" mode="aspectFill"></image>
+  <image class="profile-bottom-art" src="/assets/images/chinese-style/profile/profile-river-houses.webp" mode="aspectFill"></image>
   <view class="user-card card" wx:if="{{isLogin}}">
-    <image class="user-mountain-art" src="/images/profile-gold-mountains.png" mode="aspectFill"></image>
+    <image class="user-town-art" src="/assets/images/chinese-style/profile/profile-ink-baijianlou.webp" mode="aspectFill"></image>
+    <image class="user-mountain-art" src="/assets/images/chinese-style/decorations/decoration-gold-landscape.webp" mode="aspectFit"></image>
     <view class="avatar-wrap">
       <image class="avatar" src="{{avatarUrl}}" mode="aspectFill" binderror="onAvatarError"></image>
     </view>

@@ -1,10 +1,19 @@
 .container {
+  position:relative;
   min-height: 100vh;
-  background: #f5f7fa;
+  background-color:transparent;
+  background-image:url("/assets/images/chinese-style/backgrounds/background-bottom-water-town.webp");
+  background-size:100% 100vh;
+  background-position:center bottom;
+  background-repeat:no-repeat;
   padding: 20rpx;
 }
 
+.contact-houses-art { position:fixed; z-index:0; right:0; bottom:55rpx; width:100%; height:210rpx; opacity:.24; pointer-events:none; }
+
 .header {
+  position:relative;
+  z-index:1;
   text-align: center;
   padding: 40rpx 0;
 }
@@ -24,7 +33,9 @@
 }
 
 .card {
-  background: #fff;
+  position:relative;
+  z-index:1;
+  background: rgba(255,249,239,.94);
   border-radius: 16rpx;
   margin-bottom: 20rpx;
   padding: 30rpx;
@@ -134,7 +145,9 @@
 }
 
 .tips-card {
-  background: #fff;
+  position:relative;
+  z-index:1;
+  background: rgba(255,249,239,.94);
   border-radius: 16rpx;
   padding: 30rpx;
   margin-top: 20rpx;

@@ -1,11 +1,8 @@
 .container { position: relative; padding-top: 300rpx; }
-.hero-landscape { position: absolute; top: 0; left: -28rpx; right: -28rpx; height: 340rpx; overflow: hidden; background: linear-gradient(180deg,#fbf3e6 0%,rgba(248,241,229,.3) 72%,#f8f1e5 100%); pointer-events: none; }
-.mountain-ridge { position:absolute; left:-8%; width:116%; height:180rpx; bottom:16rpx; opacity:.27; background:linear-gradient(160deg,transparent 0 14%,#9e9b8e 14.5% 18%,transparent 18.5% 28%,#b1aa9a 28.5% 34%,transparent 34.5% 45%,#aaa596 45.5% 50%,transparent 50.5% 63%,#bbb3a1 63.5% 70%,transparent 70.5%); clip-path:polygon(0 78%,10% 36%,16% 62%,28% 17%,38% 72%,50% 30%,63% 72%,76% 10%,85% 55%,94% 24%,100% 75%,100% 100%,0 100%); }
-.ridge-front { bottom:0; height:145rpx; opacity:.17; transform:scaleX(-1); }
-.sun-disc { position:absolute; left:35%; top:145rpx; width:48rpx; height:48rpx; border-radius:50%; background:#edc58d; opacity:.72; }
-.plum-branch { position:absolute; z-index:2; left:0; top:72rpx; width:300rpx; height:185rpx; }
-.pavilion { position:absolute; z-index:2; right:-10rpx; bottom:20rpx; width:230rpx; height:170rpx; }
-.brand-title { position:absolute; z-index:3; top:72rpx; left:0; right:0; text-align:center; color:#241f19; font-family:"STKaiti","KaiTi",serif; font-weight:700; font-size:48rpx; letter-spacing:4rpx; text-shadow:0 1rpx 0 rgba(255,249,239,.7); }
+.home-art-swiper { position:absolute; z-index:0; top:0; left:-28rpx; width:calc(100% + 56rpx); height:1333rpx; opacity:.36; pointer-events:none; }
+.home-art-image { display:block; width:100%; height:100%; }
+.page-content { position:relative; z-index:1; }
+.brand-title { position:absolute; z-index:3; top:-228rpx; left:0; right:0; text-align:center; color:#241f19; font-family:"STKaiti","KaiTi",serif; font-weight:700; font-size:48rpx; letter-spacing:4rpx; text-shadow:0 1rpx 8rpx rgba(255,249,239,.9); }
 .brand-seal { display:inline-flex; vertical-align:middle; align-items:center; justify-content:center; width:30rpx; height:42rpx; margin-left:8rpx; background:#a83e2a; border-radius:7rpx; color:#fff2df; font-family:"KaiTi",serif; font-size:17rpx; letter-spacing:0; writing-mode:vertical-rl; }
 .search-card { padding: 30rpx 32rpx 34rpx; position: relative; overflow: hidden; border:2rpx solid #b99462; border-radius:24rpx; background:rgba(255,249,239,.96); box-shadow:0 10rpx 26rpx rgba(91,63,35,.12); }
 .search-title, .section-title { font-family: "STKaiti", "KaiTi", serif; font-size: 38rpx; font-weight: 700; color: #392c20; }

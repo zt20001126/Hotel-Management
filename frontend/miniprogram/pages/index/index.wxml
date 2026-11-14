@@ -1,5 +1,11 @@
 <view class="container">
-  <view class="hero-landscape" aria-hidden="true"><image class="plum-branch" src="/images/plum-branch.svg" mode="aspectFit"></image><view class="sun-disc"></view><view class="mountain-ridge ridge-back"></view><view class="mountain-ridge ridge-front"></view><image class="pavilion" src="/images/pavilion.svg" mode="aspectFit"></image></view>
+  <swiper class="home-art-swiper" autoplay="{{true}}" interval="7000" duration="1000" circular="{{true}}" indicator-dots="{{false}}" aria-hidden="true">
+    <swiper-item><image class="home-art-image" src="/assets/images/chinese-style/home/home-ink-water-town.webp" mode="aspectFill"></image></swiper-item>
+    <swiper-item><image class="home-art-image" src="/assets/images/chinese-style/home/home-plum-water-town.webp" mode="aspectFill"></image></swiper-item>
+    <swiper-item><image class="home-art-image" src="/assets/images/chinese-style/home/home-golden-sunrise.webp" mode="aspectFill"></image></swiper-item>
+    <swiper-item><image class="home-art-image" src="/assets/images/chinese-style/home/home-night-town.webp" mode="aspectFill"></image></swiper-item>
+  </swiper>
+  <view class="page-content">
   <view class="brand-title">悦居民宿<text class="brand-seal">民宿</text></view>
   <!-- 搜索区域 -->
   <view class="search-card card">
@@ -44,5 +50,6 @@
         </view>
       </view>
     </view>
+  </view>
   </view>
 </view>

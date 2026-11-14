@@ -1,4 +1,5 @@
 <view class="container">
+  <image class="contact-houses-art" src="/assets/images/chinese-style/decorations/decoration-baijianlou-houses.webp" mode="aspectFit" aria-hidden="true"></image>
   <view class="header">
     <text class="title">联系我们</text>
     <text class="subtitle">我们随时为您服务</text>

@@ -1,6 +1,9 @@
 page {
   min-height: 100%;
   background: #f8f1e5;
+  background-image: url("/assets/images/chinese-style/backgrounds/background-paper-texture.webp");
+  background-size: 100% 100vh;
+  background-repeat: repeat-y;
   color: #30271f;
   font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
   font-size: 28rpx;
@@ -23,5 +26,3 @@ button::after { border: 0; }
 .flex-between { display: flex; justify-content: space-between; align-items: center; }
 .flex-center { display: flex; justify-content: center; align-items: center; }
 
-/* Local paper grain and low contrast ink hills, shared by mini program pages only. */
-.container::before { content: ""; position: fixed; z-index: -1; left: 0; right: 0; top: 0; height: 300rpx; pointer-events: none; opacity: .28; background: radial-gradient(ellipse at 78% 90%, #c8bea8 0 3%, transparent 3.5%), radial-gradient(ellipse at 67% 100%, #d4cbb8 0 12%, transparent 12.5%), radial-gradient(ellipse at 40% 100%, #ded4c0 0 20%, transparent 20.5%), linear-gradient(180deg, #f5ead8, rgba(248,241,229,0)); }

@@ -1,13 +1,14 @@
 .container { position:relative; min-height:calc(100vh - 100rpx); padding-top:22rpx; padding-bottom:210rpx; overflow:hidden; background:transparent; }
 .profile-top-art { position:fixed; z-index:0; top:0; left:0; width:100%; height:430rpx; opacity:.98; pointer-events:none; }
 .profile-bottom-art { position:fixed; z-index:0; left:0; bottom:calc(100rpx + env(safe-area-inset-bottom)); width:100%; height:600rpx; opacity:.9; pointer-events:none; }
-.user-card { position:relative; z-index:1; display:flex; align-items:center; min-height:210rpx; box-sizing:border-box; padding:30rpx 34rpx; overflow:hidden; background:linear-gradient(115deg,#b23d2d,#8f281f); border:1rpx solid #ca9665; border-radius:24rpx; color:#fff8ed; box-shadow:0 10rpx 24rpx rgba(99,45,31,.18); }
+.user-card { position:relative; z-index:1; display:flex; align-items:center; min-height:210rpx; box-sizing:border-box; padding:30rpx 34rpx; overflow:hidden; background:rgba(255,249,239,.9); border:1rpx solid #caaf83; border-radius:24rpx; color:#30271f; box-shadow:0 10rpx 24rpx rgba(99,75,42,.12); }
 .avatar-wrap { position:relative; z-index:2; flex:none; }
-.avatar-wrap .avatar { display:block; width:132rpx; height:132rpx; border:4rpx solid rgba(255,246,226,.9); border-radius:50%; background:#f4e4c9; }
+.avatar-wrap .avatar { display:block; width:132rpx; height:132rpx; border:4rpx solid #fffaf1; border-radius:50%; background:#f4e4c9; }
 .user-info { position:relative; z-index:2; min-width:0; margin-left:26rpx; }
-.nickname { max-width:440rpx; overflow:hidden; margin-bottom:12rpx; color:#fffaf0; font-size:36rpx; font-weight:600; text-overflow:ellipsis; white-space:nowrap; }
-.phone { color:rgba(255,248,237,.9); font-size:26rpx; }
-.user-mountain-art { position:absolute; z-index:1; right:-20rpx; bottom:-24rpx; width:390rpx; height:220rpx; opacity:.32; pointer-events:none; }
+.user-town-art { position:absolute; z-index:1; right:0; bottom:0; width:100%; height:100%; opacity:.12; pointer-events:none; }
+.nickname { max-width:440rpx; overflow:hidden; margin-bottom:12rpx; color:#30271f; font-size:36rpx; font-weight:600; text-overflow:ellipsis; white-space:nowrap; }
+.phone { color:#806d57; font-size:26rpx; }
+.user-mountain-art { position:absolute; z-index:1; right:-8rpx; bottom:4rpx; width:390rpx; height:190rpx; opacity:.58; pointer-events:none; }
 .login-card { position:relative; z-index:1; padding:44rpx 32rpx; text-align:center; }
 .login-tip { display:block; margin-bottom:22rpx; color:#897966; }
 .btn-login { width:300rpx; height:76rpx; margin:auto; }
