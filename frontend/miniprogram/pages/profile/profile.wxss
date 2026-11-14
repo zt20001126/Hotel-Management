@@ -15,3 +15,6 @@
 .menu-arrow { color: #b99462; font-size: 32rpx; }
 .btn-logout { width: 68%; height: 78rpx; margin: 54rpx auto 0; background: #fff9ef; border: 2rpx solid #b85b43; border-radius: 999rpx; color: #a83e2a; font-size: 30rpx; }
 .btn-logout:active { background: #f3e5d2; }
+
+/* Reserve space for the custom four-item navigation bar. */
+.container { padding-bottom: 150rpx; }

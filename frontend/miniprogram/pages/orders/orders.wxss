@@ -15,3 +15,6 @@
 .empty, .login-tip { text-align: center; padding: 100rpx 0; color: #978a7a; }
 .empty::before { content: "山水 · 暂无订单"; display: block; margin-bottom: 20rpx; color: #b99462; font-family: "STKaiti", "KaiTi", serif; font-size: 32rpx; }
 .btn-login { width: 240rpx; height: 76rpx; margin: 26rpx auto 0; }
+
+/* Reserve space for the custom four-item navigation bar. */
+.container { padding-bottom: 150rpx; }

@@ -9,6 +9,7 @@ page {
 button { display: flex; align-items: center; justify-content: center; text-align: center; }
 button::after { border: 0; }
 .container { min-height: 100vh; padding: 24rpx 28rpx 40rpx; box-sizing: border-box; }
+.container::after { content:""; position:fixed; z-index:0; left:0; right:0; bottom:0; height:30rpx; background:url("/images/waves.svg") repeat-x bottom center / 250rpx 40rpx; pointer-events:none; opacity:.52; }
 .card { background: #fff9ef; border: 1rpx solid #e4cfad; border-radius: 24rpx; box-shadow: 0 8rpx 24rpx rgba(91, 63, 35, .08); }
 .btn-primary { color: #fff9ef; background: #a83e2a; border: 0; border-radius: 999rpx; font-size: 30rpx; font-weight: 600; }
 .btn-primary:active, .btn-book:active { background: #8e3022; opacity: .92; }

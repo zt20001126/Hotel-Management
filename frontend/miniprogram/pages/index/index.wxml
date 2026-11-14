@@ -1,33 +1,36 @@
 <view class="container">
+  <view class="hero-landscape" aria-hidden="true"><image class="plum-branch" src="/images/plum-branch.svg" mode="aspectFit"></image><view class="sun-disc"></view><view class="mountain-ridge ridge-back"></view><view class="mountain-ridge ridge-front"></view><image class="pavilion" src="/images/pavilion.svg" mode="aspectFit"></image></view>
+  <view class="brand-title">悦居民宿<text class="brand-seal">民宿</text></view>
   <!-- 搜索区域 -->
   <view class="search-card card">
+    <image class="corner corner-tl" src="/images/keyfret.svg" mode="aspectFit"></image><image class="corner corner-tr" src="/images/keyfret.svg" mode="aspectFit"></image>
     <view class="search-title">预订房间</view>
     <view class="search-form">
-      <view class="form-item">
-        <text class="label">入住日期</text>
+      <view class="date-row">
         <picker mode="date" value="{{checkInDate}}" start="{{today}}" bindchange="onCheckInChange">
-          <view class="picker">{{checkInDate || '请选择'}}</view>
+          <view class="date-card">
+            <view class="date-heading"><text class="calendar-icon">▦</text><text>入住日期</text><text class="date-arrow">›</text></view>
+            <text class="date-value">{{checkInDate || '请选择'}}</text>
+          </view>
         </picker>
-      </view>
-      <view class="form-item">
-        <text class="label">退房日期</text>
+        <text class="date-connector">—</text>
         <picker mode="date" value="{{checkOutDate}}" start="{{minCheckOut}}" bindchange="onCheckOutChange">
-          <view class="picker">{{checkOutDate || '请选择'}}</view>
+          <view class="date-card">
+            <view class="date-heading"><text class="calendar-icon">▦</text><text>退房日期</text><text class="date-arrow">›</text></view>
+            <text class="date-value">{{checkOutDate || '请选择'}}</text>
+          </view>
         </picker>
       </view>
-      <view class="form-item">
-        <text class="label">入住人数</text>
-        <picker mode="selector" range="{{guestOptions}}" value="{{guestIndex}}" bindchange="onGuestChange">
-          <view class="picker">{{guestOptions[guestIndex]}}人</view>
-        </picker>
-      </view>
-      <button class="btn-search btn-primary" bindtap="searchRooms">搜索可用房型</button>
+      <view class="nights-wrap"><image class="night-ornament night-left" src="/images/cloud.svg" mode="aspectFit"></image><text class="night-pill"><text class="moon-icon">☾</text> 共 <text class="night-count">{{stayNights}}</text> 晚</text><image class="night-ornament night-right" src="/images/cloud.svg" mode="aspectFit"></image></view>
+      <button class="btn-search btn-primary" bindtap="searchRooms"><text class="search-icon"></text>查询</button>
     </view>
+    <image class="cloud-ornament cloud-card-left" src="/images/cloud.svg" mode="aspectFit"></image><image class="cloud-ornament cloud-card-right" src="/images/cloud.svg" mode="aspectFit"></image>
+    <image class="corner corner-bl" src="/images/keyfret.svg" mode="aspectFit"></image><image class="corner corner-br" src="/images/keyfret.svg" mode="aspectFit"></image>
   </view>
 
   <!-- 推荐房型 -->
   <view class="section">
-    <view class="section-title">精选房型</view>
+    <view class="section-title"><text>精选房型</text><image class="section-cloud" src="/images/cloud.svg" mode="aspectFit"></image></view>
     <view class="room-list">
       <view class="room-card card" wx:for="{{roomTypes}}" wx:key="id" bindtap="goRoomDetail" data-id="{{item.id}}">
         <image class="room-image" src="{{item.images[0] || 'https://dummyimage.com/400x300/667eea/ffffff.png&text=Room'}}" mode="aspectFill" binderror="onImageError" data-index="{{index}}"></image>

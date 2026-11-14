@@ -1,0 +1,10 @@
+<view class="tab-shell">
+  <view class="tab-items">
+    <view class="tab-item {{selected === index ? 'selected' : ''}}" wx:for="{{list}}" wx:key="pagePath" data-path="{{item.pagePath}}" data-index="{{index}}" bindtap="switchTab">
+      <image class="tab-icon" src="{{selected === index ? item.activeIcon : item.icon}}" mode="aspectFit"></image>
+      <text class="tab-label">{{item.text}}</text>
+    </view>
+  </view>
+  <view class="tab-waves"></view>
+  <view class="safe-area"></view>
+</view>

@@ -9,6 +9,8 @@ Page({
   },
 
   onShow() {
+    const tabBar = this.getTabBar && this.getTabBar()
+    if (tabBar) tabBar.setData({ selected: 3 })
     const userInfo = app.globalData.userInfo || {}
     const isEmployee = userInfo.role && userInfo.role !== 'guest'
     this.setData({

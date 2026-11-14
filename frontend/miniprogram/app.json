@@ -26,7 +26,10 @@
     "navigationBarTitleText": "悦居民宿",
     "navigationBarTextStyle": "black"
   },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
   "tabBar": {
+    "custom": true,
     "color": "#897966",
     "selectedColor": "#a83e2a",
     "backgroundColor": "#fff9ef",
@@ -57,7 +60,5 @@
         "selectedIconPath": "images/tab-user-active.png"
       }
     ]
-  },
-  "style": "v2",
-  "sitemapLocation": "sitemap.json"
+  }
 }
