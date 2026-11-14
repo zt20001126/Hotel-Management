@@ -1,0 +1,9 @@
+# IntelliJ IDEA project state and generated module files
+.idea/
+*.iml
+
+# Maven build output
+**/target/
+
+# WeChat Developer Tools machine-specific settings
+**/project.private.config.json
