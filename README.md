@@ -250,3 +250,18 @@ npm run dev
 ## License
 
 MIT License
+
+
+### 房型图片 OSS 与初始素材导入
+
+在 `backend/src/main/resources/application.yml` 的 `aliyun.oss` 中填写上海地域 Endpoint、Bucket 和轮换后的 AccessKey。项目使用私有 Bucket，后端生成临时访问链接。Docker 构建时该文件会打入镜像；修改后需重新构建镜像。请勿将真实密钥提交到代码仓库或分享镜像。
+
+准备数据库连接等既有启动配置后，在 `backend` 目录执行下列命令预览六个房型及图片数量，不会写入 OSS 或数据库：
+
+```powershell
+mvn spring-boot:run "-Dspring-boot.run.arguments=--spring.main.web-application-type=none --room-image-import=E:/qianxun/素材/lr"
+```
+
+确认预览中的房型及旧图片后，在同一参数后追加 `--room-image-import-execute` 执行上传和替换。每个房型所有文件上传成功后才更新数据库；失败后可重新运行，但已经上传的对象不会自动删除。备份数据库中的原图片引用后再运行。
+
+小程序需要能通过 HTTPS 访问返回的图片地址；在微信开发者平台配置相应域名，并验证私有 OSS 签名图片能正常显示。

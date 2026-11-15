@@ -130,8 +130,8 @@
             <div class="image-list">
               <div class="image-item" v-for="(img, index) in imageList" :key="index">
                 <el-image
-                  :src="img"
-                  :preview-src-list="imageList"
+                  :src="img.url"
+                  :preview-src-list="imageList.map(item => item.url)"
                   :initial-index="index"
                   fit="cover"
                   class="room-image"
@@ -204,7 +204,7 @@ import { ref, reactive, onMounted, watch, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus, Delete, Upload, ArrowUp, ArrowDown } from '@element-plus/icons-vue'
 import { getRoomTypePage, addRoomType, updateRoomType, deleteRoomType } from '@/api/room'
-import { uploadFile, addImageByUrl as addImageByUrlApi } from '@/api/file'
+import { addImageByUrl as addImageByUrlApi } from '@/api/file'
 import { useUserStore } from '@/stores/user'
 
 const loading = ref(false)
@@ -290,9 +290,11 @@ function openDialog(row = null) {
     // 解析图片列表
     if (form.value.images) {
       try {
-        imageList.value = typeof form.value.images === 'string' 
-          ? JSON.parse(form.value.images) 
+        const urls = typeof form.value.images === 'string'
+          ? JSON.parse(form.value.images)
           : form.value.images
+        const refs = row.imageRefs || urls
+        imageList.value = refs.map((ref, index) => ({ ref, url: urls[index] }))
       } catch (e) {
         imageList.value = []
       }
@@ -324,14 +326,14 @@ function openDialog(row = null) {
 
 // 监听图片列表变化，同步到form
 watch(imageList, (newVal) => {
-  form.value.images = JSON.stringify(newVal)
+  form.value.images = JSON.stringify(newVal.map(item => item.ref))
 }, { deep: true })
 
 async function submitForm() {
   await formRef.value.validate()
   
   // 确保图片列表已同步
-  form.value.images = JSON.stringify(imageList.value)
+  form.value.images = JSON.stringify(imageList.value.map(item => item.ref))
   
   submitting.value = true
   
@@ -368,7 +370,7 @@ function beforeUpload(file) {
 
 async function handleUploadSuccess(response) {
   if (response.code === 200 && response.data) {
-    imageList.value.push(response.data.url)
+    imageList.value.push({ ref: response.data.objectRef, url: response.data.url })
     ElMessage.success('图片上传成功')
   } else {
     ElMessage.error('图片上传失败')
@@ -392,7 +394,7 @@ async function addImageByUrl() {
   try {
     const res = await addImageByUrlApi(url)
     if (res.code === 200 && res.data) {
-      imageList.value.push(res.data.url)
+      imageList.value.push({ ref: res.data.objectRef || res.data.url, url: res.data.url })
       imageUrl.value = ''
       ElMessage.success('图片添加成功')
     }

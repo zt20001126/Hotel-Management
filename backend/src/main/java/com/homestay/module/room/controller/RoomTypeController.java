@@ -5,6 +5,8 @@ import com.homestay.common.result.PageResult;
 import com.homestay.common.result.Result;
 import com.homestay.module.room.entity.RoomType;
 import com.homestay.module.room.service.RoomTypeService;
+import com.homestay.module.room.service.RoomTypeImageService;
+import com.homestay.module.room.vo.RoomTypeVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,36 +24,45 @@ public class RoomTypeController {
     @Autowired
     private RoomTypeService roomTypeService;
 
+    @Autowired
+    private RoomTypeImageService roomTypeImageService;
+
     @Operation(summary = "获取房型分页列表")
     @GetMapping("/page")
-    public Result<PageResult<RoomType>> getRoomTypePage(
+    public Result<PageResult<RoomTypeVO>> getRoomTypePage(
             @RequestParam(defaultValue = "1") Integer page,
             @RequestParam(defaultValue = "10") Integer size,
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) Integer status) {
         IPage<RoomType> pageResult = roomTypeService.getRoomTypePage(page, size, keyword, status);
-        return Result.success(PageResult.of(pageResult));
+        PageResult<RoomTypeVO> result = new PageResult<>();
+        result.setRecords(pageResult.getRecords().stream().map(roomTypeImageService::toResponse).toList());
+        result.setTotal(pageResult.getTotal());
+        result.setCurrent(pageResult.getCurrent());
+        result.setSize(pageResult.getSize());
+        result.setPages(pageResult.getPages());
+        return Result.success(result);
     }
 
     @Operation(summary = "获取所有可用房型")
     @GetMapping("/available")
-    public Result<List<RoomType>> getAvailableRoomTypes() {
-        return Result.success(roomTypeService.getAvailableRoomTypes());
+    public Result<List<RoomTypeVO>> getAvailableRoomTypes() {
+        return Result.success(roomTypeService.getAvailableRoomTypes().stream().map(roomTypeImageService::toResponse).toList());
     }
 
     @Operation(summary = "搜索可用房型")
     @GetMapping("/search")
-    public Result<List<RoomType>> searchAvailableRoomTypes(
+    public Result<List<RoomTypeVO>> searchAvailableRoomTypes(
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkInDate,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkOutDate,
             @RequestParam(required = false) Integer guestCount) {
-        return Result.success(roomTypeService.searchAvailableRoomTypes(checkInDate, checkOutDate, guestCount));
+        return Result.success(roomTypeService.searchAvailableRoomTypes(checkInDate, checkOutDate, guestCount).stream().map(roomTypeImageService::toResponse).toList());
     }
 
     @Operation(summary = "获取房型详情")
     @GetMapping("/{id}")
-    public Result<RoomType> getRoomType(@PathVariable Long id) {
-        return Result.success(roomTypeService.getById(id));
+    public Result<RoomTypeVO> getRoomType(@PathVariable Long id) {
+        return Result.success(roomTypeImageService.toResponse(roomTypeService.getById(id)));
     }
 
     @Operation(summary = "添加房型")
