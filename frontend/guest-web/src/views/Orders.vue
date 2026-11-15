@@ -62,14 +62,6 @@
                   查看详情
                 </el-button>
                 <el-button
-                  v-if="canPay(order)"
-                  type="success"
-                  text
-                  @click="handlePayment(order)"
-                >
-                  立即支付
-                </el-button>
-                <el-button
                   v-if="order.status === 'PENDING' || order.status === 'pending' || order.status === 'CONFIRMED' || order.status === 'confirmed'"
                   type="danger"
                   text
@@ -108,7 +100,6 @@
             <div class="order-footer">
               <div class="price-info">
                 <span class="total-price">总价：¥{{ order.totalPrice }}</span>
-                <span class="deposit" v-if="Number(order.deposit) > 0">保证金：¥{{ order.deposit }}</span>
                 <span class="paid" v-if="order.paidAmount > 0">已支付：¥{{ order.paidAmount }}</span>
                 <span class="unpaid" v-if="getUnpaidAmount(order) > 0">待支付：¥{{ getUnpaidAmount(order) }}</span>
               </div>
@@ -134,62 +125,6 @@
       </div>
     </el-footer>
 
-    <!-- 支付对话框 -->
-    <el-dialog
-      v-model="showPaymentDialog"
-      title="支付订单"
-      width="500px"
-      :close-on-click-modal="false"
-      @close="handlePaymentDialogClose"
-    >
-      <el-form :model="paymentForm" label-width="100px" v-if="currentOrder">
-        <el-form-item label="订单号">
-          <span>{{ currentOrder.orderNo }}</span>
-        </el-form-item>
-        <el-form-item label="支付类型" required>
-          <el-radio-group v-model="paymentForm.paymentType">
-            <el-radio
-              v-if="Number(currentOrder.deposit) > 0"
-              label="deposit"
-              :disabled="hasPaidDeposit(currentOrderPayments) || getRemainingDeposit(currentOrder, currentOrderPayments) <= 0"
-            >
-              支付保证金 (¥{{ getRemainingDeposit(currentOrder, currentOrderPayments) }})
-            </el-radio>
-            <el-radio
-              label="room_fee"
-              :disabled="hasPaidRoomFee(currentOrderPayments) || getUnpaidRoomFee(currentOrder, currentOrderPayments) <= 0"
-            >
-              支付房费 (¥{{ getUnpaidRoomFee(currentOrder, currentOrderPayments) }})
-            </el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="支付金额">
-          <span class="payment-amount">¥{{ getPaymentAmount() }}</span>
-        </el-form-item>
-        <el-form-item label="支付方式" required>
-          <el-radio-group v-model="paymentForm.paymentMethod">
-            <el-radio label="wechat">微信支付</el-radio>
-            <el-radio label="alipay">支付宝</el-radio>
-            <el-radio label="card">银行卡</el-radio>
-            <el-radio label="cash">现金</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="备注">
-          <el-input
-            v-model="paymentForm.remark"
-            type="textarea"
-            :rows="3"
-            placeholder="可选"
-          />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="handlePaymentDialogClose">取消</el-button>
-        <el-button type="primary" @click="confirmPayment" :loading="paymentLoading">
-          确认支付
-        </el-button>
-      </template>
-    </el-dialog>
   </div>
 </template>
 
@@ -198,7 +133,6 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { getMyOrders, cancelOrder } from '@/api/order'
-import { createPayment, getOrderPayments } from '@/api/payment'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 const router = useRouter()
@@ -209,16 +143,6 @@ const activeMenu = computed(() => route.path)
 const loading = ref(false)
 const filterStatus = ref('')
 const orders = ref([])
-const showPaymentDialog = ref(false)
-const paymentLoading = ref(false)
-const currentOrder = ref(null)
-const currentOrderPayments = ref([])
-const paymentForm = ref({
-  paymentType: 'deposit',
-  paymentMethod: 'wechat',
-  remark: ''
-})
-
 const getStatusType = (status) => {
   const statusMap = {
     PENDING: 'warning',
@@ -284,175 +208,14 @@ const goToOrderDetail = (id) => {
   router.push(`/order/${id}`)
 }
 
-// 获取待支付金额（用于列表显示：保证金 + 房费 + 额外消费 - 已付）
+// 计算房费和额外消费的未结金额
 const getUnpaidAmount = (order) => {
   if (!order) return 0
-  const deposit = Number(order.deposit || 0)
   const roomFee = Number(order.totalPrice || 0)
   const extraCharges = Number(order.extraCharges || 0)
   const paid = Number(order.paidAmount || 0)
-  const totalDue = parseFloat((deposit + roomFee + extraCharges).toFixed(2))
-  return Math.max(0, parseFloat((totalDue - paid).toFixed(2)))
-}
-
-// 获取待支付房费（用于支付对话框，基于支付记录精确计算）
-const getUnpaidRoomFee = (order, payments = []) => {
-  if (!order) return 0
-  const roomFee = Number(order.totalPrice || 0)
-  const extraCharges = Number(order.extraCharges || 0)
-  // 计算已支付的房费总额
-  const paidRoomFee = payments
-    .filter(p => p.paymentType === 'room_fee' && p.status === 'success')
-    .reduce((sum, p) => sum + Number(p.amount || 0), 0)
   const totalDue = parseFloat((roomFee + extraCharges).toFixed(2))
-  return Math.max(0, parseFloat((totalDue - paidRoomFee).toFixed(2)))
-}
-
-// 获取剩余保证金（用于列表显示，使用简单计算）
-const getDepositRemaining = (order) => {
-  if (!order) return 0
-  const deposit = Number(order.deposit || 0)
-  const paid = Number(order.paidAmount || 0)
-  // 简单计算：如果已支付金额小于保证金，则还有剩余
-  if (paid < deposit) {
-    return Math.max(0, parseFloat((deposit - paid).toFixed(2)))
-  }
-  return 0
-}
-
-// 获取剩余保证金（用于支付对话框，基于支付记录精确计算）
-const getRemainingDeposit = (order, payments = []) => {
-  if (!order) return 0
-  const deposit = Number(order.deposit || 0)
-  // 计算已支付的保证金总额
-  const paidDeposit = payments
-    .filter(p => p.paymentType === 'deposit' && p.status === 'success')
-    .reduce((sum, p) => sum + Number(p.amount || 0), 0)
-  return Math.max(0, parseFloat((deposit - paidDeposit).toFixed(2)))
-}
-
-// 检查是否已支付保证金
-const hasPaidDeposit = (payments = []) => {
-  return payments.some(
-    p => p.paymentType === 'deposit' && p.status === 'success'
-  )
-}
-
-// 检查是否已支付房费
-const hasPaidRoomFee = (payments = []) => {
-  return payments.some(
-    p => p.paymentType === 'room_fee' && p.status === 'success'
-  )
-}
-
-const canPay = (order) => {
-  if (order.status !== 'PENDING' && order.status !== 'pending' && 
-      order.status !== 'CONFIRMED' && order.status !== 'confirmed') {
-    return false
-  }
-  return getDepositRemaining(order) > 0 || getUnpaidAmount(order) > 0
-}
-
-const getPaymentAmount = () => {
-  if (!currentOrder.value) return 0
-  if (paymentForm.value.paymentType === 'deposit') {
-    return getRemainingDeposit(currentOrder.value, currentOrderPayments.value)
-  } else {
-    return getUnpaidRoomFee(currentOrder.value, currentOrderPayments.value)
-  }
-}
-
-const handlePayment = async (order) => {
-  currentOrder.value = order
-  // 获取订单的支付记录
-  try {
-    const res = await getOrderPayments(order.id)
-    currentOrderPayments.value = res.data || []
-  } catch (error) {
-    console.error('获取支付记录失败:', error)
-    currentOrderPayments.value = []
-  }
-  
-  const depositRemaining = getRemainingDeposit(order, currentOrderPayments.value)
-  const unpaid = getUnpaidRoomFee(order, currentOrderPayments.value)
-  if (depositRemaining <= 0 && unpaid <= 0) {
-    ElMessage.info('订单已付清，无需支付')
-    return
-  }
-  
-  // 根据已支付情况设置默认支付类型（选择未被禁用的选项）
-  let defaultPaymentType = 'deposit'
-  // 如果保证金已支付过或没有剩余保证金，则默认选择房费（如果房费还未支付）
-  const canPayDeposit = !hasPaidDeposit(currentOrderPayments.value) && depositRemaining > 0
-  const canPayRoomFee = !hasPaidRoomFee(currentOrderPayments.value) && unpaid > 0
-  
-  if (!canPayDeposit && canPayRoomFee) {
-    defaultPaymentType = 'room_fee'
-  } else if (canPayDeposit) {
-    defaultPaymentType = 'deposit'
-  } else if (canPayRoomFee) {
-    defaultPaymentType = 'room_fee'
-  }
-  
-  paymentForm.value = {
-    paymentType: defaultPaymentType,
-    paymentMethod: 'wechat',
-    remark: ''
-  }
-  showPaymentDialog.value = true
-}
-
-const handlePaymentDialogClose = () => {
-  showPaymentDialog.value = false
-  currentOrder.value = null
-  currentOrderPayments.value = []
-}
-
-const confirmPayment = async () => {
-  if (!paymentForm.value.paymentMethod) {
-    ElMessage.warning('请选择支付方式')
-    return
-  }
-
-  if (!currentOrder.value) return
-
-  // 防止重复支付：检查是否已经支付过该类型
-  if (paymentForm.value.paymentType === 'deposit' && hasPaidDeposit(currentOrderPayments.value)) {
-    ElMessage.warning('保证金已支付，不能重复支付')
-    return
-  }
-  
-  if (paymentForm.value.paymentType === 'room_fee' && hasPaidRoomFee(currentOrderPayments.value)) {
-    ElMessage.warning('房费已支付，不能重复支付')
-    return
-  }
-
-  const amount = getPaymentAmount()
-  if (amount <= 0) {
-    ElMessage.info('无需支付')
-    return
-  }
-
-  paymentLoading.value = true
-  try {
-    await createPayment({
-      orderId: currentOrder.value.id,
-      amount,
-      paymentType: paymentForm.value.paymentType,
-      paymentMethod: paymentForm.value.paymentMethod,
-      remark: paymentForm.value.remark
-    })
-    
-    ElMessage.success('支付成功！')
-    handlePaymentDialogClose()
-    // 重新加载订单列表
-    await loadOrders()
-  } catch (error) {
-    console.error('支付失败:', error)
-    ElMessage.error(error.response?.data?.message || '支付失败，请重试')
-  } finally {
-    paymentLoading.value = false
-  }
+  return Math.max(0, parseFloat((totalDue - paid).toFixed(2)))
 }
 
 const handleCancel = async (id) => {

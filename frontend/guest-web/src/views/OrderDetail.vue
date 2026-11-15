@@ -105,9 +105,6 @@
                 <el-descriptions-item label="总价">
                   <span class="price-text">¥{{ Number(order.totalPrice || 0).toFixed(2) }}</span>
                 </el-descriptions-item>
-                <el-descriptions-item v-if="Number(order.deposit) > 0" label="保证金">
-                  <span class="deposit-text">¥{{ Number(order.deposit || 0).toFixed(2) }}</span>
-                </el-descriptions-item>
                 <el-descriptions-item label="已支付">
                   <span class="paid-text">¥{{ Number(order.paidAmount || 0).toFixed(2) }}</span>
                 </el-descriptions-item>
@@ -120,14 +117,6 @@
 
           <!-- 操作按钮 -->
           <div class="action-buttons" v-if="canShowActions">
-            <el-button
-              v-if="unpaidAmount > 0"
-              type="primary"
-              size="large"
-              @click="openPaymentDialog"
-            >
-              立即支付
-            </el-button>
             <el-button
               v-if="canModify"
               type="warning"
@@ -154,55 +143,6 @@
         </div>
       </div>
     </div>
-
-    <!-- 支付对话框 -->
-    <el-dialog
-      v-model="showPaymentDialog"
-      title="支付订单"
-      width="500px"
-      :close-on-click-modal="false"
-    >
-      <el-form :model="paymentForm" label-width="100px">
-        <el-form-item label="订单号">
-          <span>{{ order?.orderNo }}</span>
-        </el-form-item>
-        <el-form-item label="支付类型" required>
-          <el-radio-group v-model="paymentForm.paymentType">
-            <el-radio v-if="Number(order?.deposit) > 0" label="deposit" :disabled="hasPaidDeposit || remainingDeposit <= 0">
-              支付保证金 (¥{{ remainingDeposit }})
-            </el-radio>
-            <el-radio label="room_fee" :disabled="hasPaidRoomFee || remainingRoomFee <= 0">
-              支付房费 (¥{{ remainingRoomFee }})
-            </el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="支付金额">
-          <span class="payment-amount">¥{{ paymentAmount }}</span>
-        </el-form-item>
-        <el-form-item label="支付方式" required>
-          <el-radio-group v-model="paymentForm.paymentMethod">
-            <el-radio label="wechat">微信支付</el-radio>
-            <el-radio label="alipay">支付宝</el-radio>
-            <el-radio label="card">银行卡</el-radio>
-            <el-radio label="cash">现金</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="备注">
-          <el-input
-            v-model="paymentForm.remark"
-            type="textarea"
-            :rows="3"
-            placeholder="可选"
-          />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="showPaymentDialog = false">取消</el-button>
-        <el-button type="primary" @click="handlePayment" :loading="paymentLoading">
-          确认支付
-        </el-button>
-      </template>
-    </el-dialog>
 
     <!-- 改订对话框 -->
     <el-dialog
@@ -246,9 +186,6 @@
         <el-form-item label="新房费">
           <span class="price-text">¥{{ modifyTotalPrice }}</span>
         </el-form-item>
-        <el-form-item v-if="modifyDeposit > 0" label="新保证金">
-          <span class="deposit-text">¥{{ modifyDeposit }}</span>
-        </el-form-item>
         <el-form-item label="价格差额">
           <span :class="modifyPriceDiff >= 0 ? 'unpaid-text' : 'paid-text'">
             {{ modifyPriceDiff >= 0 ? '+' : '' }}¥{{ modifyPriceDiff }}
@@ -277,8 +214,6 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { getOrder, cancelOrder, updateOrder } from '@/api/order'
-import { getDepositRate } from '@/api/room'
-import { createPayment, getOrderPayments } from '@/api/payment'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { ArrowLeft } from '@element-plus/icons-vue'
 import dayjs from 'dayjs'
@@ -290,19 +225,9 @@ const userStore = useUserStore()
 const activeMenu = computed(() => route.path)
 const loading = ref(false)
 const order = ref(null)
-const payments = ref([])  // 支付记录
-const showPaymentDialog = ref(false)
-const paymentLoading = ref(false)
-const paymentForm = ref({
-  paymentType: 'deposit',
-  paymentMethod: 'wechat',
-  remark: ''
-})
-
 // 改订相关
 const showModifyDialog = ref(false)
 const modifyLoading = ref(false)
-const depositRate = ref(0)
 const modifyForm = ref({
   checkInDate: '',
   checkOutDate: ''
@@ -320,42 +245,10 @@ const nights = computed(() => {
 const unpaidAmount = computed(() => {
   if (!order.value) return 0
   const total = Number(order.value.totalPrice || 0)
-  const deposit = Number(order.value.deposit || 0)
   const extraCharges = Number(order.value.extraCharges || 0)
   const paid = Number(order.value.paidAmount || 0)
   // 保留两位小数，避免浮点数误差
-  return Math.max(0, parseFloat((deposit + total + extraCharges - paid).toFixed(2)))
-})
-
-// 检查是否已支付保证金
-const hasPaidDeposit = computed(() => {
-  return payments.value.some(p => p.paymentType === 'deposit' && p.status === 'success')
-})
-
-// 检查是否已支付房费
-const hasPaidRoomFee = computed(() => {
-  return payments.value.some(p => p.paymentType === 'room_fee' && p.status === 'success')
-})
-
-// 剩余保证金
-const remainingDeposit = computed(() => {
-  if (!order.value) return 0
-  const deposit = Number(order.value.deposit || 0)
-  const paidDeposit = payments.value
-    .filter(p => p.paymentType === 'deposit' && p.status === 'success')
-    .reduce((sum, p) => sum + Number(p.amount || 0), 0)
-  return Math.max(0, parseFloat((deposit - paidDeposit).toFixed(2)))
-})
-
-// 剩余房费
-const remainingRoomFee = computed(() => {
-  if (!order.value) return 0
-  const roomFee = Number(order.value.totalPrice || 0)
-  const extraCharges = Number(order.value.extraCharges || 0)
-  const paidRoomFee = payments.value
-    .filter(p => p.paymentType === 'room_fee' && p.status === 'success')
-    .reduce((sum, p) => sum + Number(p.amount || 0), 0)
-  return Math.max(0, parseFloat((roomFee + extraCharges - paidRoomFee).toFixed(2)))
+  return Math.max(0, parseFloat((total + extraCharges - paid).toFixed(2)))
 })
 
 // 是否已改订过
@@ -377,14 +270,10 @@ const modifyTotalPrice = computed(() => {
   return parseFloat((roomPrice * modifyNights.value).toFixed(2))
 })
 
-const modifyDeposit = computed(() => {
-  return parseFloat((modifyTotalPrice.value * depositRate.value).toFixed(2))
-})
-
 const modifyPriceDiff = computed(() => {
   if (!order.value) return 0
-  const originalTotal = Number(order.value.totalPrice || 0) + Number(order.value.deposit || 0)
-  const newTotal = modifyTotalPrice.value + modifyDeposit.value
+  const originalTotal = Number(order.value.totalPrice || 0)
+  const newTotal = modifyTotalPrice.value
   return parseFloat((newTotal - originalTotal).toFixed(2))
 })
 
@@ -407,15 +296,6 @@ const canModify = computed(() => {
 const canCancel = computed(() => {
   const status = (order.value?.status || '').toLowerCase()
   return ['pending', 'confirmed'].includes(status)
-})
-
-const paymentAmount = computed(() => {
-  if (!order.value) return 0
-  if (paymentForm.value.paymentType === 'deposit') {
-    return remainingDeposit.value
-  } else {
-    return remainingRoomFee.value
-  }
 })
 
 const getStatusType = (status) => {
@@ -460,24 +340,12 @@ const loadOrder = async () => {
   try {
     const res = await getOrder(route.params.id)
     order.value = res.data
-    // 加载支付记录
-    await loadPayments()
   } catch (error) {
     console.error('加载订单详情失败:', error)
     ElMessage.error('加载订单详情失败')
     router.push('/orders')
   } finally {
     loading.value = false
-  }
-}
-
-const loadPayments = async () => {
-  try {
-    const res = await getOrderPayments(route.params.id)
-    payments.value = res.data || []
-  } catch (error) {
-    console.error('加载支付记录失败:', error)
-    payments.value = []
   }
 }
 
@@ -499,90 +367,12 @@ const handleCancel = async () => {
   }
 }
 
-// 打开支付对话框，自动选择未支付的类型
-const openPaymentDialog = () => {
-  // 根据已支付情况自动选择支付类型
-  if (!hasPaidDeposit.value && remainingDeposit.value > 0) {
-    paymentForm.value.paymentType = 'deposit'
-  } else if (!hasPaidRoomFee.value && remainingRoomFee.value > 0) {
-    paymentForm.value.paymentType = 'room_fee'
-  } else {
-    // 都已支付或无需支付
-    ElMessage.info('无需支付')
-    return
-  }
-  paymentForm.value.paymentMethod = 'wechat'
-  paymentForm.value.remark = ''
-  showPaymentDialog.value = true
-}
-
-const handlePayment = async () => {
-  if (!paymentForm.value.paymentMethod) {
-    ElMessage.warning('请选择支付方式')
-    return
-  }
-
-  // 防止重复支付
-  if (paymentForm.value.paymentType === 'deposit' && hasPaidDeposit.value) {
-    ElMessage.warning('保证金已支付，不能重复支付')
-    return
-  }
-  if (paymentForm.value.paymentType === 'room_fee' && hasPaidRoomFee.value) {
-    ElMessage.warning('房费已支付，不能重复支付')
-    return
-  }
-
-  const amount = paymentAmount.value
-  if (amount <= 0) {
-    ElMessage.info('无需支付')
-    return
-  }
-
-  paymentLoading.value = true
-  try {
-    await createPayment({
-      orderId: order.value.id,
-      amount: amount,
-      paymentType: paymentForm.value.paymentType,
-      paymentMethod: paymentForm.value.paymentMethod,
-      remark: paymentForm.value.remark
-    })
-    
-    ElMessage.success('支付成功！')
-    showPaymentDialog.value = false
-    // 重置表单
-    paymentForm.value = {
-      paymentType: 'deposit',
-      paymentMethod: 'wechat',
-      remark: ''
-    }
-    // 重新加载订单信息
-    await loadOrder()
-  } catch (error) {
-    console.error('支付失败:', error)
-    ElMessage.error(error.response?.data?.message || '支付失败，请重试')
-  } finally {
-    paymentLoading.value = false
-  }
-}
-
 const handleLogout = () => {
   userStore.logout()
   ElMessage.success('已退出登录')
 }
 
 // 改订相关函数
-const loadDepositRate = async () => {
-  try {
-    const res = await getDepositRate()
-    if (res.data) {
-      depositRate.value = parseFloat(res.data)
-    }
-  } catch (error) {
-    console.error('加载保证金比例失败:', error)
-  }
-}
-
 const disabledModifyCheckInDate = (date) => {
   return date < new Date(new Date().setHours(0, 0, 0, 0))
 }
@@ -615,6 +405,10 @@ const confirmModify = async () => {
     ElMessage.warning('退房日期必须晚于入住日期')
     return
   }
+  if (modifyPriceDiff.value !== 0) {
+    ElMessage.warning('暂不支持变更房费的改订')
+    return
+  }
 
   modifyLoading.value = true
   try {
@@ -623,8 +417,7 @@ const confirmModify = async () => {
       checkInDate: modifyForm.value.checkInDate,
       checkOutDate: modifyForm.value.checkOutDate,
       nights: modifyNights.value,
-      totalPrice: modifyTotalPrice.value,
-      deposit: modifyDeposit.value
+      totalPrice: modifyTotalPrice.value
     })
     ElMessage.success('改订成功')
     showModifyDialog.value = false
@@ -639,7 +432,6 @@ const confirmModify = async () => {
 
 onMounted(() => {
   loadOrder()
-  loadDepositRate()
 })
 </script>
 

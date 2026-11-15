@@ -19,7 +19,6 @@ Page({
     newTotalPrice: 0,
     priceDiff: 0,
     absPriceDiff: 0,
-    depositRate: 0,
     submitting: false
   },
 
@@ -29,7 +28,6 @@ Page({
       today: this.formatDate(new Date())
     })
     this.loadOrder()
-    this.loadConfig()
   },
 
   formatDate(date) {
@@ -81,16 +79,6 @@ Page({
     this.setData({ roomImage: '' })
   },
 
-  async loadConfig() {
-    try {
-      const res = await app.request({ url: '/config/deposit_rate' })
-      if (res.data) {
-        this.setData({ depositRate: parseFloat(res.data) })
-        this.calculatePrice()
-      }
-    } catch (err) {}
-  },
-
   onCheckInChange(e) {
     const checkInDate = e.detail.value
     const minCheckOut = this.formatDate(new Date(new Date(checkInDate).getTime() + 86400000))
@@ -108,7 +96,7 @@ Page({
   },
 
   calculatePrice() {
-    const { checkInDate, checkOutDate, roomType, depositRate } = this.data
+    const { checkInDate, checkOutDate, roomType } = this.data
     if (!checkInDate || !checkOutDate || !roomType) return
 
     const start = new Date(checkInDate)
@@ -128,7 +116,11 @@ Page({
 
   async submitModify() {
     if (this.data.submitting) return
-    const { order, checkInDate, checkOutDate, newTotalPrice, priceDiff, depositRate } = this.data
+    const { order, checkInDate, checkOutDate, newTotalPrice, priceDiff } = this.data
+    if (priceDiff !== 0) {
+      wx.showToast({ title: '暂不支持变更房费的改订', icon: 'none' })
+      return
+    }
 
     if (!checkInDate || !checkOutDate) {
       wx.showToast({ title: '请选择日期', icon: 'none' })
@@ -150,8 +142,7 @@ Page({
           checkInDate,
           checkOutDate,
           nights,
-          totalPrice: newTotalPrice,
-          deposit: parseFloat((newTotalPrice * depositRate).toFixed(2))
+          totalPrice: newTotalPrice
         }
       })
 

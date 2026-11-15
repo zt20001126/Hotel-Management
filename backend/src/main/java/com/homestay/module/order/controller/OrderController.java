@@ -34,9 +34,9 @@ public class OrderController {
                 order.getGuestName(), order.getGuestPhone(), order.getGuestCount());
         try {
             Order createdOrder = orderService.createOrder(order);
-            log.info("订单创建成功 - 订单ID: {}, 订单号: {}, 总价: {}, 保证金: {}", 
+            log.info("模拟支付成功 - 订单ID: {}, 订单号: {}, 房费: {}",
                     createdOrder.getId(), createdOrder.getOrderNo(), 
-                    createdOrder.getTotalPrice(), createdOrder.getDeposit());
+                    createdOrder.getTotalPrice());
             return Result.success(createdOrder);
         } catch (Exception e) {
             log.error("订单创建失败 - 房型ID: {}, 入住日期: {}, 退房日期: {}, 错误信息: {}", 

@@ -33,7 +33,7 @@
       <view class="tip-content">1. 改订后，系统会重新计算订单价格</view>
       <view class="tip-content">2. 如新价格高于原价格，需要补差价</view>
       <view class="tip-content">3. 如新价格低于原价格，差额将退回到您的账户</view>
-      <view class="tip-content" wx:if="{{depositRate > 0}}">4. 改订后需要重新支付保证金</view>
+      <view class="tip-content">4. 暂不支持变更房费的改订</view>
       <image class="bridge-art" src="/assets/images/chinese-style/decorations/decoration-stone-bridge-water.webp" mode="aspectFit" aria-hidden="true" />
     </view>
   </view>

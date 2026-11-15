@@ -25,7 +25,6 @@
     <view class="section-title">费用信息</view>
     <view class="info-row"><image class="row-icon" src="/images/order-detail/bed.svg" mode="aspectFit"/><text class="label">房费单价</text><text class="value">¥{{displayMoney.roomPrice}} /晚</text></view>
     <view class="info-row"><image class="row-icon" src="/images/order-detail/coins.svg" mode="aspectFit"/><text class="label">房费({{order.nights}}晚)</text><text class="value">¥{{displayMoney.roomFee}}</text></view>
-    <view class="info-row" wx:if="{{order.deposit > 0}}"><image class="row-icon" src="/images/order-detail/wallet.svg" mode="aspectFit"/><text class="label">保证金</text><text class="value">¥{{displayMoney.deposit}}</text></view>
     <view class="info-row" wx:if="{{order.extraCharges > 0}}"><image class="row-icon" src="/images/order-detail/coins.svg" mode="aspectFit"/><text class="label">额外消费</text><text class="value">¥{{displayMoney.extraCharges}}</text></view>
     <view class="info-row"><image class="row-icon" src="/images/order-detail/wallet.svg" mode="aspectFit"/><text class="label">应付总计</text><text class="value price">¥{{displayMoney.total}}</text></view>
     <view class="info-row"><image class="row-icon" src="/images/order-detail/paid.svg" mode="aspectFit"/><text class="label">已付金额</text><text class="value text-success">¥{{displayMoney.paid}}</text></view>
@@ -53,27 +52,8 @@
   
   <view class="bottom-landscape"></view>
   <view class="bottom-bar" wx:if="{{order.status === 'pending' || order.status === 'confirmed'}}">
-    <button class="btn-pay btn-primary" wx:if="{{unpaidAmount > 0}}" bindtap="showPay">
-      支付 ¥{{displayMoney.nextPay}} <text class="pay-arrow">›</text>
-    </button>
-    <block wx:if="{{unpaidAmount <= 0}}">
-      <button class="btn-modify" wx:if="{{!isModified}}" bindtap="goModify">改订</button>
-      <button class="btn-cancel" bindtap="cancelOrder">取消订单</button>
-    </block>
+    <button class="btn-modify" wx:if="{{!isModified}}" bindtap="goModify">改订</button>
+    <button class="btn-cancel" bindtap="cancelOrder">取消订单</button>
   </view>
   
-  <!-- 支付弹窗 -->
-  <view class="modal-mask" wx:if="{{showPayModal}}" bindtap="hidePayModal">
-    <view class="modal-content" catchtap="stopPropagation">
-      <view class="modal-title">确认支付</view>
-      <view class="pay-amount-wrap">
-        <text class="pay-amount-label">支付金额</text>
-        <text class="pay-amount-value">¥{{payAmount}}</text>
-      </view>
-      <view class="modal-buttons">
-        <button class="btn-modal-cancel" bindtap="hidePayModal">取消</button>
-        <button class="btn-modal-confirm btn-primary" bindtap="confirmPay" loading="{{paying}}">确认支付</button>
-      </view>
-    </view>
-  </view>
 </view>

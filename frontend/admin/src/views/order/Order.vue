@@ -25,9 +25,6 @@
       <template #header>
         <div class="card-header">
           <span>订单列表</span>
-          <el-button type="primary" @click="openCreateDialog">
-            <el-icon><Plus /></el-icon>创建订单
-          </el-button>
         </div>
       </template>
       
@@ -81,7 +78,6 @@
         <el-descriptions-item label="入住人数">{{ currentOrder.guestCount }}人</el-descriptions-item>
         <el-descriptions-item label="房间单价">¥{{ currentOrder.roomPrice }}</el-descriptions-item>
         <el-descriptions-item label="订单总价">¥{{ currentOrder.totalPrice }}</el-descriptions-item>
-        <el-descriptions-item label="保证金">¥{{ currentOrder.deposit }}</el-descriptions-item>
         <el-descriptions-item label="已付金额">¥{{ currentOrder.paidAmount }}</el-descriptions-item>
       </el-descriptions>
     </el-dialog>

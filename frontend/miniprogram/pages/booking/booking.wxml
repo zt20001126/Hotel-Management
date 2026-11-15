@@ -36,11 +36,9 @@
     <view class="price-card card">
       <view class="section-title">费用明细</view>
       <view class="price-row"><view class="price-label"><image class="row-icon" src="../rooms/icon-bed.svg" /><text>房费（¥{{roomType.basePrice}} × {{nights}}晚）</text></view><text>¥{{totalPrice}}</text></view>
-      <view class="price-row" wx:if="{{deposit > 0}}"><view class="price-label"><image class="row-icon" src="./icon-shield.svg" /><text>保证金（{{depositRate * 100}}%）</text></view><text>¥{{deposit}}</text></view>
-      <view class="price-row total"><view class="price-label"><image class="row-icon" src="./icon-wallet.svg" /><text>应付总计</text></view><text class="total-price">¥{{grandTotal}}</text></view>
-      <view class="price-row deposit-row" wx:if="{{deposit > 0}}"><view class="price-label"><image class="row-icon deposit-icon" src="./icon-shield.svg" /><text>本次需支付保证金</text></view><text class="deposit-price">¥{{deposit}}</text></view>
+      <view class="price-row total"><view class="price-label"><image class="row-icon" src="./icon-wallet.svg" /><text>应付房费</text></view><text class="total-price">¥{{totalPrice}}</text></view>
     </view>
     <image class="bridge-art" src="/assets/images/chinese-style/decorations/decoration-stone-bridge-water.webp" mode="aspectFit" aria-hidden="true" />
   </view>
-  <view class="bottom-bar"><view class="price-info"><text class="bottom-label">{{deposit > 0 ? '需付保证金' : '应付房费'}}</text><text class="amount">¥{{deposit > 0 ? deposit : totalPrice}}</text></view><button class="btn-submit" bindtap="submitOrder" loading="{{submitting}}" disabled="{{submitting}}">提交订单 <text class="button-arrow">›</text></button></view>
+  <view class="bottom-bar"><view class="price-info"><text class="bottom-label">应付房费</text><text class="amount">¥{{totalPrice}}</text></view><button class="btn-submit" bindtap="submitOrder" loading="{{submitting}}" disabled="{{submitting}}">模拟支付并预订 <text class="button-arrow">›</text></button></view>
 </view>

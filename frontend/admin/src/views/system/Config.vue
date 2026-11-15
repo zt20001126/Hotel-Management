@@ -18,10 +18,6 @@
         </el-form-item>
         
         <el-divider content-position="left">预订规则</el-divider>
-        <el-form-item label="保证金比例">
-          <el-input-number v-model.number="configForm.deposit_rate" :min="0" :max="1" :step="0.1" :precision="2" />
-          <span class="form-tip">预订时需支付的保证金比例，如0.3表示30%</span>
-        </el-form-item>
         <el-form-item label="免费取消时限(小时)">
           <el-input-number v-model.number="configForm.cancel_free_hours" :min="0" />
           <span class="form-tip">入住前多少小时可免费取消</span>
@@ -68,7 +64,6 @@ async function loadConfig() {
   try {
     const res = await getConfigMap()
     configForm.value = res.data
-    configForm.value.deposit_rate = parseFloat(res.data.deposit_rate ?? 0)
     configForm.value.cancel_free_hours = parseInt(res.data.cancel_free_hours || 24)
     configForm.value.cancel_penalty_rate = parseFloat(res.data.cancel_penalty_rate || 0.5)
     configForm.value.late_checkout_fee = parseFloat(res.data.late_checkout_fee || 50)
@@ -85,7 +80,6 @@ async function saveConfig() {
       homestay_address: configForm.value.homestay_address,
       homestay_phone: configForm.value.homestay_phone,
       homestay_description: configForm.value.homestay_description,
-      deposit_rate: String(configForm.value.deposit_rate),
       cancel_free_hours: String(configForm.value.cancel_free_hours),
       cancel_penalty_rate: String(configForm.value.cancel_penalty_rate),
       check_in_time: checkInTime.value,

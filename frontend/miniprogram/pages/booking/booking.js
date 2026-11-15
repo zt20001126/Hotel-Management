@@ -11,9 +11,6 @@ Page({
     roomImage: '',
     nights: 1,
     totalPrice: 0,
-    depositRate: 0,
-    deposit: 0,
-    grandTotal: 0,  // 应付总计 = 房费 + 保证金
     guestOptions: [1, 2, 3, 4, 5, 6],
     guestIndex: 1,
     form: { guestName: '', guestPhone: '', guestIdCard: '', remark: '' },
@@ -35,7 +32,6 @@ Page({
       guestIndex: Math.max(0, (parseInt(options.guestCount) || 2) - 1)
     })
     this.loadRoomType()
-    this.loadConfig()
   },
 
   async loadRoomType() {
@@ -54,16 +50,6 @@ Page({
 
   onRoomImageError() {
     this.setData({ roomImage: '' })
-  },
-
-  async loadConfig() {
-    try {
-      const res = await app.request({ url: '/config/deposit_rate' })
-      if (res.data) {
-        const depositRate = parseFloat(res.data)
-        this.setData({ depositRate }, () => this.updatePrice())
-      }
-    } catch (err) {}
   },
 
   calculateNights() {
@@ -92,9 +78,7 @@ Page({
     if (!this.data.roomType.basePrice) return
     const nights = this.calculateNights()
     const totalPrice = (this.data.roomType.basePrice * nights).toFixed(2)
-    const deposit = (totalPrice * this.data.depositRate).toFixed(2)
-    const grandTotal = (parseFloat(totalPrice) + parseFloat(deposit)).toFixed(2)
-    this.setData({ nights, totalPrice, deposit, grandTotal })
+    this.setData({ nights, totalPrice })
   },
 
   onCheckInChange(e) {
@@ -167,11 +151,10 @@ Page({
         orderId: res.data.id,
         orderNo: res.data.orderNo,
         totalPrice: res.data.totalPrice,
-        deposit: res.data.deposit,
         timestamp: new Date().toISOString()
       })
       
-      wx.showToast({ title: '预订成功', icon: 'success' })
+      wx.showToast({ title: '模拟支付成功', icon: 'success' })
       setTimeout(() => {
         wx.redirectTo({ url: `/pages/order-detail/order-detail?id=${res.data.id}` })
       }, 1500)

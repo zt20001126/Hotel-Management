@@ -15,7 +15,8 @@ import com.homestay.module.room.mapper.RoomMapper;
 import com.homestay.module.room.mapper.RoomTypeMapper;
 import com.homestay.module.cleaning.entity.CleaningTask;
 import com.homestay.module.cleaning.service.CleaningService;
-import com.homestay.module.system.service.SystemConfigService;
+import com.homestay.module.payment.entity.PaymentRecord;
+import com.homestay.module.payment.service.PaymentRecordService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,14 +43,17 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     private RoomTypeMapper roomTypeMapper;
     
     @Autowired
-    private SystemConfigService systemConfigService;
-    
-    @Autowired
     private CleaningService cleaningService;
+
+    @Autowired
+    private PaymentRecordService paymentRecordService;
 
     @Override
     @Transactional
     public Order createOrder(Order order) {
+        if (!"guest".equals(UserContextHolder.getUserType())) {
+            throw new BusinessException("请使用宾客账号支付预订");
+        }
         log.info("开始创建订单 - 房型ID: {}, 入住日期: {}, 退房日期: {}, 宾客: {} ({})", 
                 order.getRoomTypeId(), order.getCheckInDate(), order.getCheckOutDate(), 
                 order.getGuestName(), order.getGuestPhone());
@@ -59,6 +63,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         if (roomType == null) {
             log.error("订单创建失败 - 房型不存在, 房型ID: {}", order.getRoomTypeId());
             throw new BusinessException("房型不存在");
+        }
+        if (roomType.getBasePrice() == null || roomType.getBasePrice().signum() <= 0) {
+            throw new BusinessException("房费必须大于零");
         }
         log.debug("房型验证通过 - 房型名称: {}, 基础价格: {}", roomType.getName(), roomType.getBasePrice());
         
@@ -90,10 +97,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         log.debug("订单价格计算 - 单价: {}, 晚数: {}, 总价: {}", 
                 roomType.getBasePrice(), nights, order.getTotalPrice());
         
-        // 计算保证金
-        BigDecimal depositRate = systemConfigService.getConfigDecimal("deposit_rate");
-        order.setDeposit(order.getTotalPrice().multiply(depositRate));
-        log.debug("保证金计算 - 保证金率: {}, 保证金: {}", depositRate, order.getDeposit());
+        // 当前预订只收取房费，不收取保证金。
+        order.setDeposit(BigDecimal.ZERO);
         
         // 设置初始值
         // 从用户上下文获取当前登录用户的ID并设置到订单中
@@ -106,7 +111,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         log.debug("设置订单宾客ID - 宾客ID: {}", guestId);
         order.setPaidAmount(BigDecimal.ZERO);
         order.setExtraCharges(BigDecimal.ZERO);
-        order.setStatus("pending");
+        order.setStatus("awaiting_payment");
+        order.setRoomId(null);
         
         // 保存订单
         try {
@@ -115,14 +121,21 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 log.error("订单保存失败 - 订单号: {}, 房型ID: {}", orderNo, order.getRoomTypeId());
                 throw new BusinessException("订单保存失败，请稍后重试");
             }
-            log.info("订单保存成功 - 订单ID: {}, 订单号: {}, 总价: {}, 保证金: {}", 
-                    order.getId(), orderNo, order.getTotalPrice(), order.getDeposit());
+            log.info("预订信息保存成功 - 订单ID: {}, 订单号: {}, 房费: {}",
+                    order.getId(), orderNo, order.getTotalPrice());
         } catch (Exception e) {
             log.error("订单保存异常 - 订单号: {}, 错误信息: {}", orderNo, e.getMessage(), e);
             throw new BusinessException("订单保存失败: " + e.getMessage());
         }
         
-        return order;
+        // 虚拟支付与订单创建处于同一事务，支付失败时不保留有效订单。
+        PaymentRecord payment = new PaymentRecord();
+        payment.setOrderId(order.getId());
+        payment.setAmount(order.getTotalPrice());
+        payment.setPaymentType("room_fee");
+        payment.setPaymentMethod("mock");
+        paymentRecordService.createPayment(payment);
+        return this.getById(order.getId());
     }
 
     private String generateOrderNo() {
@@ -136,6 +149,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     public IPage<Order> getOrderPage(Integer page, Integer size, String keyword, String status, String startDate, String endDate) {
         Page<Order> pageParam = new Page<>(page, size);
         LambdaQueryWrapper<Order> wrapper = new LambdaQueryWrapper<>();
+        wrapper.apply("total_price > 0 AND paid_amount >= total_price");
         
         if (StringUtils.hasText(keyword)) {
             wrapper.and(w -> w.like(Order::getOrderNo, keyword)
@@ -163,6 +177,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     public List<Order> getGuestOrders(Long guestId) {
         List<Order> orders = this.list(new LambdaQueryWrapper<Order>()
                 .eq(Order::getGuestId, guestId)
+                .apply("total_price > 0 AND paid_amount >= total_price")
                 .orderByDesc(Order::getCreateTime));
         // 填充房型名称
         for (Order order : orders) {
@@ -184,7 +199,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             throw new BusinessException("订单ID不能为空");
         }
         Order order = this.getById(id);
-        if (order == null) {
+        if (order == null || !isPaid(order)) {
             log.warn("订单不存在 - 订单ID: {}", id);
             throw new BusinessException(404, "订单不存在");
         }
@@ -202,7 +217,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     @Override
     public Order getOrderByOrderNo(String orderNo) {
         return this.getOne(new LambdaQueryWrapper<Order>()
-                .eq(Order::getOrderNo, orderNo));
+                .eq(Order::getOrderNo, orderNo)
+                .apply("total_price > 0 AND paid_amount >= total_price"));
     }
 
     @Override
@@ -212,7 +228,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         if (order == null) {
             throw new BusinessException("订单不存在");
         }
-        if (!"pending".equals(order.getStatus())) {
+        if (!isPaid(order) || !"pending".equals(order.getStatus())) {
             throw new BusinessException("订单状态不允许确认");
         }
         order.setStatus("confirmed");
@@ -226,7 +242,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         if (order == null) {
             throw new BusinessException("订单不存在");
         }
-        if (!"confirmed".equals(order.getStatus()) && !"pending".equals(order.getStatus())) {
+        if (!isPaid(order) || !"confirmed".equals(order.getStatus())) {
             throw new BusinessException("订单状态不允许办理入住");
         }
         
@@ -307,14 +323,39 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         if (existing == null) {
             throw new BusinessException("订单不存在");
         }
+        if (!isPaid(existing) || order.getStatus() != null || order.getPaidAmount() != null
+                || order.getDeposit() != null || order.getGuestId() != null
+                || order.getRoomId() != null || order.getRoomTypeId() != null
+                || (order.getTotalPrice() != null
+                && order.getTotalPrice().compareTo(existing.getTotalPrice()) != 0)) {
+            throw new BusinessException("暂不支持变更房费的订单改订");
+        }
+        if ("guest".equals(UserContextHolder.getUserType())
+                && !java.util.Objects.equals(existing.getGuestId(), UserContextHolder.getUserId())) {
+            throw new BusinessException("只能改订自己的订单");
+        }
+        if (order.getCheckInDate() == null || order.getCheckOutDate() == null
+                || existing.getRoomPrice() == null) {
+            throw new BusinessException("入住日期和退房日期不能为空");
+        }
+        long nights = ChronoUnit.DAYS.between(order.getCheckInDate(), order.getCheckOutDate());
+        if (nights <= 0 || existing.getRoomPrice().multiply(BigDecimal.valueOf(nights))
+                .compareTo(existing.getTotalPrice()) != 0) {
+            throw new BusinessException("暂不支持变更房费的订单改订");
+        }
         // 检查是否已经改订过
         Integer modifyCount = existing.getModifyCount();
         if (modifyCount != null && modifyCount >= 1) {
             throw new BusinessException("订单已改订过，每个订单只能改订一次");
         }
         // 增加改订次数
-        order.setModifyCount((modifyCount == null ? 0 : modifyCount) + 1);
-        return this.updateById(order);
+        Order update = new Order();
+        update.setId(existing.getId());
+        update.setCheckInDate(order.getCheckInDate());
+        update.setCheckOutDate(order.getCheckOutDate());
+        update.setNights((int) nights);
+        update.setModifyCount((modifyCount == null ? 0 : modifyCount) + 1);
+        return this.updateById(update);
     }
 
     @Override
@@ -324,6 +365,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         List<Order> orders = this.list(new LambdaQueryWrapper<Order>()
                 .eq(Order::getCheckInDate, today)
                 .eq(Order::getStatus, "confirmed")
+                .apply("total_price > 0 AND paid_amount >= total_price")
                 .orderByAsc(Order::getCreateTime));
         // 填充房型名称
         for (Order order : orders) {
@@ -342,6 +384,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         // 返回所有已入住的订单，可以随时办理退房
         List<Order> orders = this.list(new LambdaQueryWrapper<Order>()
                 .eq(Order::getStatus, "checked_in")
+                .apply("total_price > 0 AND paid_amount >= total_price")
                 .orderByAsc(Order::getCheckOutDate));
         // 填充房型名称
         for (Order order : orders) {
@@ -372,21 +415,26 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         LocalDate today = LocalDate.now();
         
         stats.put("todayOrders", this.count(new LambdaQueryWrapper<Order>()
-                .apply("DATE(create_time) = {0}", today)));
+                .apply("DATE(create_time) = {0}", today)
+                .apply("total_price > 0 AND paid_amount >= total_price")));
         
         stats.put("todayCheckIn", this.count(new LambdaQueryWrapper<Order>()
                 .eq(Order::getCheckInDate, today)
-                .in(Order::getStatus, "confirmed", "pending")));
+                .in(Order::getStatus, "confirmed", "pending")
+                .apply("total_price > 0 AND paid_amount >= total_price")));
         
         stats.put("todayCheckOut", this.count(new LambdaQueryWrapper<Order>()
                 .eq(Order::getCheckOutDate, today)
-                .eq(Order::getStatus, "checked_in")));
+                .eq(Order::getStatus, "checked_in")
+                .apply("total_price > 0 AND paid_amount >= total_price")));
         
         stats.put("currentGuests", this.count(new LambdaQueryWrapper<Order>()
-                .eq(Order::getStatus, "checked_in")));
+                .eq(Order::getStatus, "checked_in")
+                .apply("total_price > 0 AND paid_amount >= total_price")));
         
         stats.put("pendingOrders", this.count(new LambdaQueryWrapper<Order>()
-                .eq(Order::getStatus, "pending")));
+                .eq(Order::getStatus, "pending")
+                .apply("total_price > 0 AND paid_amount >= total_price")));
         
         stats.put("todayRevenue", getDailyRevenue(today));
         stats.put("monthlyRevenue", getMonthlyRevenue(today.getYear(), today.getMonthValue()));
@@ -397,5 +445,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     @Override
     public List<Map<String, Object>> getRevenueChart(LocalDate startDate, LocalDate endDate) {
         return baseMapper.getOrderStatsByDateRange(startDate, endDate.plusDays(1));
+    }
+
+    private boolean isPaid(Order order) {
+        return order.getTotalPrice() != null && order.getTotalPrice().signum() > 0
+                && order.getPaidAmount() != null
+                && order.getPaidAmount().compareTo(order.getTotalPrice()) >= 0;
     }
 }

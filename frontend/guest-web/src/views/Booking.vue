@@ -63,13 +63,9 @@
                     <span>房费：</span>
                     <span class="highlight">¥{{ totalPrice.toFixed(2) }}</span>
                   </div>
-                  <div class="info-row" v-if="deposit > 0">
-                    <span>保证金（{{ (depositRate * 100).toFixed(0) }}%）：</span>
-                    <span class="highlight-red">¥{{ deposit.toFixed(2) }}</span>
-                  </div>
                   <div class="info-row total">
                     <span>应付总计：</span>
-                    <span class="highlight-total">¥{{ (totalPrice + deposit).toFixed(2) }}</span>
+                    <span class="highlight-total">¥{{ totalPrice.toFixed(2) }}</span>
                   </div>
                 </div>
               </div>
@@ -190,10 +186,6 @@
                     <span>总价：</span>
                     <span class="total-price">¥{{ totalPrice }}</span>
                   </div>
-                  <div class="summary-item" v-if="deposit > 0">
-                    <span>保证金：</span>
-                    <span class="deposit">¥{{ deposit }}</span>
-                  </div>
                 </div>
 
                 <el-form-item style="margin-top: 30px">
@@ -204,7 +196,7 @@
                     @click="submitBooking"
                     style="margin-left: 10px"
                   >
-                    确认预订
+                    模拟支付并预订
                   </el-button>
                 </el-form-item>
               </div>
@@ -227,7 +219,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
-import { getRoomType, getDepositRate } from '@/api/room'
+import { getRoomType } from '@/api/room'
 import { createOrder } from '@/api/order'
 import { ElMessage } from 'element-plus'
 import dayjs from 'dayjs'
@@ -242,7 +234,6 @@ const submitting = ref(false)
 const currentStep = ref(0)
 const roomType = ref(null)
 const bookingFormRef = ref(null)
-const depositRate = ref(0)  // 未加载配置时默认不收取保证金
 
 const bookingForm = ref({
   roomTypeId: Number(route.params.roomTypeId),
@@ -292,10 +283,6 @@ const totalPrice = computed(() => {
     return 0
   }
   return roomType.value.price * nights.value
-})
-
-const deposit = computed(() => {
-  return parseFloat((totalPrice.value * depositRate.value).toFixed(2))
 })
 
 const disabledCheckInDate = (date) => {
@@ -383,11 +370,10 @@ const submitBooking = async () => {
   try {
     const orderData = {
       ...bookingForm.value,
-      totalPrice: totalPrice.value,
-      deposit: deposit.value
+      totalPrice: totalPrice.value
     }
     const res = await createOrder(orderData)
-    ElMessage.success('预订成功！')
+    ElMessage.success('模拟支付成功，预订待确认')
     router.push(`/order/${res.data.id}`)
   } catch (error) {
     console.error('预订失败:', error)
@@ -401,20 +387,8 @@ const handleLogout = () => {
   ElMessage.success('已退出登录')
 }
 
-const loadDepositRate = async () => {
-  try {
-    const res = await getDepositRate()
-    if (res.data) {
-      depositRate.value = parseFloat(res.data)
-    }
-  } catch (error) {
-    console.error('加载保证金比例失败:', error)
-  }
-}
-
 onMounted(() => {
   loadRoomType()
-  loadDepositRate()
 })
 </script>
 

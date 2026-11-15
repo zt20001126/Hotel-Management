@@ -12,14 +12,15 @@ Page({
       cancelled: '已取消' 
     },
     statusHintMap: {
-      pending: '请及时完成支付，锁定房间',
+      pending: '房费已支付，等待管理员确认',
       confirmed: '订单已确认，期待您的到来',
       checked_in: '您已入住，祝您住得愉快',
       checked_out: '您已退房，期待再次相见',
       cancelled: '订单已取消'
     },
     paymentTypeMap: {
-      deposit: '保证金',
+      deposit: '历史支付',
+      room_fee: '房费（模拟支付）',
       balance: '补差价',
       refund: '退款'
     },
@@ -46,24 +47,19 @@ Page({
     try {
       const res = await app.request({ url: `/order/${id}` })
       const order = res.data
-      // 应付总计 = 保证金 + 房费 + 额外消费（与Web端保持一致：30%保证金 + 100%房费）
-      const deposit = parseFloat(order.deposit || 0)
       const roomFee = parseFloat(order.totalPrice || 0)
       const extraCharges = parseFloat(order.extraCharges || 0)
-      const totalAmount = parseFloat((deposit + roomFee + extraCharges).toFixed(2))
+      const totalAmount = parseFloat((roomFee + extraCharges).toFixed(2))
       // 待付金额 = 应付总计 - 已付金额
       const paidAmount = parseFloat(order.paidAmount || 0)
       const unpaidAmount = parseFloat((totalAmount - paidAmount).toFixed(2))
-      // 判断是否已支付保证金
-      const hasPaidDeposit = paidAmount >= deposit
-      // 计算本次应支付金额：如果还没支付保证金，支付保证金；否则支付剩余金额
-      const nextPayAmount = !hasPaidDeposit ? deposit : unpaidAmount
+      const nextPayAmount = unpaidAmount
       // 判断是否已改订过（通过检查 modifyCount）
       const isModified = order.modifyCount && order.modifyCount >= 1
       const money = value => Number(value || 0).toFixed(2)
       const displayMoney = {
         roomPrice: money(order.roomPrice), roomFee: money(roomFee),
-        deposit: money(deposit), extraCharges: money(extraCharges),
+        extraCharges: money(extraCharges),
         total: money(totalAmount), paid: money(paidAmount),
         unpaid: money(unpaidAmount), nextPay: money(nextPayAmount)
       }
@@ -97,69 +93,6 @@ Page({
         }
       }
     })
-  },
-
-  showPay() {
-    const { order, unpaidAmount } = this.data
-    if (unpaidAmount <= 0) {
-      wx.showToast({ title: '订单已付清', icon: 'none' })
-      return
-    }
-    // 判断是否已支付保证金：如果已付金额小于保证金，说明还没支付保证金
-    const paidAmount = parseFloat(order.paidAmount || 0)
-    const deposit = parseFloat(order.deposit || 0)
-    const hasPaidDeposit = paidAmount >= deposit
-    
-    // 如果还没支付保证金，支付保证金；否则支付剩余金额
-    const payAmount = !hasPaidDeposit ? deposit : unpaidAmount
-    this.setData({ 
-      showPayModal: true, 
-      payAmount: payAmount.toFixed(2) 
-    })
-  },
-
-  hidePayModal() {
-    this.setData({ showPayModal: false })
-  },
-
-  async confirmPay() {
-    const { order, payAmount } = this.data
-    if (!app.checkLogin()) {
-      wx.showToast({ title: '请先登录', icon: 'none' })
-      wx.navigateTo({ url: '/pages/login/login' })
-      return
-    }
-
-    this.setData({ paying: true })
-    try {
-      // 判断是否已支付保证金
-      const paidAmount = parseFloat(order.paidAmount || 0)
-      const deposit = parseFloat(order.deposit || 0)
-      const hasPaidDeposit = paidAmount >= deposit
-      
-      // 根据是否已支付保证金来判断支付类型
-      const paymentType = !hasPaidDeposit ? 'deposit' : 'balance'
-      
-      await app.request({
-        url: '/payment',
-        method: 'POST',
-        data: {
-          orderId: order.id,
-          amount: parseFloat(payAmount),
-          paymentType: paymentType,
-          paymentMethod: 'wechat',
-          remark: paymentType === 'deposit' ? '支付保证金' : '补差价'
-        }
-      })
-      
-      wx.showToast({ title: '支付成功', icon: 'success' })
-      this.setData({ showPayModal: false })
-      this.loadOrder(order.id)
-    } catch (err) {
-      console.error(err)
-    } finally {
-      this.setData({ paying: false })
-    }
   },
 
   formatDate(dateStr) {

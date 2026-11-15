@@ -13,24 +13,27 @@ import java.util.Map;
 
 @Mapper
 public interface OrderMapper extends BaseMapper<Order> {
+
+    @Select("SELECT * FROM booking_order WHERE id = #{id} AND deleted = 0 FOR UPDATE")
+    Order selectForPayment(@Param("id") Long id);
     
     @Select("SELECT COALESCE(SUM(total_price), 0) FROM booking_order " +
-            "WHERE DATE(create_time) = #{date} AND status NOT IN ('cancelled') AND deleted = 0")
+            "WHERE DATE(create_time) = #{date} AND status NOT IN ('cancelled') AND deleted = 0 AND total_price > 0 AND paid_amount >= total_price")
     BigDecimal getDailyRevenue(@Param("date") LocalDate date);
 
     @Select("SELECT COALESCE(SUM(total_price), 0) FROM booking_order " +
             "WHERE YEAR(create_time) = #{year} AND MONTH(create_time) = #{month} " +
-            "AND status NOT IN ('cancelled') AND deleted = 0")
+            "AND status NOT IN ('cancelled') AND deleted = 0 AND total_price > 0 AND paid_amount >= total_price")
     BigDecimal getMonthlyRevenue(@Param("year") int year, @Param("month") int month);
 
     @Select("SELECT COUNT(*) FROM booking_order " +
-            "WHERE DATE(create_time) = #{date} AND deleted = 0")
+            "WHERE DATE(create_time) = #{date} AND deleted = 0 AND total_price > 0 AND paid_amount >= total_price")
     Integer getDailyOrderCount(@Param("date") LocalDate date);
 
     @Select("SELECT DATE(create_time) as date, COUNT(*) as count, COALESCE(SUM(total_price), 0) as revenue " +
             "FROM booking_order " +
             "WHERE create_time >= #{startDate} AND create_time < #{endDate} " +
-            "AND status NOT IN ('cancelled') AND deleted = 0 " +
+            "AND status NOT IN ('cancelled') AND deleted = 0 AND total_price > 0 AND paid_amount >= total_price " +
             "GROUP BY DATE(create_time) ORDER BY date")
     List<Map<String, Object>> getOrderStatsByDateRange(@Param("startDate") LocalDate startDate, 
                                                         @Param("endDate") LocalDate endDate);

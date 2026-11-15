@@ -30,31 +30,20 @@ public class PaymentRecordServiceImpl extends ServiceImpl<PaymentRecordMapper, P
     @Override
     @Transactional
     public PaymentRecord createPayment(PaymentRecord payment) {
-        Order order = orderMapper.selectById(payment.getOrderId());
+        Order order = orderMapper.selectForPayment(payment.getOrderId());
         if (order == null) {
             throw new BusinessException("订单不存在");
         }
-        
-        // 检查是否重复支付保证金
-        if ("deposit".equals(payment.getPaymentType())) {
-            List<PaymentRecord> existingDeposits = this.list(new LambdaQueryWrapper<PaymentRecord>()
-                    .eq(PaymentRecord::getOrderId, payment.getOrderId())
-                    .eq(PaymentRecord::getPaymentType, "deposit")
-                    .eq(PaymentRecord::getStatus, "success"));
-            if (!existingDeposits.isEmpty()) {
-                throw new BusinessException("保证金已支付，不能重复支付");
-            }
+        if (!"guest".equals(UserContextHolder.getUserType())
+                || !java.util.Objects.equals(order.getGuestId(), UserContextHolder.getUserId())) {
+            throw new BusinessException("只能支付自己的预订");
         }
-        
-        // 检查是否重复支付房费
-        if ("room_fee".equals(payment.getPaymentType())) {
-            List<PaymentRecord> existingRoomFees = this.list(new LambdaQueryWrapper<PaymentRecord>()
-                    .eq(PaymentRecord::getOrderId, payment.getOrderId())
-                    .eq(PaymentRecord::getPaymentType, "room_fee")
-                    .eq(PaymentRecord::getStatus, "success"));
-            if (!existingRoomFees.isEmpty()) {
-                throw new BusinessException("房费已支付，不能重复支付");
-            }
+        if (!"awaiting_payment".equals(order.getStatus()) || order.getTotalPrice() == null
+                || order.getTotalPrice().signum() <= 0 || payment.getAmount() == null
+                || payment.getAmount().compareTo(order.getTotalPrice()) != 0
+                || !"room_fee".equals(payment.getPaymentType())
+                || !"mock".equals(payment.getPaymentMethod())) {
+            throw new BusinessException("仅支持一次模拟支付全部房费");
         }
         
         payment.setPaymentNo(generatePaymentNo());
@@ -63,10 +52,15 @@ public class PaymentRecordServiceImpl extends ServiceImpl<PaymentRecordMapper, P
         payment.setStatus("success");
         payment.setOperatorId(UserContextHolder.getUserId());
         
-        this.save(payment);
+        if (!this.save(payment)) {
+            throw new BusinessException("模拟支付记录保存失败");
+        }
         
         order.setPaidAmount(order.getPaidAmount().add(payment.getAmount()));
-        orderMapper.updateById(order);
+        order.setStatus("pending");
+        if (orderMapper.updateById(order) != 1) {
+            throw new BusinessException("支付状态更新失败");
+        }
         
         return payment;
     }
