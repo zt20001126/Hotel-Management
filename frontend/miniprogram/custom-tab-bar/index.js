@@ -2,7 +2,6 @@ Component({
   data: {
     selected: 0,
     list: [
-      { pagePath: '/pages/index/index', text: '首页', icon: '/images/tab-home.png', activeIcon: '/images/tab-home-active.png' },
       { pagePath: '/pages/rooms/rooms', text: '房型', icon: '/images/tab-room.png', activeIcon: '/images/tab-room-active.png' },
       { pagePath: '/pages/profile/profile', text: '我的', icon: '/images/tab-user.png', activeIcon: '/images/tab-user-active.png' }
     ]

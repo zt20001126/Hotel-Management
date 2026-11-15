@@ -14,7 +14,7 @@ Page({
   
   onShow() {
     const tabBar = this.getTabBar && this.getTabBar()
-    if (tabBar) tabBar.setData({ selected: 1 })
+    if (tabBar) tabBar.setData({ selected: 0 })
     // 房型页始终展示所有上架房型，不受首页日期搜索条件影响。
     app.globalData.searchParams = null
   },

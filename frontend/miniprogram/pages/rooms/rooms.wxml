@@ -1,6 +1,6 @@
 <view class="container rooms-page">
   <image class="rooms-hero" src="/assets/images/chinese-style/banners/banner-plum-riverside.webp" mode="aspectFill" aria-hidden="true"></image>
-  <view class="rooms-title">房型列表<text class="rooms-seal">民宿</text></view>
+  <view class="rooms-title">芊浔民宿<text class="rooms-seal">民宿</text></view>
   <!-- 加载状态 -->
   <view class="loading" wx:if="{{loading}}">
     <text>加载中...</text>

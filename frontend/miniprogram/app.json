@@ -1,7 +1,7 @@
 {
   "pages": [
-    "pages/index/index",
     "pages/rooms/rooms",
+    "pages/index/index",
     "pages/room-detail/room-detail",
     "pages/booking/booking",
     "pages/orders/orders",
@@ -35,12 +35,6 @@
     "backgroundColor": "#fff9ef",
     "borderStyle": "white",
     "list": [
-      {
-        "pagePath": "pages/index/index",
-        "text": "首页",
-        "iconPath": "images/tab-home.png",
-        "selectedIconPath": "images/tab-home-active.png"
-      },
       {
         "pagePath": "pages/rooms/rooms",
         "text": "房型",
