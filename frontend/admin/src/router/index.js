@@ -87,6 +87,12 @@ const routes = [
         meta: { title: '宾客管理', icon: 'UserFilled' }
       },
       {
+        path: 'operating-expenses',
+        name: 'OperatingExpenses',
+        component: () => import('@/views/system/OperatingExpense.vue'),
+        meta: { title: '经营支出', roles: ['owner'] }
+      },
+      {
         path: 'statistics',
         name: 'Statistics',
         component: () => import('@/views/statistics/Statistics.vue'),
@@ -127,6 +133,8 @@ router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth !== false && !token) {
     next('/login')
   } else if (to.path === '/login' && token) {
+    next('/dashboard')
+  } else if (to.name === 'OperatingExpenses' && !useUserStore().hasRole(['owner'])) {
     next('/dashboard')
   } else {
     next()

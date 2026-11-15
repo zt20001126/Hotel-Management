@@ -62,6 +62,7 @@
           <el-menu-item index="/employee">员工管理</el-menu-item>
           <el-menu-item index="/role">角色管理</el-menu-item>
           <el-menu-item index="/guest">宾客管理</el-menu-item>
+          <el-menu-item index="/operating-expenses">经营支出</el-menu-item>
           <el-menu-item index="/statistics">经营分析</el-menu-item>
           <el-menu-item index="/config">系统设置</el-menu-item>
           <el-menu-item index="/log">操作日志</el-menu-item>
