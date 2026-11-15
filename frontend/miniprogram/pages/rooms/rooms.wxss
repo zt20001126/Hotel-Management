@@ -1,6 +1,5 @@
 .rooms-page { position:relative; padding-top:300rpx; }
 .rooms-hero { position:absolute; top:0; left:-28rpx; width:calc(100% + 56rpx); height:300rpx; overflow:hidden; opacity:.52; pointer-events:none; }
-.rooms-hero-image { display:block; width:100%; height:100%; }
 .rooms-title { position:absolute; z-index:3; top:65rpx; left:0; right:0; text-align:center; color:#241f19; font-family:"STKaiti","KaiTi",serif; font-size:48rpx; font-weight:700; letter-spacing:4rpx; text-shadow:0 1rpx 8rpx rgba(255,249,239,.95); }
 .rooms-seal { display:inline-flex; vertical-align:middle; align-items:center; justify-content:center; width:30rpx; height:42rpx; margin-left:8rpx; background:#a83e2a; border-radius:7rpx; color:#fff2df; font-family:"KaiTi",serif; font-size:17rpx; letter-spacing:0; writing-mode:vertical-rl; }
 .filter-bar { position:relative; display:flex; align-items:center; padding:22rpx 34rpx; margin-bottom:24rpx; overflow:hidden; background:#fff9ef; border:2rpx solid #c8a46f; border-radius:24rpx; color:#655548; box-shadow:0 8rpx 20rpx rgba(91,63,35,.08); }

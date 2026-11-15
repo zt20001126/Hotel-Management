@@ -1,10 +1,5 @@
 <view class="container rooms-page">
-  <swiper class="rooms-hero" autoplay="{{true}}" interval="6500" duration="1000" circular="{{true}}" indicator-dots="{{false}}" aria-hidden="true">
-    <swiper-item><image class="rooms-hero-image" src="/assets/images/chinese-style/banners/banner-plum-riverside.webp" mode="aspectFill"></image></swiper-item>
-    <swiper-item><image class="rooms-hero-image" src="/assets/images/chinese-style/banners/banner-stone-bridge-canal.webp" mode="aspectFill"></image></swiper-item>
-    <swiper-item><image class="rooms-hero-image" src="/assets/images/chinese-style/banners/banner-golden-landscape-lines.webp" mode="aspectFill"></image></swiper-item>
-    <swiper-item><image class="rooms-hero-image" src="/assets/images/chinese-style/banners/banner-night-baijianlou.webp" mode="aspectFill"></image></swiper-item>
-  </swiper>
+  <image class="rooms-hero" src="/assets/images/chinese-style/banners/banner-plum-riverside.webp" mode="aspectFill" aria-hidden="true"></image>
   <view class="rooms-title">房型列表<text class="rooms-seal">民宿</text></view>
   <!-- 加载状态 -->
   <view class="loading" wx:if="{{loading}}">
