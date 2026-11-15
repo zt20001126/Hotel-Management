@@ -17,6 +17,9 @@
 .preference-item { display: flex; align-items: center; padding: 10rpx 18rpx; background: #f8f1e5; border: 1rpx solid #e9dcc9; border-radius: 12rpx; color: #655548; }
 .preference-text { font-size: 26rpx; }
 .preference-arrow { margin-left: 10rpx; color: #a83e2a; font-size: 20rpx; }
+.section-title { display:flex; align-items:center; margin:24rpx 0 20rpx 6rpx; font-family:"STKaiti", "KaiTi", serif; font-size:38rpx; font-weight:700; color:#392c20; }
+.section-title::before { content:""; display:block; width:8rpx; height:38rpx; margin-right:18rpx; background:#a83e2a; border-radius:8rpx; }
+.section-cloud { width:180rpx; height:60rpx; margin-left:auto; opacity:.55; }
 .room-card { padding: 0; overflow: hidden; margin-bottom: 22rpx; }
 .room-image { display: block; width: 100%; height: 330rpx; background: #e9dcc9; }
 .room-info { padding: 20rpx 24rpx 24rpx; }

@@ -8,6 +8,7 @@
   
   <!-- 房型列表 -->
   <view class="room-list" wx:if="{{!loading && roomTypes.length > 0}}">
+    <view class="section-title"><text>精选房型</text><image class="section-cloud" src="/images/cloud.svg" mode="aspectFit" aria-hidden="true"></image></view>
     <view class="room-card card" wx:for="{{roomTypes}}" wx:key="id" bindtap="goDetail" data-id="{{item.id}}">
       <image class="room-image" src="{{item.images[0] || 'https://dummyimage.com/400x300/667eea/ffffff.png&text=Room'}}" mode="aspectFill" binderror="onImageError" data-index="{{index}}"></image>
       <view class="room-info">
