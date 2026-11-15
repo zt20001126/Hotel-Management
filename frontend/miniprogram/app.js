@@ -1,6 +1,6 @@
 App({
   globalData: {
-    baseUrl: 'http://localhost:8080/api',
+    baseUrl: 'http://192.168.1.7:8080/api',
     token: '',
     userInfo: null,
     searchParams: null  // 用于传递搜索参数到tabBar页面
