@@ -14,6 +14,10 @@ const routes = [
     redirect: '/dashboard',
     meta: { requiresAuth: true },
     children: [
+      { path: 'external/calendar', name: 'ExternalCalendar', component: () => import('@/views/external/Calendar.vue'), meta: { title: '第三方房态日历', externalOwner: true } },
+      { path: 'external/orders', name: 'ExternalOrders', component: () => import('@/views/external/Orders.vue'), meta: { title: '平台订单', externalOwner: true } },
+      { path: 'external/reports', name: 'ExternalReports', component: () => import('@/views/external/Reports.vue'), meta: { title: '第三方经营统计', externalOwner: true } },
+      { path: 'external/settings', name: 'ExternalSettings', component: () => import('@/views/external/Settings.vue'), meta: { title: '平台与主播设置', externalOwner: true } },
       {
         path: 'dashboard',
         name: 'Dashboard',
@@ -134,7 +138,7 @@ router.beforeEach((to, from, next) => {
     next('/login')
   } else if (to.path === '/login' && token) {
     next('/dashboard')
-  } else if (to.name === 'OperatingExpenses' && !useUserStore().hasRole(['owner'])) {
+  } else if ((to.name === 'OperatingExpenses' || to.meta.externalOwner) && !useUserStore().hasRole(['owner'])) {
     next('/dashboard')
   } else {
     next()

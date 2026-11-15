@@ -39,6 +39,13 @@
           <el-menu-item index="/checkout">退房结算</el-menu-item>
         </el-sub-menu>
         
+        <el-sub-menu index="external" v-if="userStore.hasRole(['owner'])">
+          <template #title><el-icon><Document /></el-icon><span>第三方平台</span></template>
+          <el-menu-item index="/external/calendar">房态日历</el-menu-item>
+          <el-menu-item index="/external/orders">平台订单</el-menu-item>
+          <el-menu-item index="/external/reports">经营统计</el-menu-item>
+          <el-menu-item index="/external/settings">平台与主播设置</el-menu-item>
+        </el-sub-menu>
         <el-menu-item index="/pos">
           <el-icon><ShoppingCart /></el-icon>
           <template #title>POS消费</template>
