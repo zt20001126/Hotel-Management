@@ -366,21 +366,17 @@ CREATE TABLE `room`  (
   UNIQUE INDEX `room_number`(`room_number` ASC) USING BTREE,
   INDEX `idx_room_type`(`room_type_id` ASC) USING BTREE,
   INDEX `idx_status`(`status` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '房间表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '房间表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of room
 -- ----------------------------
-INSERT INTO `room` VALUES (1, '101', 1, 1, 'occupied', 'clean', '朝南，采光好', '2025-12-30 03:28:24', '2025-12-30 03:28:24', 0);
-INSERT INTO `room` VALUES (2, '102', 1, 1, 'available', 'clean', '朝北，安静', '2025-12-30 03:28:24', '2025-12-30 03:28:24', 0);
-INSERT INTO `room` VALUES (3, '103', 2, 1, 'available', 'clean', '朝南，景观房', '2025-12-30 03:28:24', '2025-12-30 03:28:24', 0);
-INSERT INTO `room` VALUES (4, '201', 2, 2, 'available', 'clean', '朝南，阳台房', '2025-12-30 03:28:24', '2025-12-30 03:28:24', 0);
-INSERT INTO `room` VALUES (5, '202', 3, 2, 'available', 'clean', '朝东，早晨阳光充足', '2025-12-30 03:28:24', '2025-12-30 03:28:24', 0);
-INSERT INTO `room` VALUES (6, '203', 3, 2, 'available', 'clean', '朝西', '2025-12-30 03:28:24', '2025-12-30 03:28:24', 0);
-INSERT INTO `room` VALUES (7, '301', 3, 3, 'occupied', 'clean', '朝南', '2025-12-30 03:28:24', '2025-12-30 03:28:24', 0);
-INSERT INTO `room` VALUES (8, '302', 4, 3, 'available', 'clean', '家庭套房，空间大', '2025-12-30 03:28:24', '2025-12-30 03:28:24', 0);
-INSERT INTO `room` VALUES (9, '303', 4, 3, 'available', 'clean', '家庭套房，带阳台', '2025-12-30 03:28:24', '2025-12-30 03:28:24', 0);
-INSERT INTO `room` VALUES (10, '501', 5, 5, 'available', 'clean', '总统套房，顶层景观', '2025-12-30 03:28:24', '2025-12-30 03:28:24', 0);
+INSERT INTO `room` VALUES (1, '101', 1, 1, 'available', 'clean', '一楼；有窗；禁烟；不可加床', '2025-12-30 03:28:24', '2025-12-30 03:28:24', 0);
+INSERT INTO `room` VALUES (2, '102', 2, 1, 'available', 'clean', '一楼；有窗；禁烟；不可加床', '2025-12-30 03:28:24', '2025-12-30 03:28:24', 0);
+INSERT INTO `room` VALUES (3, '103', 3, 1, 'available', 'clean', '一楼；有窗；禁烟；不可加床', '2025-12-30 03:28:24', '2025-12-30 03:28:24', 0);
+INSERT INTO `room` VALUES (4, '201', 4, 2, 'available', 'clean', '二楼；有窗；榻榻米设计；禁烟；不可加床', '2025-12-30 03:28:24', '2025-12-30 03:28:24', 0);
+INSERT INTO `room` VALUES (5, '202', 5, 2, 'available', 'clean', '二楼；有窗；禁烟；不可加床', '2025-12-30 03:28:24', '2025-12-30 03:28:24', 0);
+INSERT INTO `room` VALUES (6, '203', 6, 2, 'available', 'clean', '二楼；有窗；四柱纱幔床；室内浴缸；禁烟；不可加床', '2025-12-30 03:28:24', '2025-12-30 03:28:24', 0);
 
 -- ----------------------------
 -- Table structure for room_type
@@ -405,16 +401,17 @@ CREATE TABLE `room_type`  (
   `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` tinyint(4) NULL DEFAULT 0 COMMENT '删除标记',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '房型表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '房型表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of room_type
 -- ----------------------------
-INSERT INTO `room_type` VALUES (1, '标准单人间', '温馨舒适的单人房间，配备独立卫浴、空调、电视等设施，适合商务出行。', 198.00, 258.00, 358.00, 1, 1, '单人床 1.2m', 18, '[\"空调\",\"电视\",\"独立卫浴\",\"WiFi\",\"热水壶\",\"衣柜\"]', '[\"https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&h=600&fit=crop\",\"https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop\",\"https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=800&h=600&fit=crop\"]', 1, 1, '2025-12-30 03:28:24', '2025-12-30 03:28:24', 0);
-INSERT INTO `room_type` VALUES (2, '豪华大床房', '宽敞明亮的大床房，配备1.8米大床，适合情侣或夫妻入住。', 298.00, 368.00, 498.00, 2, 1, '大床 1.8m', 25, '[\"空调\",\"电视\",\"独立卫浴\",\"WiFi\",\"热水壶\",\"衣柜\",\"迷你冰箱\",\"保险箱\"]', '[\"https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=800&h=600&fit=crop\",\"https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?w=800&h=600&fit=crop\",\"https://images.unsplash.com/photo-1590073242678-70ee3fc28e8e?w=800&h=600&fit=crop\"]', 1, 2, '2025-12-30 03:28:24', '2025-12-30 03:28:24', 0);
-INSERT INTO `room_type` VALUES (3, '温馨双床房', '舒适的双床房间，配备两张1.2米单人床，适合朋友或同事入住。', 268.00, 328.00, 458.00, 2, 2, '单人床 1.2m x2', 28, '[\"空调\",\"电视\",\"独立卫浴\",\"WiFi\",\"热水壶\",\"衣柜\",\"书桌\"]', '[\"https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=600&fit=crop\",\"https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=800&h=600&fit=crop\",\"https://images.unsplash.com/photo-1615874959471-d37d6ec6f74c?w=800&h=600&fit=crop\"]', 1, 3, '2025-12-30 03:28:24', '2025-12-30 03:28:24', 0);
-INSERT INTO `room_type` VALUES (4, '家庭套房', '宽敞的家庭套房，含独立客厅和卧室，适合家庭出游。', 458.00, 558.00, 698.00, 4, 2, '大床1.8m + 双床1.2m', 45, '[\"空调\",\"电视\",\"独立卫浴\",\"WiFi\",\"热水壶\",\"衣柜\",\"迷你冰箱\",\"保险箱\",\"沙发\",\"茶几\",\"微波炉\"]', '[\"https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=800&h=600&fit=crop\",\"https://images.unsplash.com/photo-1560185007-c5ca9d2c014d?w=800&h=600&fit=crop\",\"https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&h=600&fit=crop\"]', 1, 4, '2025-12-30 03:28:24', '2025-12-30 03:28:24', 0);
-INSERT INTO `room_type` VALUES (5, '总统套房', '顶级奢华套房，含独立客厅、卧室、书房，配备高端设施，尊享私密与舒适。', 888.00, 1088.00, 1388.00, 2, 1, '特大床 2.0m', 80, '[\"中央空调\",\"65寸智能电视\",\"豪华卫浴\",\"高速WiFi\",\"意式咖啡机\",\"衣帽间\",\"迷你吧台\",\"保险箱\",\"浴缸\",\"独立书房\",\"智能家居系统\"]', '[\"https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800&h=600&fit=crop\",\"https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800&h=600&fit=crop\",\"https://images.unsplash.com/photo-1562436260-9570a88ec114?w=800&h=600&fit=crop\"]', 1, 5, '2025-12-30 03:28:24', '2025-12-30 03:28:24', 0);
+INSERT INTO `room_type` VALUES (1, '智能轻奢大床房', '30平方米智能轻奢大床房，配备1.8米大床、红木茶椅、地暖及智能设施，环境整洁舒适，适合双人入住。', 198.00, 258.00, 358.00, 2, 1, '大床 1.8m', 30, '["全屋智能","地暖","空调","电视","免费Wi-Fi","红木茶椅","茶几","衣柜","洗浴用品","有窗","禁烟","不可加床"]', '["https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&h=600&fit=crop","https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop","https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=800&h=600&fit=crop"]', 1, 1, '2025-12-30 03:28:24', '2025-12-30 03:28:24', 0);
+INSERT INTO `room_type` VALUES (2, '浅溪·智能双床房', '30平方米智能双床房，配备2张1.5米床、独立卫浴、红木茶椅及地暖，房间宽敞整洁，适合双人入住。', 198.00, 258.00, 358.00, 2, 2, '单人床 1.5m x2', 30, '["全屋智能","地暖","独立卫浴","电视","免费Wi-Fi","免费有线宽带","红木茶椅","茶几","衣柜","洗浴用品","有窗","禁烟","不可加床"]', '["https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=800&h=600&fit=crop","https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?w=800&h=600&fit=crop","https://images.unsplash.com/photo-1590073242678-70ee3fc28e8e?w=800&h=600&fit=crop"]', 1, 2, '2025-12-30 03:28:24', '2025-12-30 03:28:24', 0);
+INSERT INTO `room_type` VALUES (3, '云岸·智能双床房', '30平方米智能双床房，配备2张1.5米床、独立卫浴、红木茶椅及地暖，采用简约中式装修风格，适合双人入住。', 298.00, 368.00, 498.00, 2, 2, '单人床 1.5m x2', 30, '["全屋智能","地暖","独立卫浴","电视","免费Wi-Fi","免费有线宽带","红木茶椅","茶几","衣柜","洗浴用品","有窗","禁烟","不可加床"]', '["https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=600&fit=crop","https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=800&h=600&fit=crop","https://images.unsplash.com/photo-1615874959471-d37d6ec6f74c?w=800&h=600&fit=crop"]', 1, 3, '2025-12-30 03:28:24', '2025-12-30 03:28:24', 0);
+INSERT INTO `room_type` VALUES (4, '冷江·榻榻米大床房', '30平方米智能榻榻米大床房，配备1.8米大床、独立卫浴、智能马桶、红木茶桌及地暖，采用简约中式装修风格，适合双人入住。', 298.00, 368.00, 498.00, 2, 1, '大床 1.8m', 30, '["全屋智能","地暖","独立卫浴","智能马桶","吹风机","电视","免费Wi-Fi","免费有线宽带","红木茶桌","衣柜","洗浴用品","有窗","榻榻米设计","禁烟","不可加床"]', '["https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=800&h=600&fit=crop","https://images.unsplash.com/photo-1560185007-c5ca9d2c014d?w=800&h=600&fit=crop","https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&h=600&fit=crop"]', 1, 4, '2025-12-30 03:28:24', '2025-12-30 03:28:24', 0);
+INSERT INTO `room_type` VALUES (5, '清汀·智能双床房', '30平方米智能双床房，配备2张1.5米床、独立卫浴、红木茶椅及地暖，采用简约中式装修风格，适合双人入住。', 268.00, 328.00, 458.00, 2, 2, '单人床 1.5m x2', 30, '["全屋智能","地暖","独立卫浴","电视","免费Wi-Fi","免费有线宽带","红木茶椅","茶几","衣柜","洗浴用品","有窗","禁烟","不可加床"]', '["https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800&h=600&fit=crop","https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800&h=600&fit=crop","https://images.unsplash.com/photo-1562436260-9570a88ec114?w=800&h=600&fit=crop"]', 1, 5, '2025-12-30 03:28:24', '2025-12-30 03:28:24', 0);
+INSERT INTO `room_type` VALUES (6, '木荷·智能浴缸大床房', '30平方米智能浴缸大床房，配备1.8米纱幔大床、独立浴缸、智能马桶及地暖，采用简约雅致的装修风格，适合情侣或双人入住。', 268.00, 328.00, 458.00, 2, 1, '大床 1.8m', 30, '["全屋智能","地暖","独立卫浴","独立浴缸","智能马桶","电视","免费Wi-Fi","免费有线宽带","茶几","休闲椅","衣柜","洗浴用品","有窗","四柱纱幔床","禁烟","不可加床"]', '["https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800&h=600&fit=crop","https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800&h=600&fit=crop","https://images.unsplash.com/photo-1562436260-9570a88ec114?w=800&h=600&fit=crop"]', 1, 6, '2025-12-30 03:28:24', '2025-12-30 03:28:24', 0);
 
 -- ----------------------------
 -- Table structure for sys_config
