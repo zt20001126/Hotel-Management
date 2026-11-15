@@ -1,6 +1,6 @@
 <view class="container" wx:if="{{order}}">
   <view class="top-decoration"><image class="plum" src="/images/plum-branch.svg" mode="aspectFit"/><image class="waterside" src="/images/profile-landscape.png" mode="aspectFill"/></view>
-  <view class="status-card">
+  <view class="status-card {{order.status}}">
     <view class="status-icon"><image src="/images/order-detail/{{order.status}}.svg" mode="aspectFit"/></view>
     <view class="status-copy"><text class="status-text">{{statusMap[order.status] || order.status}}</text><text class="status-hint">{{statusHintMap[order.status] || '查看您的订单详情'}}</text></view>
   </view>
@@ -34,25 +34,23 @@
   <view class="info-card card" wx:if="{{payments.length > 0}}">
     <view class="section-title">支付记录</view>
     <view class="payment-item" wx:for="{{payments}}" wx:key="id">
-      <view class="payment-header">
-        <text class="payment-type">{{paymentTypeMap[item.paymentType] || item.paymentType}}</text>
-        <text class="payment-amount {{item.paymentType === 'refund' ? 'text-success' : ''}}">
+      <view class="payment-row payment-header">
+        <text class="payment-type" wx:if="{{item.paymentType !== 'refund'}}">房费（{{item.paymentMethod}}）</text>
+        <text class="payment-type" wx:else>{{paymentTypeMap[item.paymentType] || item.paymentType}}</text>
+        <text class="status-badge success" wx:if="{{item.status === 'success'}}">支付成功</text>
+      </view>
+      <view class="payment-row payment-info">
+        <text class="payment-no">支付单号：{{item.paymentNo}}</text>
+        <text class="payment-amount">
           {{item.paymentType === 'refund' ? '+' : '-'}}¥{{item.displayAmount}}
         </text>
       </view>
-      <view class="payment-info">
-        <text class="payment-no">支付单号：{{item.paymentNo}}</text>
-        <text class="payment-time">{{item.displayTime}}</text>
-      </view>
-      <view class="payment-status" wx:if="{{item.status === 'success'}}">
-        <text class="status-badge success">支付成功</text>
-      </view>
+      <view class="payment-time">{{item.displayTime}}</view>
     </view>
   </view>
   
   <view class="bottom-landscape"></view>
   <view class="bottom-bar" wx:if="{{order.status === 'pending' || order.status === 'confirmed'}}">
-    <button class="btn-modify" wx:if="{{!isModified}}" bindtap="goModify">改订</button>
     <button class="btn-cancel" bindtap="cancelOrder">取消订单</button>
   </view>
   

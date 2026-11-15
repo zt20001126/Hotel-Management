@@ -1,245 +1,45 @@
-.container {
-  padding: 20rpx;
-  padding-bottom: calc(128rpx + env(safe-area-inset-bottom));
-  background-image: linear-gradient(180deg, #f8f1e5 0%, #f0dfbd 68%, #d8b978 100%);
-}
-
-.status-card {
-  text-align: center;
-  padding: 40rpx;
-  color: #fff;
-}
-
-.status-card.pending { background: linear-gradient(135deg, #e6a23c 0%, #ebb563 100%); }
-.status-card.confirmed { background: linear-gradient(135deg, #409eff 0%, #66b1ff 100%); }
-.status-card.checked_in { background: linear-gradient(135deg, #67c23a 0%, #85ce61 100%); }
-.status-card.checked_out { background: linear-gradient(135deg, #909399 0%, #a6a9ad 100%); }
-.status-card.cancelled { background: linear-gradient(135deg, #f56c6c 0%, #f78989 100%); }
-
-.status-text {
-  font-size: 36rpx;
-  font-weight: bold;
-}
-
-.info-card {
-  margin-top: 20rpx;
-}
-
-.section-title {
-  font-size: 30rpx;
-  font-weight: bold;
-  color: #303133;
-  margin-bottom: 20rpx;
-  padding-left: 15rpx;
-  border-left: 6rpx solid #a83e2a;
-}
-
-.info-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 28rpx;
-  padding: 15rpx 0;
-  border-bottom: 1rpx solid #f5f7fa;
-}
-
-.info-row:last-child { border-bottom: none; }
-.info-row .label { color: #909399; }
-.info-row .price { font-weight: bold; color: #f56c6c; }
-
-.bottom-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 20rpx 30rpx;
-  padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
-  background: #fff;
-  box-shadow: 0 -4rpx 20rpx rgba(0,0,0,0.08);
-  display: flex;
-  gap: 20rpx;
-}
-
-.btn-cancel {
-  flex: 1;
-  background: #f5f7fa;
-  color: #606266;
-  border: none;
-  height: 88rpx;
-  line-height: 88rpx;
-  font-size: 30rpx;
-  text-align: center;
-}
-
-.btn-pay {
-  flex: 1;
-  height: 88rpx;
-  line-height: 88rpx;
-  font-size: 30rpx;
-  text-align: center;
-}
-
-.btn-modify {
-  flex: 1;
-  background: #fff;
-  color: #667eea;
-  border: 1rpx solid #667eea;
-  height: 88rpx;
-  line-height: 88rpx;
-  font-size: 30rpx;
-  text-align: center;
-}
-
-.payment-item {
-  padding: 20rpx 0;
-  border-bottom: 1rpx solid #f5f7fa;
-}
-
-.payment-item:last-child {
-  border-bottom: none;
-}
-
-.payment-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15rpx;
-}
-
-.payment-type {
-  font-size: 28rpx;
-  color: #303133;
-  font-weight: 500;
-}
-
-.payment-amount {
-  font-size: 32rpx;
-  font-weight: bold;
-  color: #f56c6c;
-}
-
-.payment-info {
-  display: flex;
-  justify-content: space-between;
-  font-size: 24rpx;
-  color: #909399;
-  margin-bottom: 10rpx;
-}
-
-.payment-status {
-  margin-top: 10rpx;
-}
-
-.status-badge {
-  display: inline-block;
-  padding: 4rpx 16rpx;
-  border-radius: 20rpx;
-  font-size: 22rpx;
-}
-
-.status-badge.success {
-  background: #f0f9ff;
-  color: #67c23a;
-}
-
-.modal-mask {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-.modal-content {
-  width: 600rpx;
-  background: #fff;
-  border-radius: 16rpx;
-  padding: 40rpx;
-}
-
-.modal-title {
-  font-size: 32rpx;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 40rpx;
-  color: #303133;
-}
-
-.pay-amount-wrap {
-  text-align: center;
-  margin-bottom: 50rpx;
-}
-
-.pay-amount-label {
-  display: block;
-  font-size: 28rpx;
-  color: #909399;
-  margin-bottom: 20rpx;
-}
-
-.pay-amount-value {
-  display: block;
-  font-size: 48rpx;
-  font-weight: bold;
-  color: #f56c6c;
-}
-
-.modal-buttons {
-  display: flex;
-  gap: 20rpx;
-}
-
-.btn-modal-cancel,
-.btn-modal-confirm {
-  flex: 1;
-  height: 88rpx;
-  line-height: 88rpx;
-  font-size: 30rpx;
-  border-radius: 8rpx;
-  text-align: center;
-}
-
-.btn-modal-cancel {
-  background: #f5f7fa;
-  color: #606266;
-  border: none;
-}
-
-/* 订单详情：暖色纸面与江南水乡装饰 */
-page { background: #f8efe2; }
-.container { position: relative; padding: 0 38rpx calc(150rpx + env(safe-area-inset-bottom)); background: #f8efe2; }
-.container::after { display: none; }
-.top-decoration { height: 72rpx; position: relative; overflow: hidden; margin: 0 -38rpx; }
-.plum { position: absolute; width: 270rpx; height: 110rpx; left: -12rpx; top: -22rpx; }
-.waterside { position: absolute; right: 0; bottom: 0; width: 310rpx; height: 70rpx; opacity: .3; }
-.status-card { position: relative; display: flex; align-items: center; min-height: 120rpx; box-sizing: border-box; padding: 20rpx 32rpx; border-radius: 30rpx; background: linear-gradient(110deg,#fbe6bf,#f7d49a); color: #71380e; box-shadow: 0 8rpx 20rpx rgba(155,104,38,.12); }
-.status-icon { width: 74rpx; height: 74rpx; flex: none; display: flex; align-items: center; justify-content: center; background: #ce8c39; border-radius: 50%; margin-right: 20rpx; }
-.status-icon image { width: 48rpx; height: 48rpx; }
-.status-copy { display: flex; flex-direction: column; min-width: 0; }
-.status-text { font-size: 36rpx; line-height: 1.25; font-weight: 700; }
-.status-hint { margin-top: 6rpx; font-size: 23rpx; line-height: 1.4; }
-.info-card.card { margin-top: 18rpx; padding: 20rpx 26rpx; border: 0; border-radius: 28rpx; background: #fcf7ef; box-shadow: 0 7rpx 18rpx rgba(125,87,39,.12); }
-.section-title { margin: 0 0 10rpx; padding-left: 16rpx; border-left: 7rpx solid #b52d1b; color: #171512; font-size: 30rpx; line-height: 34rpx; font-weight: 700; }
-.info-row { display: flex; align-items: center; min-height: 51rpx; box-sizing: border-box; padding: 8rpx 0; border-bottom: 1rpx solid #eee3d6; font-size: 25rpx; color: #1c1a18; }
+page { min-height: 100%; background: #f8efe2; color: #30271f; }
+.container { position: relative; box-sizing: border-box; min-height: 100vh; padding: 0 34rpx calc(150rpx + env(safe-area-inset-bottom)); overflow: hidden; background: linear-gradient(180deg, #fbf4e9 0%, #f8efe2 65%, #f5e8d6 100%); }
+.top-decoration { position: relative; height: 128rpx; margin: 0 -34rpx 12rpx; overflow: hidden; }
+.plum { position: absolute; top: 4rpx; left: -10rpx; width: 300rpx; height: 120rpx; }
+.waterside { position: absolute; right: 0; bottom: 0; width: 380rpx; height: 110rpx; opacity: .42; }
+.status-card { position: relative; z-index: 1; display: flex; align-items: center; box-sizing: border-box; min-height: 136rpx; padding: 25rpx 32rpx; border-radius: 34rpx; color: #71380e; background: linear-gradient(110deg, #fbe9c9 0%, #f8d69e 100%); box-shadow: 0 10rpx 24rpx rgba(155,104,38,.14); }
+.status-icon { display: flex; flex: none; align-items: center; justify-content: center; width: 88rpx; height: 88rpx; margin-right: 24rpx; border-radius: 50%; background: #ce8c39; }
+.status-icon image { width: 54rpx; height: 54rpx; }
+.status-copy { display: flex; flex: 1; min-width: 0; flex-direction: column; }
+.status-text { font-size: 40rpx; line-height: 1.25; font-weight: 700; }
+.status-hint { margin-top: 8rpx; font-size: 26rpx; line-height: 1.5; }
+.status-card.confirmed { color: #46633d; background: linear-gradient(110deg, #edf3df 0%, #dce9cb 100%); }
+.status-card.confirmed .status-icon { background: #72945b; }
+.status-card.checked_in { color: #46633d; background: linear-gradient(110deg, #edf3df 0%, #dce9cb 100%); }
+.status-card.checked_in .status-icon { background: #72945b; }
+.status-card.checked_out { color: #625c50; background: linear-gradient(110deg, #f1eee6 0%, #e6dfd1 100%); }
+.status-card.checked_out .status-icon { background: #94866c; }
+.status-card.cancelled { color: #8a382c; background: linear-gradient(110deg, #fae9e2 0%, #f3d5ca 100%); }
+.status-card.cancelled .status-icon { background: #bb6754; }
+.info-card.card { position: relative; z-index: 1; box-sizing: border-box; margin-top: 22rpx; padding: 24rpx 26rpx 22rpx; border: 0; border-radius: 30rpx; background: rgba(255, 250, 243, .96); box-shadow: 0 8rpx 22rpx rgba(125,87,39,.12); }
+.section-title { margin: 0 0 14rpx; padding-left: 18rpx; border-left: 8rpx solid #b52d1b; color: #171512; font-size: 34rpx; line-height: 1.25; font-weight: 700; }
+.info-row { display: flex; align-items: center; box-sizing: border-box; min-height: 62rpx; padding: 10rpx 0; border-bottom: 1rpx solid #eee3d6; color: #1c1a18; font-size: 28rpx; line-height: 1.4; }
 .info-row:last-child { border-bottom: 0; }
-.row-icon { width: 32rpx; height: 32rpx; flex: none; margin: 0 18rpx 0 8rpx; }
-.info-row .label { color: #1c1a18; flex: none; }
-.info-row .value { flex: 1; min-width: 0; margin-left: 16rpx; text-align: right; overflow-wrap: anywhere; word-break: break-all; }
-.info-row .price { color: #ad2b1b; font-size: 31rpx; font-weight: 700; }
-.info-row .text-success { color: #3d7035; font-weight: 600; }
-.unpaid-row { margin: 8rpx -10rpx 0; padding: 10rpx; border: 0; border-radius: 18rpx; background: #fae8e2; }
-.unpaid-row .label { color: #b52d1b; font-weight: 700; }
-.bottom-landscape { height: 98rpx; margin: 20rpx -38rpx -15rpx; background: url('/images/profile-landscape.png') center bottom / cover no-repeat; opacity: .24; }
-.bottom-bar { z-index: 10; padding: 24rpx 38rpx calc(20rpx + env(safe-area-inset-bottom)); background: #fcf7ef; box-shadow: 0 -4rpx 18rpx rgba(115,83,47,.06); }
-.btn-pay { height: 76rpx; line-height: normal; border-radius: 999rpx; background: linear-gradient(180deg,#b93220,#9e2416); font-size: 31rpx; font-weight: 700; }
-.pay-arrow { font-size: 46rpx; line-height: 1; margin-left: 16rpx; }
-.btn-modify, .btn-cancel { border-radius: 999rpx; color: #a83e2a; border: 1rpx solid #c99b85; background: #fcf7ef; }
-.payment-info { gap: 12rpx; flex-wrap: wrap; overflow-wrap: anywhere; }
-.payment-amount { color: #a83e2a; }
-.payment-amount.text-success { color: #3d7035; }
-.modal-content { box-sizing: border-box; max-width: 88vw; background: #fcf7ef; border-radius: 24rpx; }
-.pay-amount-value { color: #a83e2a; }
+.row-icon { flex: none; width: 38rpx; height: 38rpx; margin: 0 20rpx 0 6rpx; }
+.info-row .label { flex: none; color: #30271f; }
+.info-row .value { flex: 1; min-width: 0; margin-left: 14rpx; text-align: right; overflow-wrap: anywhere; word-break: break-all; }
+.info-row .price { color: #bd321f; font-size: 34rpx; font-weight: 700; }
+.info-row .text-success { color: #3d7035; font-weight: 700; }
+.unpaid-row { min-height: 70rpx; margin: 10rpx -10rpx 0; padding: 10rpx; border: 0; border-radius: 20rpx; background: #fae4df; }
+.unpaid-row .label, .unpaid-row .value { color: #b52d1b; font-weight: 700; }
+.bottom-landscape { position: absolute; right: 0; bottom: 0; left: 0; height: 150rpx; background: url('/images/profile-landscape.png') center bottom / cover no-repeat; opacity: .22; pointer-events: none; }
+.bottom-bar { position: fixed; z-index: 10; right: 0; bottom: 0; left: 0; box-sizing: border-box; padding: 20rpx 34rpx calc(20rpx + env(safe-area-inset-bottom)); background: rgba(255, 250, 243, .97); box-shadow: 0 -4rpx 18rpx rgba(115,83,47,.08); }
+.btn-cancel { width: 100%; height: 88rpx; padding: 0 24rpx; border: 2rpx solid #a83e2a; border-radius: 999rpx; color: #a83e2a; background: transparent; font-size: 32rpx; line-height: 84rpx; font-weight: 600; }
+.btn-cancel:active { color: #8e3022; background: rgba(168,62,42,.06); }
+.payment-item { box-sizing: border-box; margin-bottom: 16rpx; padding: 20rpx 22rpx; border-radius: 22rpx; background: #f7f7ef; }
+.payment-item:last-child { margin-bottom: 0; }
+.payment-row { display: flex; align-items: center; justify-content: space-between; gap: 14rpx; min-width: 0; }
+.payment-header { margin-bottom: 12rpx; }
+.payment-type { flex: 1; min-width: 0; color: #30271f; font-size: 28rpx; line-height: 1.4; font-weight: 600; overflow-wrap: anywhere; }
+.payment-amount { flex: none; color: #a83e2a; font-size: 29rpx; line-height: 1.4; font-weight: 700; white-space: nowrap; }
+.payment-info { margin-bottom: 8rpx; color: #827567; font-size: 24rpx; line-height: 1.5; }
+.payment-no { flex: 1; min-width: 0; overflow-wrap: anywhere; word-break: break-all; }
+.payment-time { color: #a69d92; font-size: 24rpx; line-height: 1.5; overflow-wrap: anywhere; }
+.status-badge { display: inline-flex; flex: none; align-items: center; justify-content: center; padding: 6rpx 16rpx; border-radius: 999rpx; font-size: 23rpx; line-height: 1.35; white-space: nowrap; }
+.status-badge.success { color: #55715b; background: #e9f0e3; }
