@@ -28,6 +28,8 @@
     </view>
 
     <view class="login-card">
+      <image class="card-bamboo" src="/pages/login/bamboo.svg" mode="aspectFit" aria-hidden="true"></image>
+      <image class="card-cloud" src="/images/cloud.svg" mode="aspectFit" aria-hidden="true"></image>
       <button
         class="quick-login-button"
         open-type="getPhoneNumber"
