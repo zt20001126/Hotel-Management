@@ -9,7 +9,9 @@ Page({
     roomType: null,
     facilities: [],
     nights: 1,
-    totalPrice: 0
+    totalPrice: 0,
+    nightlyPrice: '0.00',
+    currentImage: 0
   },
 
   onLoad(options) {
@@ -28,7 +30,7 @@ Page({
       const roomType = res.data
       let facilities = []
       if (roomType.facilities) {
-        try { facilities = JSON.parse(roomType.facilities) } catch (e) {}
+        try { facilities = typeof roomType.facilities === 'string' ? JSON.parse(roomType.facilities) : roomType.facilities } catch (e) {}
       }
       
       // 解析图片列表
@@ -42,19 +44,32 @@ Page({
           images = []
         }
       }
-      // 如果没有图片，使用网络占位图
-      if (!images || images.length === 0) {
-        images = ['https://dummyimage.com/400x300/667eea/ffffff.png&text=Room']
-      }
+      if (!Array.isArray(images)) images = []
       roomType.images = images
       
       const nights = this.calculateNights()
       const totalPrice = (roomType.basePrice * nights).toFixed(2)
       
-      this.setData({ roomType, facilities, nights, totalPrice })
+      facilities = Array.isArray(facilities) ? facilities.map(name => ({ name, icon: this.facilityIcon(name) })) : []
+      this.setData({ roomType, facilities, nights, totalPrice, nightlyPrice: Number(roomType.basePrice || 0).toFixed(2), currentImage: 0 })
     } catch (err) {
       console.error(err)
     }
+  },
+
+  facilityIcon(name) {
+    const icons = [
+      [/智能|马桶/, 'smart'], [/地暖|暖气/, 'heat'], [/空调/, 'air'],
+      [/电视/, 'tv'], [/Wi.?Fi|无线|宽带/i, 'wifi'], [/茶椅|休闲椅|沙发/, 'chair'],
+      [/茶几|茶桌|桌/, 'table'], [/衣柜|衣帽/, 'cabinet'], [/卫浴|洗浴|浴缸|淋浴/, 'bath'],
+      [/窗/, 'window'], [/禁烟/, 'no-smoking'], [/加床|床/, 'bed'], [/吹风机/, 'dryer']
+    ]
+    const match = icons.find(([pattern]) => pattern.test(name))
+    return `./icons/${match ? match[1] : 'facility'}.svg`
+  },
+
+  onSwiperChange(e) {
+    this.setData({ currentImage: e.detail.current })
   },
 
   calculateNights() {
@@ -69,8 +84,8 @@ Page({
     const index = e.currentTarget.dataset.index
     const roomType = this.data.roomType
     if (roomType && roomType.images && roomType.images[index]) {
-      roomType.images[index] = 'https://dummyimage.com/400x300/667eea/ffffff.png&text=Room'
-      this.setData({ roomType })
+      roomType.images.splice(index, 1)
+      this.setData({ roomType, currentImage: Math.max(0, Math.min(this.data.currentImage, roomType.images.length - 1)) })
     }
   },
 
