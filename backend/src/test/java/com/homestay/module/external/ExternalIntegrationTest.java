@@ -42,8 +42,8 @@ class ExternalIntegrationTest {
         insertStatisticOrder(prefix + "b", platform, second, room, "2051-01-02", "2051-01-03", "10.00", "1.00", "2.00", "CHECKED_OUT");
         var result = service.statistics(LocalDate.of(2051, 1, 1), LocalDate.of(2051, 1, 31), null, null, null);
         assertEquals(2, result.anchors().size());
-        assertTrue(result.anchors().stream().anyMatch(item -> item.name().contains("ID:" + first)));
-        assertTrue(result.anchors().stream().anyMatch(item -> item.name().contains("ID:" + second)));
+        assertTrue(result.anchors().stream().allMatch(item -> item.name().equals(name)));
+        assertTrue(result.anchors().stream().allMatch(item -> item.orderCount() == 1));
     }
 
     @Test @Transactional void statisticsIncludeOnlyStayedOrdersAndKeepDimensionsIndependent() throws Exception {

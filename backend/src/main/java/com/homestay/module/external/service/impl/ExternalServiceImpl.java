@@ -217,8 +217,7 @@ public class ExternalServiceImpl implements ExternalService {
                 if (day.isBefore(start) || day.isAfter(end)) continue;
                 List<Accumulator> groups = List.of(total, daily.computeIfAbsent(day.toString(), Accumulator::new),
                         byPlatform.computeIfAbsent(String.valueOf(order.getPlatformId()), k -> new Accumulator(info.platformName())),
-                        byAnchor.computeIfAbsent(String.valueOf(order.getAnchorId()), k -> new Accumulator(
-                                order.getAnchorId() == null ? info.anchorName() : info.anchorName() + "（ID:" + order.getAnchorId() + "）")),
+                        byAnchor.computeIfAbsent(String.valueOf(order.getAnchorId()), k -> new Accumulator(info.anchorName())),
                         byRoom.computeIfAbsent(String.valueOf(order.getRoomId()), k -> new Accumulator(info.roomName())));
                 for (Accumulator group : groups) group.add(order.getId(), gross.get(i), fees.get(i), commissions.get(i));
             }
