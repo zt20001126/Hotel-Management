@@ -48,12 +48,6 @@
         "selectedIconPath": "images/tab-room-active.png"
       },
       {
-        "pagePath": "pages/orders/orders",
-        "text": "订单",
-        "iconPath": "images/tab-order.png",
-        "selectedIconPath": "images/tab-order-active.png"
-      },
-      {
         "pagePath": "pages/profile/profile",
         "text": "我的",
         "iconPath": "images/tab-user.png",

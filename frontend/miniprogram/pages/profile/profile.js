@@ -10,7 +10,7 @@ Page({
 
   onShow() {
     const tabBar = this.getTabBar && this.getTabBar()
-    if (tabBar) tabBar.setData({ selected: 3 })
+    if (tabBar) tabBar.setData({ selected: 2 })
     const userInfo = app.globalData.userInfo || {}
     const isEmployee = userInfo.role && userInfo.role !== 'guest'
     this.setData({
@@ -71,7 +71,7 @@ Page({
   },
 
   goOrders() {
-    wx.switchTab({ url: '/pages/orders/orders' })
+    wx.navigateTo({ url: '/pages/orders/orders' })
   },
 
   goEditProfile() {

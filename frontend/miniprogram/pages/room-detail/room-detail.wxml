@@ -39,6 +39,6 @@
   <image class="bridge-ornament" src="/assets/images/chinese-style/decorations/decoration-stone-bridge-water.webp" mode="aspectFit" aria-hidden="true"></image>
   <view class="bottom-bar">
     <view class="price-info"><text class="total-price">¥{{nightlyPrice}}</text><text class="bottom-unit"> /晚</text></view>
-    <button class="btn-book btn-primary" bindtap="goBooking">立即预订<text class="book-arrow">›</text></button>
+    <button class="btn-book btn-primary" bindtap="goBooking">立即预订</button>
   </view>
 </view>

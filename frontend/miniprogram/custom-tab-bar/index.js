@@ -4,7 +4,6 @@ Component({
     list: [
       { pagePath: '/pages/index/index', text: '首页', icon: '/images/tab-home.png', activeIcon: '/images/tab-home-active.png' },
       { pagePath: '/pages/rooms/rooms', text: '房型', icon: '/images/tab-room.png', activeIcon: '/images/tab-room-active.png' },
-      { pagePath: '/pages/orders/orders', text: '订单', icon: '/images/tab-order.png', activeIcon: '/images/tab-order-active.png' },
       { pagePath: '/pages/profile/profile', text: '我的', icon: '/images/tab-user.png', activeIcon: '/images/tab-user-active.png' }
     ]
   },

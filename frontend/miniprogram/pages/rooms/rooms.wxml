@@ -24,7 +24,7 @@
             <text class="currency">¥</text><text class="amount">{{item.basePrice}}</text>
             <text class="unit">/晚</text>
           </view>
-          <button class="btn-book" size="mini">预订<text class="book-arrow">›</text></button>
+          <button class="btn-book" size="mini">预订</button>
         </view>
       </view>
     </view>
