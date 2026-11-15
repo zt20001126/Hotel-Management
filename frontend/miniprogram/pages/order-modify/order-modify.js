@@ -13,7 +13,7 @@ Page({
     newTotalPrice: 0,
     priceDiff: 0,
     absPriceDiff: 0,
-    depositRate: 0.3,
+    depositRate: 0,
     submitting: false
   },
 

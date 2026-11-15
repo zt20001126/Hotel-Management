@@ -433,7 +433,7 @@ CREATE TABLE `sys_config`  (
 -- ----------------------------
 -- Records of sys_config
 -- ----------------------------
-INSERT INTO `sys_config` VALUES (1, 'deposit_rate', '0.3', '保证金比例', '预订时需支付的保证金比例，如0.3表示30%', 'number', '2025-12-30 03:28:24', '2025-12-30 03:28:24');
+INSERT INTO `sys_config` VALUES (1, 'deposit_rate', '0', '保证金比例', '预订时需支付的保证金比例，如0.3表示30%', 'number', '2025-12-30 03:28:24', '2025-12-30 03:28:24');
 INSERT INTO `sys_config` VALUES (2, 'cancel_free_hours', '24', '免费取消时限', '入住前多少小时可免费取消（小时）', 'number', '2025-12-30 03:28:24', '2025-12-30 03:28:24');
 INSERT INTO `sys_config` VALUES (3, 'cancel_penalty_rate', '0.5', '取消扣款比例', '超过免费取消时限后取消的扣款比例', 'number', '2025-12-30 03:28:24', '2025-12-30 03:28:24');
 INSERT INTO `sys_config` VALUES (4, 'check_in_time', '14:00', '入住时间', '标准入住时间', 'string', '2025-12-30 03:28:24', '2025-12-30 03:28:24');

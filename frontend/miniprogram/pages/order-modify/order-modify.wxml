@@ -47,7 +47,7 @@
     <text class="tip-content">1. 改订后，系统会重新计算订单价格</text>
     <text class="tip-content">2. 如新价格高于原价格，需要补差价</text>
     <text class="tip-content">3. 如新价格低于原价格，差额将退回到您的账户</text>
-    <text class="tip-content">4. 改订后需要重新支付保证金</text>
+    <text class="tip-content" wx:if="{{depositRate > 0}}">4. 改订后需要重新支付保证金</text>
   </view>
   
   <view class="bottom-bar">

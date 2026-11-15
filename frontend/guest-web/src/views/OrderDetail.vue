@@ -105,7 +105,7 @@
                 <el-descriptions-item label="总价">
                   <span class="price-text">¥{{ Number(order.totalPrice || 0).toFixed(2) }}</span>
                 </el-descriptions-item>
-                <el-descriptions-item label="保证金">
+                <el-descriptions-item v-if="Number(order.deposit) > 0" label="保证金">
                   <span class="deposit-text">¥{{ Number(order.deposit || 0).toFixed(2) }}</span>
                 </el-descriptions-item>
                 <el-descriptions-item label="已支付">
@@ -168,7 +168,7 @@
         </el-form-item>
         <el-form-item label="支付类型" required>
           <el-radio-group v-model="paymentForm.paymentType">
-            <el-radio label="deposit" :disabled="hasPaidDeposit || remainingDeposit <= 0">
+            <el-radio v-if="Number(order?.deposit) > 0" label="deposit" :disabled="hasPaidDeposit || remainingDeposit <= 0">
               支付保证金 (¥{{ remainingDeposit }})
             </el-radio>
             <el-radio label="room_fee" :disabled="hasPaidRoomFee || remainingRoomFee <= 0">
@@ -246,7 +246,7 @@
         <el-form-item label="新房费">
           <span class="price-text">¥{{ modifyTotalPrice }}</span>
         </el-form-item>
-        <el-form-item label="新保证金">
+        <el-form-item v-if="modifyDeposit > 0" label="新保证金">
           <span class="deposit-text">¥{{ modifyDeposit }}</span>
         </el-form-item>
         <el-form-item label="价格差额">
@@ -302,7 +302,7 @@ const paymentForm = ref({
 // 改订相关
 const showModifyDialog = ref(false)
 const modifyLoading = ref(false)
-const depositRate = ref(0.3)
+const depositRate = ref(0)
 const modifyForm = ref({
   checkInDate: '',
   checkOutDate: ''

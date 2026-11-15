@@ -68,7 +68,7 @@ async function loadConfig() {
   try {
     const res = await getConfigMap()
     configForm.value = res.data
-    configForm.value.deposit_rate = parseFloat(res.data.deposit_rate || 0.3)
+    configForm.value.deposit_rate = parseFloat(res.data.deposit_rate ?? 0)
     configForm.value.cancel_free_hours = parseInt(res.data.cancel_free_hours || 24)
     configForm.value.cancel_penalty_rate = parseFloat(res.data.cancel_penalty_rate || 0.5)
     configForm.value.late_checkout_fee = parseFloat(res.data.late_checkout_fee || 50)

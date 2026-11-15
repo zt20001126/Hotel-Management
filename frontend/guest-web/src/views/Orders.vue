@@ -108,7 +108,7 @@
             <div class="order-footer">
               <div class="price-info">
                 <span class="total-price">总价：¥{{ order.totalPrice }}</span>
-                <span class="deposit" v-if="order.deposit">保证金：¥{{ order.deposit }}</span>
+                <span class="deposit" v-if="Number(order.deposit) > 0">保证金：¥{{ order.deposit }}</span>
                 <span class="paid" v-if="order.paidAmount > 0">已支付：¥{{ order.paidAmount }}</span>
                 <span class="unpaid" v-if="getUnpaidAmount(order) > 0">待支付：¥{{ getUnpaidAmount(order) }}</span>
               </div>
@@ -149,6 +149,7 @@
         <el-form-item label="支付类型" required>
           <el-radio-group v-model="paymentForm.paymentType">
             <el-radio
+              v-if="Number(currentOrder.deposit) > 0"
               label="deposit"
               :disabled="hasPaidDeposit(currentOrderPayments) || getRemainingDeposit(currentOrder, currentOrderPayments) <= 0"
             >

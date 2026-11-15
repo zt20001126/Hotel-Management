@@ -63,7 +63,7 @@
                     <span>房费：</span>
                     <span class="highlight">¥{{ totalPrice.toFixed(2) }}</span>
                   </div>
-                  <div class="info-row">
+                  <div class="info-row" v-if="deposit > 0">
                     <span>保证金（{{ (depositRate * 100).toFixed(0) }}%）：</span>
                     <span class="highlight-red">¥{{ deposit.toFixed(2) }}</span>
                   </div>
@@ -190,7 +190,7 @@
                     <span>总价：</span>
                     <span class="total-price">¥{{ totalPrice }}</span>
                   </div>
-                  <div class="summary-item">
+                  <div class="summary-item" v-if="deposit > 0">
                     <span>保证金：</span>
                     <span class="deposit">¥{{ deposit }}</span>
                   </div>
@@ -242,7 +242,7 @@ const submitting = ref(false)
 const currentStep = ref(0)
 const roomType = ref(null)
 const bookingFormRef = ref(null)
-const depositRate = ref(0.3)  // 默认30%，会从配置加载
+const depositRate = ref(0)  // 未加载配置时默认不收取保证金
 
 const bookingForm = ref({
   roomTypeId: Number(route.params.roomTypeId),

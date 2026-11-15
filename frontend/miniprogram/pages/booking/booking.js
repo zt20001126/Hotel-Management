@@ -8,9 +8,10 @@ Page({
     today: '',
     minCheckOut: '',
     roomType: {},
+    roomImage: '',
     nights: 1,
     totalPrice: 0,
-    depositRate: 0.3,
+    depositRate: 0,
     deposit: 0,
     grandTotal: 0,  // 应付总计 = 房费 + 保证金
     guestOptions: [1, 2, 3, 4, 5, 6],
@@ -41,10 +42,18 @@ Page({
     try {
       const res = await app.request({ url: `/roomType/${this.data.roomTypeId}` })
       const roomType = res.data
-      this.setData({ roomType }, () => this.updatePrice())
+      let images = []
+      try {
+        images = typeof roomType.images === 'string' ? JSON.parse(roomType.images) : roomType.images
+      } catch (e) {}
+      this.setData({ roomType, roomImage: Array.isArray(images) ? (images[0] || '') : '' }, () => this.updatePrice())
     } catch (err) {
       console.error(err)
     }
+  },
+
+  onRoomImageError() {
+    this.setData({ roomImage: '' })
   },
 
   async loadConfig() {
