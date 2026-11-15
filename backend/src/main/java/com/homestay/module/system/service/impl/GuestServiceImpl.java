@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class GuestServiceImpl extends ServiceImpl<GuestMapper, Guest> implements GuestService {
 
+    private static final String DEFAULT_GUEST_AVATAR = "/images/avatar-ink.png";
+
     @Override
     @Transactional
     public Guest loginByWechatPhone(String openid, String phone) {
@@ -73,7 +75,7 @@ public class GuestServiceImpl extends ServiceImpl<GuestMapper, Guest> implements
             guest.setNickname("微信用户" + phone.substring(Math.max(0, phone.length() - 4)));
         }
         if (!StringUtils.hasText(guest.getAvatar())) {
-            guest.setAvatar("/images/logo.png");
+            guest.setAvatar(DEFAULT_GUEST_AVATAR);
         }
     }
 
