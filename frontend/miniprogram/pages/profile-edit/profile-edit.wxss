@@ -82,9 +82,6 @@
 
 .container {
   padding-bottom: 140rpx;
-  background-image: url("/assets/images/chinese-style/backgrounds/background-four-corner-plum.webp");
-  background-size: 100% 100vh;
-  background-position: center top;
-  background-repeat: no-repeat;
+  background-image: linear-gradient(180deg, #f7edde 0%, #f8f1e5 46%, #eee0ca 100%);
 }
 

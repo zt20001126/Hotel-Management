@@ -27,29 +27,12 @@
           </view>
         </picker>
       </view>
-      <view class="nights-wrap"><image class="night-ornament night-left" src="/images/cloud.svg" mode="aspectFit"></image><text class="night-pill"><text class="moon-icon">☾</text> 共 <text class="night-count">{{stayNights}}</text> 晚</text><image class="night-ornament night-right" src="/images/cloud.svg" mode="aspectFit"></image></view>
-      <button class="btn-search btn-primary" bindtap="searchRooms"><text class="search-icon"></text>查询</button>
+      <view class="nights-wrap"><image class="night-ornament night-left" src="/images/cloud.svg" mode="aspectFit"></image><text class="night-pill">共 <text class="night-count">{{stayNights}}</text> 晚</text><image class="night-ornament night-right" src="/images/cloud.svg" mode="aspectFit"></image></view>
+      <button class="btn-search btn-primary" bindtap="searchRooms">查询</button>
     </view>
     <image class="cloud-ornament cloud-card-left" src="/images/cloud.svg" mode="aspectFit"></image><image class="cloud-ornament cloud-card-right" src="/images/cloud.svg" mode="aspectFit"></image>
     <image class="corner corner-bl" src="/images/keyfret.svg" mode="aspectFit"></image><image class="corner corner-br" src="/images/keyfret.svg" mode="aspectFit"></image>
   </view>
 
-  <!-- 推荐房型 -->
-  <view class="section">
-    <view class="section-title"><text>精选房型</text><image class="section-cloud" src="/images/cloud.svg" mode="aspectFit"></image></view>
-    <view class="room-list">
-      <view class="room-card card" wx:for="{{roomTypes}}" wx:key="id" bindtap="goRoomDetail" data-id="{{item.id}}">
-        <image class="room-image" src="{{item.images[0] || 'https://dummyimage.com/400x300/667eea/ffffff.png&text=Room'}}" mode="aspectFill" binderror="onImageError" data-index="{{index}}"></image>
-        <view class="room-info">
-          <view class="room-name">{{item.name}}</view>
-          <view class="room-desc">{{item.bedType}} · {{item.area}}㎡ · 最多{{item.maxGuests}}人</view>
-          <view class="room-price">
-            <text class="price">¥{{item.basePrice}}</text>
-            <text class="unit">/晚起</text>
-          </view>
-        </view>
-      </view>
-    </view>
-  </view>
   </view>
 </view>

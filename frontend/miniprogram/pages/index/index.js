@@ -8,8 +8,7 @@ Page({
     minCheckOut: '',
     stayNights: 1,
     guestOptions: [1, 2, 3, 4, 5, 6],
-    guestIndex: 1,
-    roomTypes: []
+    guestIndex: 1
   },
 
   onLoad() {
@@ -22,13 +21,11 @@ Page({
       minCheckOut: tomorrow,
       stayNights: this.calculateNights(today, tomorrow)
     })
-    this.loadRoomTypes()
   },
 
   onShow() {
     const tabBar = this.getTabBar && this.getTabBar()
     if (tabBar) tabBar.setData({ selected: 0 })
-    this.loadRoomTypes()
   },
 
   formatDate(date) {
@@ -71,43 +68,6 @@ Page({
     this.setData({ guestIndex: e.detail.value })
   },
 
-  async loadRoomTypes() {
-    try {
-      const res = await app.request({ url: '/roomType/available' })
-      // 解析图片列表
-      const roomTypes = res.data.map(roomType => {
-        if (roomType.images) {
-          try {
-            roomType.images = typeof roomType.images === 'string' 
-              ? JSON.parse(roomType.images) 
-              : roomType.images
-          } catch (e) {
-            roomType.images = []
-          }
-        } else {
-          roomType.images = []
-        }
-        // 如果没有图片，使用网络占位图
-        if (!roomType.images || roomType.images.length === 0) {
-          roomType.images = ['https://dummyimage.com/400x300/667eea/ffffff.png&text=Room']
-        }
-        return roomType
-      })
-      this.setData({ roomTypes })
-    } catch (err) {
-      console.error(err)
-    }
-  },
-
-  onImageError(e) {
-    const index = e.currentTarget.dataset.index
-    const roomTypes = this.data.roomTypes
-    if (roomTypes[index]) {
-      roomTypes[index].images[0] = 'https://dummyimage.com/400x300/667eea/ffffff.png&text=Room'
-      this.setData({ roomTypes })
-    }
-  },
-
   searchRooms() {
     const { checkInDate, checkOutDate, guestIndex, guestOptions } = this.data
     
@@ -131,14 +91,6 @@ Page({
     }
     wx.switchTab({
       url: '/pages/rooms/rooms'
-    })
-  },
-
-  goRoomDetail(e) {
-    const id = e.currentTarget.dataset.id
-    const { checkInDate, checkOutDate } = this.data
-    wx.navigateTo({
-      url: `/pages/room-detail/room-detail?id=${id}&checkInDate=${checkInDate}&checkOutDate=${checkOutDate}`
     })
   }
 })

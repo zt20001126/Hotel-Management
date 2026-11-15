@@ -1,11 +1,11 @@
-.container { position: relative; padding-top: 300rpx; }
-.home-art-swiper { position:absolute; z-index:0; top:0; left:-28rpx; width:calc(100% + 56rpx); height:1333rpx; opacity:.36; pointer-events:none; }
+.container { position: relative; min-height: 100vh; padding-top: 300rpx; overflow: hidden; }
+.home-art-swiper { position:absolute; z-index:0; top:0; left:-28rpx; width:calc(100% + 56rpx); height:100%; opacity:.36; pointer-events:none; }
 .home-art-image { display:block; width:100%; height:100%; }
 .page-content { position:relative; z-index:1; }
 .brand-title { position:absolute; z-index:3; top:-228rpx; left:0; right:0; text-align:center; color:#241f19; font-family:"STKaiti","KaiTi",serif; font-weight:700; font-size:48rpx; letter-spacing:4rpx; text-shadow:0 1rpx 8rpx rgba(255,249,239,.9); }
 .brand-seal { display:inline-flex; vertical-align:middle; align-items:center; justify-content:center; width:30rpx; height:42rpx; margin-left:8rpx; background:#a83e2a; border-radius:7rpx; color:#fff2df; font-family:"KaiTi",serif; font-size:17rpx; letter-spacing:0; writing-mode:vertical-rl; }
 .search-card { padding: 30rpx 32rpx 34rpx; position: relative; overflow: hidden; border:2rpx solid #b99462; border-radius:24rpx; background:rgba(255,249,239,.96); box-shadow:0 10rpx 26rpx rgba(91,63,35,.12); }
-.search-title, .section-title { font-family: "STKaiti", "KaiTi", serif; font-size: 38rpx; font-weight: 700; color: #392c20; }
+.search-title { font-family: "STKaiti", "KaiTi", serif; font-size: 38rpx; font-weight: 700; color: #392c20; }
 .search-title { position:relative; z-index:1; margin-bottom:24rpx; font-size:42rpx; }
 .search-title::after { content:""; position:absolute; z-index:-1; left:-4rpx; bottom:-8rpx; width:300rpx; height:18rpx; border-radius:50%; background:#e9cfaa; opacity:.58; transform:rotate(-7deg); }
 .corner { position:absolute; z-index:3; width:62rpx; height:62rpx; pointer-events:none; }
@@ -22,30 +22,16 @@
 .date-value { display: block; margin-top: 14rpx; color: #30271f; font-size: 27rpx; font-weight: 600; text-align: center; white-space: nowrap; }
 .date-connector { width: 48rpx; color: #c4ad8c; font-size: 30rpx; text-align: center; }
 .nights-wrap { display:flex; align-items:center; justify-content:center; margin-top:20rpx; }
-.night-pill { padding: 10rpx 34rpx; background: #f6e9d5; border-radius: 999rpx; color: #655548; font-size: 28rpx; }
-.moon-icon { margin-right:10rpx; font-size:34rpx; }
+.night-pill { text-align:center; padding: 10rpx 34rpx; background: #f6e9d5; border-radius: 999rpx; color: #655548; font-size: 28rpx; }
 .night-ornament { width:118rpx; height:38rpx; opacity:.54; }
 .night-left { transform:scaleX(-1); }
 .night-right { margin-left:18rpx; }
 .night-count { color: #a83e2a; font-size: 32rpx; font-weight: 700; }
 .btn-search { margin:24rpx auto 0; width:72%; height:88rpx; border-radius:999rpx; background:linear-gradient(100deg,#b44730,#982f21); box-shadow:0 6rpx 14rpx rgba(132,48,31,.16); font-size:34rpx; letter-spacing:3rpx; }
 .btn-search:active { opacity:.82; }
-.search-icon { position:relative; width:24rpx; height:24rpx; margin-right:18rpx; border:4rpx solid #fff9ef; border-radius:50%; }
-.search-icon::after { content:""; position:absolute; width:14rpx; height:4rpx; right:-11rpx; bottom:-6rpx; background:#fff9ef; border-radius:4rpx; transform:rotate(48deg); }
 .cloud-ornament { position:absolute; z-index:2; width:190rpx; height:86rpx; bottom:4rpx; opacity:.42; pointer-events:none; }
 .cloud-card-left { left:0; }
 .cloud-card-right { right:0; transform:scaleX(-1); }
-.section { margin-top: 34rpx; }
-.section-title { display:flex; align-items:center; margin:0 0 20rpx 6rpx; }
-.section-title::before { content:""; display:block; width:8rpx; height:38rpx; margin-right:18rpx; background:#a83e2a; border-radius:8rpx; }
-.section-cloud { width:180rpx; height:60rpx; margin-left:auto; opacity:.55; }
-.room-card { padding: 0; overflow: hidden; margin-bottom: 24rpx; }
-.room-image { display: block; width: 100%; height: 300rpx; background: #e9dcc9; }
-.room-info { padding: 22rpx 24rpx 26rpx; }
-.room-name { font-size: 32rpx; font-weight: 600; margin-bottom: 10rpx; }
-.room-desc { font-size: 24rpx; color: #978a7a; margin-bottom: 12rpx; }
-.room-price .price { color: #a83e2a; font-size: 36rpx; font-weight: 700; }
-.room-price .unit { color: #978a7a; font-size: 24rpx; }
 
 /* Reserve space for the custom four-item navigation bar. */
 .container { padding-bottom: 150rpx; }
