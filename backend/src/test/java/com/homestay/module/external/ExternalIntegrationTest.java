@@ -29,6 +29,53 @@ class ExternalIntegrationTest {
     @Autowired private MockMvc mvc;
     @Autowired private JwtUtil jwt;
 
+    @Test @Transactional void identicalAnchorNamesRemainDistinctInReport() {
+        Long room = jdbc.queryForObject("SELECT id FROM room WHERE deleted=0 ORDER BY id LIMIT 1", Long.class);
+        Long platform = jdbc.queryForObject("SELECT id FROM external_platform ORDER BY id LIMIT 1", Long.class);
+        String name = "same-" + UUID.randomUUID();
+        jdbc.update("INSERT INTO external_anchor(name,status) VALUES (?,1)", name);
+        Long first = jdbc.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
+        jdbc.update("INSERT INTO external_anchor(name,status) VALUES (?,1)", name);
+        Long second = jdbc.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
+        String prefix = UUID.randomUUID().toString();
+        insertStatisticOrder(prefix + "a", platform, first, room, "2051-01-01", "2051-01-02", "10.00", "1.00", "2.00", "CHECKED_IN");
+        insertStatisticOrder(prefix + "b", platform, second, room, "2051-01-02", "2051-01-03", "10.00", "1.00", "2.00", "CHECKED_OUT");
+        var result = service.statistics(LocalDate.of(2051, 1, 1), LocalDate.of(2051, 1, 31), null, null, null);
+        assertEquals(2, result.anchors().size());
+        assertTrue(result.anchors().stream().anyMatch(item -> item.name().contains("ID:" + first)));
+        assertTrue(result.anchors().stream().anyMatch(item -> item.name().contains("ID:" + second)));
+    }
+
+    @Test @Transactional void statisticsIncludeOnlyStayedOrdersAndKeepDimensionsIndependent() throws Exception {
+        Long room1 = jdbc.queryForObject("SELECT id FROM room WHERE deleted=0 ORDER BY id LIMIT 1", Long.class);
+        Long room2 = jdbc.queryForObject("SELECT id FROM room WHERE deleted=0 ORDER BY id LIMIT 1 OFFSET 1", Long.class);
+        Long platform1 = jdbc.queryForObject("SELECT id FROM external_platform ORDER BY id LIMIT 1", Long.class);
+        Long platform2 = jdbc.queryForObject("SELECT id FROM external_platform ORDER BY id LIMIT 1 OFFSET 1", Long.class);
+        jdbc.update("INSERT INTO external_anchor(name,status) VALUES (?,1)", "qa-" + UUID.randomUUID());
+        Long anchor = jdbc.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
+        String prefix = UUID.randomUUID().toString();
+        insertStatisticOrder(prefix + "a", platform1, anchor, room1, "2050-01-31", "2050-02-02", "10.01", "1.01", "2.00", "CHECKED_IN");
+        insertStatisticOrder(prefix + "b", platform2, null, room2, "2050-02-01", "2050-02-02", "5.00", "6.00", "0.00", "CHECKED_OUT");
+        insertStatisticOrder(prefix + "c", platform1, null, room2, "2050-02-02", "2050-02-03", "999.00", "0.00", "0.00", "BOOKED");
+        insertStatisticOrder(prefix + "d", platform1, null, room1, "2050-02-03", "2050-02-04", "999.00", "0.00", "0.00", "CANCELLED");
+        var report = service.statistics(LocalDate.of(2050, 2, 1), LocalDate.of(2050, 2, 28), null, null, null);
+        assertEquals(2, report.total().orderCount()); assertEquals(2, report.total().nights());
+        assertEquals(new BigDecimal("10.00"), report.total().totalAmount());
+        assertEquals(new BigDecimal("6.50"), report.total().platformFee());
+        assertEquals(new BigDecimal("1.00"), report.total().anchorFee());
+        assertEquals(new BigDecimal("2.50"), report.total().netProfit());
+        assertEquals(2, report.platforms().size()); assertEquals(2, report.anchors().size()); assertEquals(2, report.rooms().size());
+        var selected = service.statistics(LocalDate.of(2050, 2, 1), LocalDate.of(2050, 2, 28), platform2, null, null);
+        assertEquals(new BigDecimal("-1.00"), selected.total().netProfit());
+        assertEquals(1, selected.total().orderCount());
+    }
+
+    private void insertStatisticOrder(String no, Long platform, Long anchor, Long room, String start, String end,
+                                      String total, String fee, String commission, String status) {
+        jdbc.update("INSERT INTO external_order(order_no,platform_id,anchor_id,room_id,check_in_date,check_out_date,guest_count,total_amount,platform_fee,anchor_fee,status) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+                no, platform, anchor, room, start, end, 1, new BigDecimal(total), new BigDecimal(fee), new BigDecimal(commission), status);
+    }
+
     @Test @Transactional void catalogCanClearRemarkAndRejectInvalidStatus() throws Exception {
         String owner = "Bearer " + jwt.generateToken(1L, "owner-test", "employee", "owner");
         String name = "anchor-" + UUID.randomUUID();
