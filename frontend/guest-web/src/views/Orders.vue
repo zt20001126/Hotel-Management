@@ -5,7 +5,7 @@
       <div class="guest-container">
         <div class="header-content">
           <div class="logo" @click="$router.push('/')">
-            <h2>悦居民宿</h2>
+            <h2>芊浔民宿</h2>
           </div>
           <el-menu
             mode="horizontal"
@@ -130,7 +130,7 @@
     <!-- 页脚 -->
     <el-footer class="footer">
       <div class="guest-container">
-        <p>&copy; 2025 悦居民宿. 保留所有权利.</p>
+        <p>&copy; 2025 芊浔民宿. 保留所有权利.</p>
       </div>
     </el-footer>
 

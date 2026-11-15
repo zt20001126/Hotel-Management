@@ -1,0 +1,1 @@
+import{D as e}from"./index-s6aGkcni.js";function r(){return e.get("/roomType/available")}function a(o){return e.get("/roomType/search",{params:o})}function n(o){return e.get(`/roomType/${o}`)}function s(){return e.get("/config/deposit_rate")}export{n as a,s as b,r as g,a as s};

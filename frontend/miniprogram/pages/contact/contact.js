@@ -69,7 +69,7 @@ Page({
     wx.openLocation({
       latitude: 39.9042, // 示例坐标，实际应该使用真实地址的坐标
       longitude: 116.4074,
-      name: '悦居民宿',
+      name: '芊浔民宿',
       address: this.data.contactInfo.address,
       fail: (err) => {
         wx.showToast({ title: '打开地图失败', icon: 'none' })

@@ -64,7 +64,7 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  document.title = to.meta.title ? `${to.meta.title} - 悦居民宿` : '悦居民宿'
+  document.title = to.meta.title ? `${to.meta.title} - 芊浔民宿` : '芊浔民宿'
   
   const userStore = useUserStore()
   

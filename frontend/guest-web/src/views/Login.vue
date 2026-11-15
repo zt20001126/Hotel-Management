@@ -5,7 +5,7 @@
         <template #header>
           <div class="card-header">
             <h2>登录</h2>
-            <p>欢迎回到悦居民宿</p>
+            <p>欢迎回到芊浔民宿</p>
           </div>
         </template>
         <el-form

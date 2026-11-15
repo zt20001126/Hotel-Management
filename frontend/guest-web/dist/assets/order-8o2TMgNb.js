@@ -1,0 +1,1 @@
+import{D as e}from"./index-s6aGkcni.js";function n(r){return e.post("/order",r)}function u(){return e.get("/order/my")}function o(r){return e.get(`/order/${r}`)}function a(r){return e.put(`/order/${r}/cancel`)}function c(r){return e.put("/order",r)}export{a,o as b,n as c,u as g,c as u};

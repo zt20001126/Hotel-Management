@@ -5,7 +5,7 @@
       <div class="guest-container">
         <div class="header-content">
           <div class="logo">
-            <h2>悦居民宿</h2>
+            <h2>芊浔民宿</h2>
           </div>
           <el-menu
             mode="horizontal"
@@ -36,7 +36,7 @@
     <div class="search-section">
       <div class="guest-container">
         <div class="page-header">
-          <h1>欢迎来到悦居民宿</h1>
+          <h1>欢迎来到芊浔民宿</h1>
           <p>为您提供舒适的住宿体验</p>
         </div>
         <el-card class="search-card">
@@ -125,7 +125,7 @@
     <!-- 页脚 -->
     <el-footer class="footer">
       <div class="guest-container">
-        <p>&copy; 2025 悦居民宿. 保留所有权利.</p>
+        <p>&copy; 2025 芊浔民宿. 保留所有权利.</p>
       </div>
     </el-footer>
   </div>

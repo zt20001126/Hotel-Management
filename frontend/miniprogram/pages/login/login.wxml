@@ -1,42 +1,49 @@
-<view class="container">
-  <view class="logo-wrap">
-    <image class="logo" src="/images/logo.png" mode="aspectFit" binderror="onLogoError" wx:if="{{showLogo}}"></image>
-    <text class="app-name">悦居民宿</text>
-  </view>
-  
-  <view class="form-card card">
-    <!-- 登录类型选择 -->
-    <view class="login-type-tabs">
-      <view class="tab-item {{loginType === 'guest' ? 'active' : ''}}" 
-            data-type="guest" 
-            bindtap="switchLoginType">
-        客户登录
+<view class="login-page">
+  <image
+    class="login-background"
+    src="/assets/images/chinese-style/backgrounds/background-bottom-water-town.webp"
+    mode="aspectFill"
+    aria-hidden="true"
+  ></image>
+
+  <view class="login-content">
+    <view class="brand-block">
+      <view class="brand-emblem">
+        <image
+          wx:if="{{showLogo}}"
+          class="brand-logo"
+          src="/images/logo-qianxun.jpg"
+          mode="aspectFill"
+          binderror="onLogoError"
+          aria-label="芊浔民宿 Logo"
+        ></image>
+        <text wx:else class="brand-logo-fallback">芊</text>
       </view>
-      <view class="tab-item {{loginType === 'employee' ? 'active' : ''}}" 
-            data-type="employee" 
-            bindtap="switchLoginType">
-        员工登录
+
+      <view class="brand-name-row">
+        <view class="brand-rule"><view class="brand-dot"></view></view>
+        <text class="brand-name">芊浔民宿</text>
+        <view class="brand-rule brand-rule-right"><view class="brand-dot"></view></view>
       </view>
     </view>
-    
-    <block wx:if="{{loginType === 'guest'}}">
-      <view class="form-item login-tip">使用微信绑定手机号快捷登录</view>
-      <button class="btn-login btn-primary"
-              open-type="getPhoneNumber"
-              bindgetphonenumber="onGetPhoneNumber"
-              loading="{{loading}}"
-              disabled="{{loading}}">
-        微信手机号快捷登录
+
+    <view class="login-card">
+      <button
+        class="quick-login-button"
+        open-type="getPhoneNumber"
+        bindgetphonenumber="onGetPhoneNumber"
+        loading="{{loading}}"
+        disabled="{{loading}}"
+      >
+        <view class="quick-login-content">
+          <view class="wechat-mark" aria-hidden="true">
+            <view class="wechat-bubble wechat-bubble-main"></view>
+            <view class="wechat-bubble wechat-bubble-small"></view>
+          </view>
+          <text class="quick-login-label">微信手机号快捷登录</text>
+          <text class="quick-login-arrow">›</text>
+        </view>
       </button>
-    </block>
-    <block wx:else>
-      <view class="form-item">
-        <input class="input" placeholder="请输入员工用户名" value="{{username}}" bindinput="onUsernameInput" />
-      </view>
-      <view class="form-item">
-        <input class="input" placeholder="请输入密码" password value="{{password}}" bindinput="onPasswordInput" />
-      </view>
-      <button class="btn-login btn-primary" bindtap="login" loading="{{loading}}">员 工 登 录</button>
-    </block>
+    </view>
   </view>
 </view>

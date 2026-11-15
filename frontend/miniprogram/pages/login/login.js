@@ -5,8 +5,7 @@ Page({
     username: '',
     password: '',
     loading: false,
-    showLogo: true,
-    loginType: 'guest' // 'guest' 或 'employee'
+    showLogo: true
   },
 
   onLogoError() {
@@ -20,11 +19,6 @@ Page({
 
   onPasswordInput(e) {
     this.setData({ password: e.detail.value })
-  },
-
-  switchLoginType(e) {
-    const type = e.currentTarget.dataset.type
-    this.setData({ loginType: type })
   },
 
   async login() {

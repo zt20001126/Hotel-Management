@@ -4,7 +4,7 @@
     <div class="login-card">
       <div class="login-header">
         <el-icon class="logo-icon"><HomeFilled /></el-icon>
-        <h1>悦居民宿管理系统</h1>
+        <h1>芊浔民宿管理系统</h1>
         <p>Homestay Business Management System</p>
       </div>
       

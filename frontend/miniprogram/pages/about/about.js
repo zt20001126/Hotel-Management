@@ -1,9 +1,9 @@
 Page({
   data: {
     appInfo: {
-      name: '悦居民宿',
+      name: '芊浔民宿',
       version: '1.0.0',
-      description: '悦居民宿致力于为您提供温馨舒适的住宿体验，让每一次旅行都成为美好的回忆。',
+      description: '芊浔民宿致力于为您提供温馨舒适的住宿体验，让每一次旅行都成为美好的回忆。',
       features: [
         '精选优质房源，环境优美',
         '24小时客服服务，随时为您解答',
@@ -11,7 +11,7 @@ Page({
         '完善的售后服务保障'
       ],
       company: {
-        name: '悦居民宿管理有限公司',
+        name: '芊浔民宿管理有限公司',
         established: '2020年',
         location: '北京市朝阳区'
       }
@@ -26,7 +26,7 @@ Page({
   viewAgreement() {
     wx.showModal({
       title: '用户协议',
-      content: '欢迎使用悦居民宿服务。在使用我们的服务前，请仔细阅读用户协议。',
+      content: '欢迎使用芊浔民宿服务。在使用我们的服务前，请仔细阅读用户协议。',
       showCancel: false,
       confirmText: '我知道了'
     })

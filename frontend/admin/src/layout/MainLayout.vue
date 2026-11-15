@@ -3,7 +3,7 @@
     <el-aside :width="isCollapse ? '64px' : '220px'" class="sidebar">
       <div class="logo">
         <el-icon><HomeFilled /></el-icon>
-        <span v-show="!isCollapse">悦居民宿</span>
+        <span v-show="!isCollapse">芊浔民宿</span>
       </div>
       <el-menu
         :default-active="currentRoute"

@@ -442,10 +442,10 @@ INSERT INTO `sys_config` VALUES (3, 'cancel_penalty_rate', '0.5', '取消扣款�
 INSERT INTO `sys_config` VALUES (4, 'check_in_time', '14:00', '入住时间', '标准入住时间', 'string', '2025-12-30 03:28:24', '2025-12-30 03:28:24');
 INSERT INTO `sys_config` VALUES (5, 'check_out_time', '12:00', '退房时间', '标准退房时间', 'string', '2025-12-30 03:28:24', '2025-12-30 03:28:24');
 INSERT INTO `sys_config` VALUES (6, 'late_checkout_fee', '50', '延迟退房费用', '每小时延迟退房费用', 'number', '2025-12-30 03:28:24', '2025-12-30 03:28:24');
-INSERT INTO `sys_config` VALUES (7, 'homestay_name', '悦居民宿', '民宿名称', '民宿品牌名称', 'string', '2025-12-30 03:28:24', '2025-12-30 03:28:24');
+INSERT INTO `sys_config` VALUES (7, 'homestay_name', '芊浔民宿', '民宿名称', '民宿品牌名称', 'string', '2025-12-30 03:28:24', '2025-12-30 03:28:24');
 INSERT INTO `sys_config` VALUES (8, 'homestay_address', '浙江省杭州市西湖区龙井路88号', '民宿地址', '民宿详细地址', 'string', '2025-12-30 03:28:24', '2025-12-30 03:28:24');
 INSERT INTO `sys_config` VALUES (9, 'homestay_phone', '0571-88888888', '联系电话', '民宿联系电话', 'string', '2025-12-30 03:28:24', '2025-12-30 03:28:24');
-INSERT INTO `sys_config` VALUES (10, 'homestay_description', '悦居民宿位于风景秀丽的西湖景区，环境优美，交通便利，是您休闲度假的理想选择。', '民宿介绍', '民宿简介描述', 'string', '2025-12-30 03:28:24', '2025-12-30 03:28:24');
+INSERT INTO `sys_config` VALUES (10, 'homestay_description', '芊浔民宿位于风景秀丽的西湖景区，环境优美，交通便利，是您休闲度假的理想选择。', '民宿介绍', '民宿简介描述', 'string', '2025-12-30 03:28:24', '2025-12-30 03:28:24');
 
 -- ----------------------------
 -- Table structure for sys_employee
