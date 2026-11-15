@@ -15,6 +15,35 @@ App({
     }
   },
 
+  onShow(options) {
+    if (!this.globalData.token) {
+      if (options.path !== 'pages/login/login') this.goToLogin()
+      return
+    }
+
+    // 前台恢复时由服务端校验令牌，网络故障不清除已有登录状态。
+    const token = this.globalData.token
+    const isEmployee = this.globalData.userInfo && this.globalData.userInfo.role
+    wx.request({
+      url: this.globalData.baseUrl + (isEmployee ? '/employee/current' : '/guest/current'),
+      header: { Authorization: 'Bearer ' + token },
+      success: (res) => {
+        if (this.globalData.token === token && (res.statusCode === 401 || (res.data && res.data.code === 401))) {
+          this.logout()
+          this.goToLogin()
+        }
+      }
+    })
+  },
+
+  goToLogin() {
+    const pages = getCurrentPages()
+    const currentPage = pages[pages.length - 1]
+    if (!currentPage || currentPage.route !== 'pages/login/login') {
+      wx.reLaunch({ url: '/pages/login/login' })
+    }
+  },
+
   request(options) {
     const that = this
     const requestId = Date.now() + Math.random().toString(36).substr(2, 9)
@@ -51,11 +80,8 @@ App({
               url: options.url,
               message: res.data.message
             })
-            wx.removeStorageSync('token')
-            wx.removeStorageSync('userInfo')
-            that.globalData.token = ''
-            that.globalData.userInfo = null
-            wx.navigateTo({ url: '/pages/login/login' })
+            that.logout()
+            that.goToLogin()
             reject(res.data)
           } else {
             console.error(`[HTTP请求] [${requestId}] 业务错误`, {

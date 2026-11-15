@@ -149,7 +149,7 @@ Page({
       success: (res) => {
         if (res.confirm) {
           app.logout()
-          wx.redirectTo({ url: '/pages/login/login' })
+          app.goToLogin()
         }
       }
     })

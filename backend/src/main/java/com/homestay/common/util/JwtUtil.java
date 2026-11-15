@@ -33,15 +33,19 @@ public class JwtUtil {
         claims.put("userType", userType);
         claims.put("role", role);
         String subject = username != null ? username : userType + ":" + userId;
-        return createToken(claims, subject);
+        long expirationMillis = JwtConstants.GUEST_USER_TYPE.equals(userType)
+                ? JwtConstants.GUEST_TOKEN_EXPIRATION_MILLIS
+                : JwtConstants.EMPLOYEE_TOKEN_EXPIRATION_MILLIS;
+        return createToken(claims, subject, expirationMillis);
     }
 
-    private String createToken(Map<String, Object> claims, String subject) {
+    private String createToken(Map<String, Object> claims, String subject, long expirationMillis) {
+        long issuedAt = System.currentTimeMillis();
         return Jwts.builder()
                 .claims(claims)
                 .subject(subject)
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + JwtConstants.TOKEN_EXPIRATION_MILLIS))
+                .issuedAt(new Date(issuedAt))
+                .expiration(new Date(issuedAt + expirationMillis))
                 .signWith(getSigningKey())
                 .compact();
     }

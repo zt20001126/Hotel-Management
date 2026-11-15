@@ -75,7 +75,7 @@ Page({
       })
       app.login(result.data.token, result.data.userInfo)
       wx.showToast({ title: '登录成功', icon: 'success' })
-      setTimeout(() => wx.navigateBack(), 800)
+      setTimeout(() => wx.switchTab({ url: '/pages/index/index' }), 800)
     } catch (error) {
       console.error('微信手机号登录失败', error)
     } finally {

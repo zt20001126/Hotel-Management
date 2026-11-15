@@ -86,7 +86,7 @@ Page({
         if (res.confirm) {
           app.logout()
           this.setData({ isLogin: false, userInfo: {} })
-          wx.showToast({ title: '已退出登录', icon: 'success' })
+          app.goToLogin()
         }
       }
     })
