@@ -1,87 +1,20 @@
-.form-card {
-  padding: 40rpx;
-}
-
-.section-title {
-  font-size: 32rpx;
-  font-weight: bold;
-  margin-bottom: 30rpx;
-  color: #303133;
-}
-
-.form-item {
-  margin-bottom: 40rpx;
-  padding-bottom: 30rpx;
-  border-bottom: 1rpx solid #f5f7fa;
-}
-
-.form-item:last-child {
-  border-bottom: none;
-  margin-bottom: 0;
-  padding-bottom: 0;
-}
-
-.label {
-  display: block;
-  font-size: 28rpx;
-  color: #606266;
-  margin-bottom: 20rpx;
-}
-
-.value {
-  display: block;
-  font-size: 30rpx;
-  color: #303133;
-}
-
-.hint {
-  display: block;
-  font-size: 24rpx;
-  color: #909399;
-  margin-top: 10rpx;
-}
-
-.input {
-  width: 100%;
-  height: 80rpx;
-  background: #f5f7fa;
-  border-radius: 8rpx;
-  padding: 0 30rpx;
-  font-size: 30rpx;
-  box-sizing: border-box;
-}
-
-.picker-value {
-  height: 80rpx;
-  line-height: 80rpx;
-  background: #f5f7fa;
-  border-radius: 8rpx;
-  padding: 0 30rpx;
-  font-size: 30rpx;
-  color: #303133;
-}
-
-.bottom-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 20rpx;
-  padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
-  background: #fff;
-  box-shadow: 0 -2rpx 12rpx rgba(0, 0, 0, 0.05);
-}
-
-.btn-save {
-  width: 100%;
-  height: 88rpx;
-  line-height: 88rpx;
-  font-size: 32rpx;
-  text-align: center;
-}
-
-.container {
-  padding-bottom: 140rpx;
-  background-image: linear-gradient(180deg, #f7edde 0%, #f8f1e5 46%, #eee0ca 100%);
-}
-
+page { background: #f9efe4; }
+.profile-edit-page { position: relative; min-height: 100vh; box-sizing: border-box; padding-bottom: calc(160rpx + env(safe-area-inset-bottom)); overflow: hidden; background: #f9efe4; }
+.top-art { position: relative; height: 105rpx; overflow: hidden; }
+.plum-art { position: absolute; left: 0; top: -20rpx; width: 270rpx; height: 125rpx; }
+.houses-art { position: absolute; right: 0; bottom: 0; width: 320rpx; height: 105rpx; opacity: .55; }
+.content { position: relative; z-index: 1; padding: 0 32rpx; }
+.form-card.card { box-sizing: border-box; padding: 36rpx 32rpx 30rpx; border: 1rpx solid #f0e3d5; border-radius: 24rpx; background: #fdf7ef; box-shadow: 0 8rpx 20rpx rgba(112, 76, 36, .12); }
+.section-title { padding-left: 17rpx; border-left: 7rpx solid #ad3b29; color: #351b13; font-size: 32rpx; font-weight: 700; line-height: 36rpx; }
+.nickname-row { display: flex; align-items: center; min-width: 0; min-height: 96rpx; margin-top: 26rpx; border-bottom: 1rpx solid #ede2d5; }
+.user-icon { flex: none; width: 38rpx; height: 38rpx; margin-right: 20rpx; }
+.label { flex: none; color: #351b13; font-size: 28rpx; font-weight: 600; }
+.nickname-input { flex: 1; min-width: 0; height: 80rpx; margin-left: 20rpx; color: #605d59; text-align: right; font-size: 28rpx; }
+.placeholder { color: #a69a8b; }
+.chevron { flex: none; width: 14rpx; height: 14rpx; margin: 0 8rpx 0 22rpx; border-top: 2rpx solid #8e8981; border-right: 2rpx solid #8e8981; transform: rotate(45deg); }
+.landscape { position: absolute; left: 0; right: 0; bottom: calc(145rpx + env(safe-area-inset-bottom)); height: 180rpx; pointer-events: none; overflow: hidden; }
+.landscape-houses { position: absolute; left: -30rpx; bottom: 0; width: 48%; height: 170rpx; opacity: .36; }
+.landscape-bridge { position: absolute; right: -20rpx; bottom: 0; width: 50%; height: 170rpx; opacity: .42; }
+.bottom-bar { position: fixed; z-index: 10; left: 0; right: 0; bottom: 0; padding: 24rpx 32rpx calc(20rpx + env(safe-area-inset-bottom)); background: #fcf9f5; }
+.btn-save { width: 100%; height: 82rpx; border-radius: 999rpx; background: #ad3b29; font-size: 32rpx; }
+.btn-save[disabled] { color: #fff9ef; background: #ad3b29; opacity: .65; }

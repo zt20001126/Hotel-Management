@@ -25,7 +25,11 @@ Page({
     this.setData({ loading: true })
     try {
       const res = await app.request({ url: '/order/my' })
-      this.setData({ orders: res.data })
+      const orders = (res.data || []).map(order => ({
+        ...order,
+        displayTotalPrice: Number(order.totalPrice || 0).toFixed(2)
+      }))
+      this.setData({ orders })
     } catch (err) {
       console.error(err)
     } finally {

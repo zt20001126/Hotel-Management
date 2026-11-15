@@ -43,11 +43,6 @@
       <text class="menu-text">联系客服</text>
       <text class="menu-arrow">›</text>
     </view>
-    <view class="menu-item" bindtap="goAbout">
-      <image class="menu-icon" src="/images/profile-icon-about.svg" mode="aspectFit"></image>
-      <text class="menu-text">关于我们</text>
-      <text class="menu-arrow">›</text>
-    </view>
   </view>
   
   <button class="btn-logout" wx:if="{{isLogin}}" bindtap="logout">退出登录</button>

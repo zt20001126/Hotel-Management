@@ -1,75 +1,39 @@
-<view class="container">
-  <image class="contact-houses-art" src="/assets/images/chinese-style/decorations/decoration-baijianlou-houses.webp" mode="aspectFit" aria-hidden="true"></image>
-  <view class="header">
-    <text class="title">联系我们</text>
-    <text class="subtitle">我们随时为您服务</text>
+<view class="contact-page">
+  <image class="top-plum" src="/assets/images/chinese-style/decorations/decoration-plum-branch.webp" mode="aspectFit" aria-hidden="true" />
+  <image class="top-houses" src="/assets/images/chinese-style/decorations/decoration-baijianlou-houses.webp" mode="aspectFit" aria-hidden="true" />
+  <view class="landscape" aria-hidden="true">
+    <image class="landscape-houses" src="/assets/images/chinese-style/decorations/decoration-baijianlou-houses.webp" mode="aspectFit" />
+    <image class="landscape-bridge" src="/assets/images/chinese-style/decorations/decoration-stone-bridge-water.webp" mode="aspectFit" />
   </view>
 
-  <view class="contact-card card">
-    <view class="contact-item" bindtap="makePhoneCall">
-      <view class="item-left">
-        <text class="item-icon">📞</text>
-        <view class="item-content">
-          <text class="item-label">客服热线</text>
-          <text class="item-value">{{contactInfo.phone}}</text>
+  <view class="content">
+    <view class="intro">
+      <text class="intro-title">联系我们</text>
+      <text class="intro-subtitle">欢迎随时与我们联系，我们竭诚为您服务</text>
+      <view class="ornament" aria-hidden="true">
+        <view class="ornament-line ornament-line-left" />
+        <image class="ornament-icon" src="./ornament.svg" />
+        <view class="ornament-line ornament-line-right" />
+      </view>
+    </view>
+
+    <view class="contact-panel phone-panel">
+      <view class="panel-title">联系电话</view>
+      <view class="panel-body">
+        <view class="icon-box"><image class="contact-icon" src="./phone.svg" /></view>
+        <view class="panel-value phone-values">
+          <text>18557531002</text>
+          <text>13867282089</text>
         </view>
       </view>
-      <text class="item-action">拨打</text>
     </view>
 
-    <view class="contact-item" bindtap="copyWechat">
-      <view class="item-left">
-        <text class="item-icon">💬</text>
-        <view class="item-content">
-          <text class="item-label">微信客服</text>
-          <text class="item-value">{{contactInfo.wechat}}</text>
-        </view>
+    <view class="contact-panel address-panel">
+      <view class="panel-title">民宿地址</view>
+      <view class="panel-body">
+        <view class="icon-box"><image class="contact-icon" src="./location.svg" /></view>
+        <view class="panel-value address-value">浙江湖州南浔区宝善街167号</view>
       </view>
-      <text class="item-action">复制</text>
     </view>
-
-    <view class="contact-item" bindtap="copyQQ">
-      <view class="item-left">
-        <text class="item-icon">💻</text>
-        <view class="item-content">
-          <text class="item-label">QQ客服</text>
-          <text class="item-value">{{contactInfo.qq}}</text>
-        </view>
-      </view>
-      <text class="item-action">复制</text>
-    </view>
-
-    <view class="contact-item" bindtap="copyEmail">
-      <view class="item-left">
-        <text class="item-icon">📧</text>
-        <view class="item-content">
-          <text class="item-label">邮箱地址</text>
-          <text class="item-value">{{contactInfo.email}}</text>
-        </view>
-      </view>
-      <text class="item-action">复制</text>
-    </view>
-  </view>
-
-  <view class="info-card card">
-    <view class="info-title">服务时间</view>
-    <view class="info-content">{{contactInfo.workTime}}</view>
-  </view>
-
-  <view class="address-card card">
-    <view class="info-title">公司地址</view>
-    <view class="address-content">
-      <text class="address-text">{{contactInfo.address}}</text>
-      <button class="btn-map" bindtap="viewMap">查看地图</button>
-    </view>
-  </view>
-
-  <view class="tips-card">
-    <text class="tips-title">💡 温馨提示</text>
-    <text class="tips-text">• 客服热线：{{contactInfo.workTime}} 为您服务</text>
-    <text class="tips-text">• 微信客服：添加后请发送"咨询"开始对话</text>
-    <text class="tips-text">• 紧急情况请直接拨打客服热线</text>
-    <text class="tips-text">• 我们会在24小时内回复您的邮件</text>
   </view>
 </view>
-

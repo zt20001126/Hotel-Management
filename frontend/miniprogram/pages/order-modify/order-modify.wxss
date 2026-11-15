@@ -1,131 +1,46 @@
-.room-info {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 40rpx;
-}
-
-.room-name {
-  font-size: 32rpx;
-  font-weight: bold;
-  color: #303133;
-}
-
-.room-price {
-  font-size: 28rpx;
-  color: #667eea;
-  font-weight: 500;
-}
-
-.form-card {
-  padding: 40rpx;
-  margin-top: 20rpx;
-}
-
-.section-title {
-  font-size: 30rpx;
-  font-weight: bold;
-  color: #303133;
-  margin-bottom: 30rpx;
-  padding-left: 15rpx;
-  border-left: 6rpx solid #667eea;
-}
-
-.form-item {
-  margin-bottom: 40rpx;
-}
-
-.form-item:last-child {
-  margin-bottom: 0;
-}
-
-.label {
-  display: block;
-  font-size: 28rpx;
-  color: #606266;
-  margin-bottom: 20rpx;
-}
-
-.picker-value {
-  height: 80rpx;
-  line-height: 80rpx;
-  background: #f5f7fa;
-  border-radius: 8rpx;
-  padding: 0 30rpx;
-  font-size: 30rpx;
-  color: #303133;
-}
-
-.price-card {
-  padding: 40rpx;
-  margin-top: 20rpx;
-}
-
-.price-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20rpx 0;
-  font-size: 28rpx;
-  border-bottom: 1rpx solid #f5f7fa;
-}
-
-.price-row:last-child {
-  border-bottom: none;
-}
-
-.price-row.diff {
-  margin-top: 10rpx;
-  padding-top: 20rpx;
-  border-top: 2rpx solid #f5f7fa;
-  font-size: 32rpx;
-  font-weight: bold;
-}
-
-.tip-card {
-  padding: 30rpx;
-  margin-top: 20rpx;
-  background: #fff7e6;
-  border-left: 6rpx solid #e6a23c;
-}
-
-.tip-text {
-  display: block;
-  font-size: 28rpx;
-  font-weight: bold;
-  color: #e6a23c;
-  margin-bottom: 15rpx;
-}
-
-.tip-content {
-  display: block;
-  font-size: 24rpx;
-  color: #606266;
-  line-height: 1.8;
-  margin-bottom: 10rpx;
-}
-
-.bottom-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 20rpx;
-  padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
-  background: #fff;
-  box-shadow: 0 -4rpx 20rpx rgba(0,0,0,0.08);
-}
-
-.btn-submit {
-  width: 100%;
-  height: 88rpx;
-  line-height: 88rpx;
-  font-size: 32rpx;
-  text-align: center;
-}
-
-.container {
-  padding-bottom: 140rpx;
-  background-image: linear-gradient(180deg, #f8f1e5 0%, #efe2cb 72%, #d8c29f 100%);
-}
-
+page { background: #f8efe2; }
+.modify-page { min-height: 100vh; box-sizing: border-box; background: linear-gradient(180deg, #faf2e7, #f8ead6); padding-bottom: calc(150rpx + env(safe-area-inset-bottom)); }
+.top-art { position: relative; height: 90rpx; overflow: hidden; }
+.plum-art { position: absolute; left: 0; top: -18rpx; width: 270rpx; height: 115rpx; }
+.houses-art { position: absolute; right: 0; bottom: 0; width: 320rpx; height: 105rpx; opacity: .55; }
+.content { padding: 0 32rpx 28rpx; }
+.card { box-sizing: border-box; border: 1rpx solid #efe1cc; border-radius: 24rpx; background: #fcf7ef; box-shadow: 0 7rpx 20rpx rgba(112, 76, 36, .11); }
+.room-info { display: flex; align-items: center; gap: 18rpx; padding: 20rpx; }
+.room-image { flex: none; width: 155rpx; height: 120rpx; border-radius: 14rpx; background: #f0e5d5; }
+.room-placeholder { display: flex; align-items: center; justify-content: center; }
+.room-placeholder image { width: 52rpx; height: 52rpx; }
+.room-main { flex: 1; min-width: 0; }
+.room-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 10rpx; }
+.room-name { min-width: 0; font-size: 28rpx; font-weight: 700; color: #25170f; overflow-wrap: anywhere; }
+.room-price { flex: none; color: #ad2b1b; font-size: 27rpx; font-weight: 700; }
+.per-night { font-size: 21rpx; }
+.room-tags { display: flex; flex-wrap: wrap; gap: 8rpx; margin-top: 15rpx; }
+.tag { display: flex; align-items: center; padding: 6rpx 10rpx; border-radius: 999rpx; background: #f2e6d5; color: #30251c; font-size: 19rpx; }
+.tag image { width: 23rpx; height: 23rpx; margin-right: 5rpx; }
+.form-card, .price-card { margin-top: 16rpx; padding: 25rpx 24rpx; }
+.section-title { padding-left: 16rpx; border-left: 7rpx solid #b52d1b; color: #26170f; font-size: 31rpx; font-weight: 700; line-height: 36rpx; margin-bottom: 20rpx; }
+.form-item, .price-row { display: flex; align-items: center; min-width: 0; }
+.form-item { margin-top: 18rpx; }
+.row-icon { flex: none; width: 34rpx; height: 34rpx; margin: 0 16rpx 0 8rpx; }
+.label { flex: none; color: #26211d; font-size: 26rpx; }
+.form-item picker { flex: 1; min-width: 0; margin-left: 25rpx; }
+.picker-value { box-sizing: border-box; height: 64rpx; padding: 0 26rpx; border-radius: 999rpx; background: #f0ede8; display: flex; align-items: center; justify-content: space-between; font-size: 27rpx; font-weight: 600; }
+.chevron { flex: none; width: 14rpx; height: 14rpx; border-top: 2rpx solid #947b5d; border-right: 2rpx solid #947b5d; transform: rotate(45deg); margin-left: 10rpx; }
+.nights { display: flex; align-items: center; justify-content: center; margin-top: 22rpx; height: 58rpx; border-radius: 12rpx; background: #f8e7df; color: #ac2c1b; font-size: 27rpx; font-weight: 700; }
+.nights image { width: 30rpx; height: 30rpx; margin-right: 15rpx; }
+.price-row { min-height: 65rpx; border-bottom: 1rpx solid #eee4d7; }
+.price-value { flex: 1; min-width: 0; text-align: right; margin-left: 12rpx; font-size: 27rpx; overflow-wrap: anywhere; }
+.new-price { color: #ad2b1b; font-weight: 700; }
+.refund { color: #537346; }
+.price-row.diff { margin-top: 4rpx; padding-top: 8rpx; border-top: 2rpx dashed #e5d5c3; border-bottom: 0; }
+.price-row.diff .label, .price-row.diff .price-value { font-weight: 700; }
+.tip-card { position: relative; overflow: hidden; margin-top: 16rpx; padding: 26rpx 30rpx; background: #fdf3e3; border-color: #efce98; }
+.tip-heading, .tip-content { position: relative; z-index: 1; }
+.tip-heading { display: flex; align-items: center; color: #cc7909; font-size: 28rpx; font-weight: 700; margin-bottom: 12rpx; }
+.tip-heading image { width: 32rpx; height: 32rpx; margin-right: 12rpx; }
+.tip-content { color: #514b46; font-size: 23rpx; line-height: 1.8; }
+.bridge-art { position: absolute; right: 0; bottom: -8rpx; width: 245rpx; height: 90rpx; opacity: .22; }
+.bottom-bar { position: fixed; z-index: 10; left: 0; right: 0; bottom: 0; padding: 24rpx 32rpx calc(20rpx + env(safe-area-inset-bottom)); background: #fcf8f2; box-shadow: 0 -4rpx 18rpx rgba(115, 83, 47, .06); }
+.btn-submit { width: 100%; height: 82rpx; border-radius: 999rpx; background: linear-gradient(180deg, #b93220, #9e2416); font-size: 31rpx; }
+.btn-submit[disabled] { opacity: .7; color: #fff9ef; background: #a83e2a; }
+.button-arrow { margin-left: 16rpx; font-size: 45rpx; line-height: 1; }

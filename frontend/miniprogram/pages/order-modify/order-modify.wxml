@@ -1,61 +1,41 @@
-<view class="container" wx:if="{{order && roomType}}">
-  <view class="room-info card">
-    <view class="room-name">{{roomType.name}}</view>
-    <view class="room-price">¥{{roomType.basePrice}}/晚</view>
+<view class="modify-page" wx:if="{{order && roomType}}">
+  <view class="top-art" aria-hidden="true">
+    <image class="plum-art" src="/assets/images/chinese-style/decorations/decoration-plum-branch.webp" mode="aspectFit" />
+    <image class="houses-art" src="/assets/images/chinese-style/decorations/decoration-baijianlou-houses.webp" mode="aspectFit" />
   </view>
-  
-  <view class="form-card card">
-    <view class="section-title">修改入住日期</view>
-    
-    <view class="form-item">
-      <text class="label">入住日期</text>
-      <picker mode="date" value="{{checkInDate}}" start="{{today}}" bindchange="onCheckInChange">
-        <view class="picker-value">{{checkInDate}}</view>
-      </picker>
+  <view class="content">
+    <view class="room-info card">
+      <image wx:if="{{roomImage}}" class="room-image" src="{{roomImage}}" mode="aspectFill" binderror="onRoomImageError" />
+      <view wx:else class="room-image room-placeholder"><image src="../rooms/icon-bed.svg" mode="aspectFit" /></view>
+      <view class="room-main">
+        <view class="room-heading"><text class="room-name">{{roomType.name}}</text><text class="room-price">¥{{displayRoomPrice}}<text class="per-night">/晚</text></text></view>
+        <view class="room-tags">
+          <view class="tag" wx:if="{{roomType.bedType}}"><image src="../rooms/icon-bed.svg" />{{roomType.bedType}}</view>
+          <view class="tag" wx:if="{{roomType.area}}"><image src="../rooms/icon-area.svg" />{{roomType.area}}㎡</view>
+          <view class="tag" wx:if="{{roomType.maxGuests}}"><image src="../rooms/icon-guests.svg" />最多{{roomType.maxGuests}}人</view>
+        </view>
+      </view>
     </view>
-    
-    <view class="form-item">
-      <text class="label">退房日期</text>
-      <picker mode="date" value="{{checkOutDate}}" start="{{minCheckOut}}" bindchange="onCheckOutChange">
-        <view class="picker-value">{{checkOutDate}}</view>
-      </picker>
+    <view class="form-card card">
+      <view class="section-title">修改入住日期</view>
+      <view class="form-item"><image class="row-icon" src="/images/order-detail/calendar.svg" /><text class="label">入住日期</text><picker mode="date" value="{{checkInDate}}" start="{{today}}" bindchange="onCheckInChange"><view class="picker-value">{{checkInDate}}<text class="chevron"></text></view></picker></view>
+      <view class="form-item"><image class="row-icon" src="/images/order-detail/calendar.svg" /><text class="label">退房日期</text><picker mode="date" value="{{checkOutDate}}" start="{{minCheckOut}}" bindchange="onCheckOutChange"><view class="picker-value">{{checkOutDate}}<text class="chevron"></text></view></picker></view>
+      <view class="nights"><image src="/images/order-detail/night.svg" />共 {{nights}} 晚</view>
     </view>
-  </view>
-  
-  <view class="price-card card">
-    <view class="section-title">费用对比</view>
-    <view class="price-row">
-      <text class="label">原订单总价</text>
-      <text>¥{{originalTotalPrice}}</text>
+    <view class="price-card card">
+      <view class="section-title">费用对比</view>
+      <view class="price-row"><image class="row-icon" src="/images/order-detail/coins.svg" /><text class="label">原订单总价</text><text class="price-value">¥{{displayOriginalPrice}}</text></view>
+      <view class="price-row"><image class="row-icon" src="/images/order-detail/wallet.svg" /><text class="label">新订单总价</text><text class="price-value new-price">¥{{displayNewPrice}}</text></view>
+      <view class="price-row diff"><image class="row-icon" src="/images/order-detail/yuan.svg" /><text class="label">{{priceDiff > 0 ? '需补差价' : (priceDiff < 0 ? '可退金额' : '差价')}}</text><text class="price-value {{priceDiff > 0 ? 'new-price' : (priceDiff < 0 ? 'refund' : '')}}">{{priceDiff === 0 ? '无变化' : '¥' + displayPriceDiff}}</text></view>
     </view>
-    <view class="price-row">
-      <text class="label">新订单总价</text>
-      <text class="text-primary">¥{{newTotalPrice}}</text>
-    </view>
-    <view class="price-row diff" wx:if="{{priceDiff !== 0}}">
-      <text class="label">{{priceDiff > 0 ? '需补差价' : '可退金额'}}</text>
-      <text class="{{priceDiff > 0 ? 'text-danger' : 'text-success'}}">¥{{absPriceDiff}}</text>
-    </view>
-    <view class="price-row diff" wx:if="{{priceDiff === 0}}">
-      <text class="label">差价</text>
-      <text class="text-gray">无变化</text>
+    <view class="tip-card card">
+      <view class="tip-heading"><image src="./icon-tip.svg" /><text>改订说明：</text></view>
+      <view class="tip-content">1. 改订后，系统会重新计算订单价格</view>
+      <view class="tip-content">2. 如新价格高于原价格，需要补差价</view>
+      <view class="tip-content">3. 如新价格低于原价格，差额将退回到您的账户</view>
+      <view class="tip-content" wx:if="{{depositRate > 0}}">4. 改订后需要重新支付保证金</view>
+      <image class="bridge-art" src="/assets/images/chinese-style/decorations/decoration-stone-bridge-water.webp" mode="aspectFit" aria-hidden="true" />
     </view>
   </view>
-  
-  <view class="tip-card card">
-    <text class="tip-text">⚠️ 改订说明：</text>
-    <text class="tip-content">1. 改订后，系统会重新计算订单价格</text>
-    <text class="tip-content">2. 如新价格高于原价格，需要补差价</text>
-    <text class="tip-content">3. 如新价格低于原价格，差额将退回到您的账户</text>
-    <text class="tip-content" wx:if="{{depositRate > 0}}">4. 改订后需要重新支付保证金</text>
-  </view>
-  
-  <view class="bottom-bar">
-    <button class="btn-submit btn-primary" bindtap="submitModify" loading="{{submitting}}">
-      确认改订
-    </button>
-  </view>
-  
-  <view style="height: 140rpx;"></view>
+  <view class="bottom-bar"><button class="btn-submit btn-primary" bindtap="submitModify" loading="{{submitting}}" disabled="{{submitting}}">确认改订 <text class="button-arrow">›</text></button></view>
 </view>
-

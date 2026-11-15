@@ -1,45 +1,24 @@
-<view class="container">
-  <view class="form-card card">
-    <view class="section-title">个人信息</view>
-    
-    <view class="form-item">
-      <text class="label">登录手机号</text>
-      <text class="value">{{userInfo.phone}}</text>
-      <text class="hint">手机号通过微信授权绑定</text>
-    </view>
-    
-    <view class="form-item">
-      <text class="label">昵称</text>
-      <input class="input" placeholder="请输入昵称" value="{{form.nickname}}" bindinput="onInput" data-field="nickname" />
-    </view>
-    
-    <view class="form-item">
-      <text class="label">真实姓名</text>
-      <input class="input" placeholder="请输入真实姓名" value="{{form.realName}}" bindinput="onInput" data-field="realName" />
-    </view>
-    
-    <view class="form-item">
-      <text class="label">邮箱</text>
-      <input class="input" placeholder="请输入邮箱" value="{{form.email}}" bindinput="onInput" data-field="email" />
-    </view>
-    
-    <view class="form-item">
-      <text class="label">身份证号</text>
-      <input class="input" placeholder="请输入身份证号" value="{{form.idCard}}" bindinput="onInput" data-field="idCard" />
-    </view>
-    
-    <view class="form-item">
-      <text class="label">性别</text>
-      <picker mode="selector" range="{{genderOptions}}" value="{{genderIndex}}" bindchange="onGenderChange">
-        <view class="picker-value">{{genderOptions[genderIndex]}}</view>
-      </picker>
+<view class="profile-edit-page">
+  <view class="top-art" aria-hidden="true">
+    <image class="plum-art" src="/assets/images/chinese-style/decorations/decoration-plum-branch.webp" mode="aspectFit" />
+    <image class="houses-art" src="/assets/images/chinese-style/decorations/decoration-baijianlou-houses.webp" mode="aspectFit" />
+  </view>
+  <view class="content">
+    <view class="form-card card">
+      <view class="section-title">个人信息</view>
+      <view class="nickname-row" bindtap="editNickname">
+        <image class="user-icon" src="/pages/booking/icon-user.svg" mode="aspectFit" />
+        <text class="label">昵称</text>
+        <input class="nickname-input" placeholder="请输入昵称" placeholder-class="placeholder" value="{{nickname}}" focus="{{nicknameFocused}}" bindinput="onNicknameInput" bindblur="onNicknameBlur" confirm-type="done" />
+        <view class="chevron"></view>
+      </view>
     </view>
   </view>
-  
+  <view class="landscape" aria-hidden="true">
+    <image class="landscape-houses" src="/assets/images/chinese-style/decorations/decoration-baijianlou-houses.webp" mode="aspectFit" />
+    <image class="landscape-bridge" src="/assets/images/chinese-style/decorations/decoration-stone-bridge-water.webp" mode="aspectFit" />
+  </view>
   <view class="bottom-bar">
-    <button class="btn-save btn-primary" bindtap="save" loading="{{loading}}">保存</button>
+    <button class="btn-save btn-primary" bindtap="save" loading="{{loading}}" disabled="{{loading || !loaded}}">保存</button>
   </view>
-  
-  <view style="height: 140rpx;"></view>
 </view>
-

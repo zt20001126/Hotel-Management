@@ -1,25 +1,29 @@
-.order-card { position: relative; padding: 26rpx; margin-bottom: 22rpx; }
-.order-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20rpx; margin-bottom: 12rpx; border-bottom: 1rpx solid #eadcc7; }
-.order-no { color: #655548; font-size: 25rpx; }
-.status { padding: 7rpx 18rpx; border-radius: 999rpx; font-size: 23rpx; }
-.status.pending { background: #f5e8cb; color: #987442; }
-.status.confirmed { background: #e5eee4; color: #55715b; }
-.status.checked_in { background: #e5eee4; color: #55715b; }
+page { background: #faf0e5; }
+.orders-page { position: relative; min-height: 100vh; box-sizing: border-box; padding-bottom: calc(145rpx + env(safe-area-inset-bottom)); overflow: hidden; background: #faf0e5; }
+.top-art { position: relative; height: 150rpx; overflow: hidden; }
+.plum-art { position: absolute; top: -20rpx; left: 0; width: 300rpx; height: 130rpx; }
+.houses-art { position: absolute; right: 0; bottom: 0; width: 410rpx; height: 140rpx; opacity: .6; }
+.landscape { position: absolute; left: 0; right: 0; bottom: calc(110rpx + env(safe-area-inset-bottom)); height: 180rpx; pointer-events: none; overflow: hidden; }
+.landscape-houses { position: absolute; left: -30rpx; bottom: 0; width: 50%; height: 180rpx; opacity: .4; }
+.landscape-bridge { position: absolute; right: -20rpx; bottom: 0; width: 54%; height: 180rpx; opacity: .48; }
+.order-list, .login-tip { position: relative; z-index: 1; }
+.order-list { padding: 0 32rpx; }
+.order-card.card { box-sizing: border-box; margin-bottom: 20rpx; padding: 22rpx 24rpx; border: 1rpx solid #efdcc5; border-radius: 27rpx; background: #fcf7ef; box-shadow: 0 7rpx 18rpx rgba(122, 82, 40, .08); }
+.order-header { display: flex; align-items: center; min-width: 0; gap: 16rpx; padding-bottom: 17rpx; border-bottom: 1rpx solid #eee1d2; }
+.header-icon { width: 33rpx; height: 33rpx; flex: none; }
+.order-no { flex: 1; min-width: 0; color: #4a1e17; font-size: 28rpx; overflow-wrap: anywhere; word-break: break-all; }
+.status { flex: none; padding: 6rpx 17rpx; border-radius: 999rpx; color: #7a532a; background: #f5e8d3; font-size: 23rpx; }
+.status.pending { background: #fbe0b5; color: #985415; }
+.status.confirmed, .status.checked_in { background: #e7efe2; color: #55715b; }
 .status.checked_out { background: #eee9df; color: #786d60; }
 .status.cancelled { background: #eeeae4; color: #978a7a; }
-.info-row { display: flex; justify-content: space-between; align-items: center; padding: 13rpx 0; color: #30271f; font-size: 27rpx; }
-.info-row .label { color: #978a7a; }
-.info-row .price { color: #a83e2a; font-weight: 700; }
-.order-footer { padding-top: 18rpx; margin-top: 12rpx; border-top: 1rpx solid #eadcc7; text-align: right; }
-.btn-cancel { display: inline-flex; height: 60rpx; padding: 0 30rpx; background: #fff9ef; border: 1rpx solid #b85b43; border-radius: 999rpx; color: #a83e2a; font-size: 24rpx; }
+.order-body { display: flex; align-items: center; padding-top: 19rpx; color: #24211e; font-size: 22rpx; }
+.date-part, .nights-part, .price-part { display: flex; align-items: center; min-width: 0; }
+.date-part { flex: 1; padding-right: 9rpx; }
+.nights-part { flex: none; padding: 0 12rpx; border-left: 1rpx solid #ead7c1; }
+.price-part { flex: 0 1 auto; padding-left: 12rpx; border-left: 1rpx solid #ead7c1; }
+.row-icon { flex: none; width: 27rpx; height: 27rpx; margin-right: 7rpx; }
+.dates { overflow-wrap: anywhere; }
+.price { color: #aa2d1d; font-size: 25rpx; font-weight: 700; overflow-wrap: anywhere; }
 .empty, .login-tip { text-align: center; padding: 100rpx 0; color: #978a7a; }
-.empty::before { content: "山水 · 暂无订单"; display: block; margin-bottom: 20rpx; color: #b99462; font-family: "STKaiti", "KaiTi", serif; font-size: 32rpx; }
 .btn-login { width: 240rpx; height: 76rpx; margin: 26rpx auto 0; }
-
-/* Reserve space for the custom four-item navigation bar. */
-.container { padding-bottom: 150rpx; }
-.container { position:relative; background-image:linear-gradient(180deg, #f8f1e5 0%, #efe2cb 72%, #d8c29f 100%); }
-.orders-banner { position:relative; height:190rpx; overflow:hidden; margin-bottom:22rpx; border-radius:22rpx; opacity:.82; }
-.orders-banner image { display:block; width:100%; height:100%; }
-.orders-town-art { position:fixed; z-index:0; right:0; bottom:calc(90rpx + env(safe-area-inset-bottom)); width:100%; height:250rpx; opacity:.24; pointer-events:none; }
-.order-card, .empty, .login-tip { position:relative; z-index:1; }

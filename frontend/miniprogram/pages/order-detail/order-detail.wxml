@@ -1,36 +1,35 @@
 <view class="container" wx:if="{{order}}">
-  <view class="status-card card {{order.status}}">
-    <text class="status-text">{{statusMap[order.status]}}</text>
+  <view class="top-decoration"><image class="plum" src="/images/plum-branch.svg" mode="aspectFit"/><image class="waterside" src="/images/profile-landscape.png" mode="aspectFill"/></view>
+  <view class="status-card">
+    <view class="status-icon"><image src="/images/order-detail/{{order.status}}.svg" mode="aspectFit"/></view>
+    <view class="status-copy"><text class="status-text">{{statusMap[order.status] || order.status}}</text><text class="status-hint">{{statusHintMap[order.status] || '查看您的订单详情'}}</text></view>
   </view>
   
   <view class="info-card card">
     <view class="section-title">订单信息</view>
-    <view class="info-row"><text class="label">订单编号</text><text>{{order.orderNo}}</text></view>
-    <view class="info-row"><text class="label">入住日期</text><text>{{order.checkInDate}}</text></view>
-    <view class="info-row"><text class="label">退房日期</text><text>{{order.checkOutDate}}</text></view>
-    <view class="info-row"><text class="label">入住晚数</text><text>{{order.nights}}晚</text></view>
-    <view class="info-row"><text class="label">入住人数</text><text>{{order.guestCount}}人</text></view>
+    <view class="info-row"><image class="row-icon" src="/images/order-detail/order.svg" mode="aspectFit"/><text class="label">订单编号</text><text class="value">{{order.orderNo}}</text></view>
+    <view class="info-row"><image class="row-icon" src="/images/order-detail/calendar.svg" mode="aspectFit"/><text class="label">入住日期</text><text class="value">{{order.checkInDate}}</text></view>
+    <view class="info-row"><image class="row-icon" src="/images/order-detail/calendar.svg" mode="aspectFit"/><text class="label">退房日期</text><text class="value">{{order.checkOutDate}}</text></view>
+    <view class="info-row"><image class="row-icon" src="/images/order-detail/night.svg" mode="aspectFit"/><text class="label">入住晚数</text><text class="value">{{order.nights}} 晚</text></view>
+    <view class="info-row"><image class="row-icon" src="/images/order-detail/guests.svg" mode="aspectFit"/><text class="label">入住人数</text><text class="value">{{order.guestCount}} 人</text></view>
   </view>
   
   <view class="info-card card">
     <view class="section-title">入住人信息</view>
-    <view class="info-row"><text class="label">姓名</text><text>{{order.guestName}}</text></view>
-    <view class="info-row"><text class="label">电话</text><text>{{order.guestPhone}}</text></view>
-    <view class="info-row" wx:if="{{order.guestIdCard}}"><text class="label">身份证</text><text>{{order.guestIdCard}}</text></view>
+    <view class="info-row"><image class="row-icon" src="/images/order-detail/user.svg" mode="aspectFit"/><text class="label">姓名</text><text class="value">{{order.guestName}}</text></view>
+    <view class="info-row"><image class="row-icon" src="/images/order-detail/phone.svg" mode="aspectFit"/><text class="label">电话</text><text class="value">{{order.guestPhone}}</text></view>
+    <view class="info-row" wx:if="{{order.guestIdCard}}"><image class="row-icon" src="/images/order-detail/id.svg" mode="aspectFit"/><text class="label">身份证</text><text class="value">{{order.guestIdCard}}</text></view>
   </view>
   
   <view class="info-card card">
     <view class="section-title">费用信息</view>
-    <view class="info-row"><text class="label">房费单价</text><text>¥{{order.roomPrice}}/晚</text></view>
-    <view class="info-row"><text class="label">房费({{order.nights}}晚)</text><text>¥{{order.totalPrice}}</text></view>
-    <view class="info-row" wx:if="{{order.deposit > 0}}"><text class="label">保证金</text><text>¥{{order.deposit}}</text></view>
-    <view class="info-row" wx:if="{{order.extraCharges > 0}}"><text class="label">额外消费</text><text>¥{{order.extraCharges}}</text></view>
-    <view class="info-row"><text class="label">应付总计</text><text class="price">¥{{totalAmount}}</text></view>
-    <view class="info-row"><text class="label">已付金额</text><text class="text-success">¥{{order.paidAmount}}</text></view>
-    <view class="info-row" wx:if="{{unpaidAmount > 0}}">
-      <text class="label">待付金额</text>
-      <text class="price">¥{{unpaidAmount}}</text>
-    </view>
+    <view class="info-row"><image class="row-icon" src="/images/order-detail/bed.svg" mode="aspectFit"/><text class="label">房费单价</text><text class="value">¥{{displayMoney.roomPrice}} /晚</text></view>
+    <view class="info-row"><image class="row-icon" src="/images/order-detail/coins.svg" mode="aspectFit"/><text class="label">房费({{order.nights}}晚)</text><text class="value">¥{{displayMoney.roomFee}}</text></view>
+    <view class="info-row" wx:if="{{order.deposit > 0}}"><image class="row-icon" src="/images/order-detail/wallet.svg" mode="aspectFit"/><text class="label">保证金</text><text class="value">¥{{displayMoney.deposit}}</text></view>
+    <view class="info-row" wx:if="{{order.extraCharges > 0}}"><image class="row-icon" src="/images/order-detail/coins.svg" mode="aspectFit"/><text class="label">额外消费</text><text class="value">¥{{displayMoney.extraCharges}}</text></view>
+    <view class="info-row"><image class="row-icon" src="/images/order-detail/wallet.svg" mode="aspectFit"/><text class="label">应付总计</text><text class="value price">¥{{displayMoney.total}}</text></view>
+    <view class="info-row"><image class="row-icon" src="/images/order-detail/paid.svg" mode="aspectFit"/><text class="label">已付金额</text><text class="value text-success">¥{{displayMoney.paid}}</text></view>
+    <view class="info-row unpaid-row"><image class="row-icon" src="/images/order-detail/yuan.svg" mode="aspectFit"/><text class="label">待付金额</text><text class="value price">¥{{displayMoney.unpaid}}</text></view>
   </view>
   
   <view class="info-card card" wx:if="{{payments.length > 0}}">
@@ -39,12 +38,12 @@
       <view class="payment-header">
         <text class="payment-type">{{paymentTypeMap[item.paymentType] || item.paymentType}}</text>
         <text class="payment-amount {{item.paymentType === 'refund' ? 'text-success' : ''}}">
-          {{item.paymentType === 'refund' ? '+' : '-'}}¥{{item.amount}}
+          {{item.paymentType === 'refund' ? '+' : '-'}}¥{{item.displayAmount}}
         </text>
       </view>
       <view class="payment-info">
         <text class="payment-no">支付单号：{{item.paymentNo}}</text>
-        <text class="payment-time">{{formatDate(item.createTime)}}</text>
+        <text class="payment-time">{{item.displayTime}}</text>
       </view>
       <view class="payment-status" wx:if="{{item.status === 'success'}}">
         <text class="status-badge success">支付成功</text>
@@ -52,9 +51,10 @@
     </view>
   </view>
   
+  <view class="bottom-landscape"></view>
   <view class="bottom-bar" wx:if="{{order.status === 'pending' || order.status === 'confirmed'}}">
     <button class="btn-pay btn-primary" wx:if="{{unpaidAmount > 0}}" bindtap="showPay">
-      支付 ¥{{nextPayAmount}}
+      支付 ¥{{displayMoney.nextPay}} <text class="pay-arrow">›</text>
     </button>
     <block wx:if="{{unpaidAmount <= 0}}">
       <button class="btn-modify" wx:if="{{!isModified}}" bindtap="goModify">改订</button>

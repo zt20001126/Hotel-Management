@@ -208,3 +208,38 @@
   color: #606266;
   border: none;
 }
+
+/* 订单详情：暖色纸面与江南水乡装饰 */
+page { background: #f8efe2; }
+.container { position: relative; padding: 0 38rpx calc(150rpx + env(safe-area-inset-bottom)); background: #f8efe2; }
+.container::after { display: none; }
+.top-decoration { height: 72rpx; position: relative; overflow: hidden; margin: 0 -38rpx; }
+.plum { position: absolute; width: 270rpx; height: 110rpx; left: -12rpx; top: -22rpx; }
+.waterside { position: absolute; right: 0; bottom: 0; width: 310rpx; height: 70rpx; opacity: .3; }
+.status-card { position: relative; display: flex; align-items: center; min-height: 120rpx; box-sizing: border-box; padding: 20rpx 32rpx; border-radius: 30rpx; background: linear-gradient(110deg,#fbe6bf,#f7d49a); color: #71380e; box-shadow: 0 8rpx 20rpx rgba(155,104,38,.12); }
+.status-icon { width: 74rpx; height: 74rpx; flex: none; display: flex; align-items: center; justify-content: center; background: #ce8c39; border-radius: 50%; margin-right: 20rpx; }
+.status-icon image { width: 48rpx; height: 48rpx; }
+.status-copy { display: flex; flex-direction: column; min-width: 0; }
+.status-text { font-size: 36rpx; line-height: 1.25; font-weight: 700; }
+.status-hint { margin-top: 6rpx; font-size: 23rpx; line-height: 1.4; }
+.info-card.card { margin-top: 18rpx; padding: 20rpx 26rpx; border: 0; border-radius: 28rpx; background: #fcf7ef; box-shadow: 0 7rpx 18rpx rgba(125,87,39,.12); }
+.section-title { margin: 0 0 10rpx; padding-left: 16rpx; border-left: 7rpx solid #b52d1b; color: #171512; font-size: 30rpx; line-height: 34rpx; font-weight: 700; }
+.info-row { display: flex; align-items: center; min-height: 51rpx; box-sizing: border-box; padding: 8rpx 0; border-bottom: 1rpx solid #eee3d6; font-size: 25rpx; color: #1c1a18; }
+.info-row:last-child { border-bottom: 0; }
+.row-icon { width: 32rpx; height: 32rpx; flex: none; margin: 0 18rpx 0 8rpx; }
+.info-row .label { color: #1c1a18; flex: none; }
+.info-row .value { flex: 1; min-width: 0; margin-left: 16rpx; text-align: right; overflow-wrap: anywhere; word-break: break-all; }
+.info-row .price { color: #ad2b1b; font-size: 31rpx; font-weight: 700; }
+.info-row .text-success { color: #3d7035; font-weight: 600; }
+.unpaid-row { margin: 8rpx -10rpx 0; padding: 10rpx; border: 0; border-radius: 18rpx; background: #fae8e2; }
+.unpaid-row .label { color: #b52d1b; font-weight: 700; }
+.bottom-landscape { height: 98rpx; margin: 20rpx -38rpx -15rpx; background: url('/images/profile-landscape.png') center bottom / cover no-repeat; opacity: .24; }
+.bottom-bar { z-index: 10; padding: 24rpx 38rpx calc(20rpx + env(safe-area-inset-bottom)); background: #fcf7ef; box-shadow: 0 -4rpx 18rpx rgba(115,83,47,.06); }
+.btn-pay { height: 76rpx; line-height: normal; border-radius: 999rpx; background: linear-gradient(180deg,#b93220,#9e2416); font-size: 31rpx; font-weight: 700; }
+.pay-arrow { font-size: 46rpx; line-height: 1; margin-left: 16rpx; }
+.btn-modify, .btn-cancel { border-radius: 999rpx; color: #a83e2a; border: 1rpx solid #c99b85; background: #fcf7ef; }
+.payment-info { gap: 12rpx; flex-wrap: wrap; overflow-wrap: anywhere; }
+.payment-amount { color: #a83e2a; }
+.payment-amount.text-success { color: #3d7035; }
+.modal-content { box-sizing: border-box; max-width: 88vw; background: #fcf7ef; border-radius: 24rpx; }
+.pay-amount-value { color: #a83e2a; }

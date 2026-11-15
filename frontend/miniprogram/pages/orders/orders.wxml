@@ -1,35 +1,28 @@
-<view class="container">
-  <image class="orders-town-art" src="/assets/images/chinese-style/decorations/decoration-baijianlou-houses.webp" mode="aspectFit" aria-hidden="true"></image>
-  <view class="orders-banner" aria-hidden="true"><image src="/assets/images/chinese-style/banners/banner-golden-landscape-lines.webp" mode="aspectFill"></image></view>
-  <view class="order-card card" wx:for="{{orders}}" wx:key="id" bindtap="goDetail" data-id="{{item.id}}">
-    <view class="order-header">
-      <text class="order-no">{{item.orderNo}}</text>
-      <text class="status {{item.status}}">{{statusMap[item.status]}}</text>
-    </view>
-    <view class="order-body">
-      <view class="info-row">
-        <text class="label">入住日期</text>
-        <text>{{item.checkInDate}} - {{item.checkOutDate}}</text>
-      </view>
-      <view class="info-row">
-        <text class="label">入住人</text>
-        <text>{{item.guestName}}</text>
-      </view>
-      <view class="info-row">
-        <text class="label">订单金额</text>
-        <text class="price">¥{{item.totalPrice}}</text>
-      </view>
-    </view>
-    <view class="order-footer" wx:if="{{item.status === 'pending' || item.status === 'confirmed'}}">
-      <button class="btn-cancel" size="mini" catchtap="cancelOrder" data-id="{{item.id}}">取消订单</button>
-    </view>
+<view class="orders-page">
+  <view class="top-art" aria-hidden="true">
+    <image class="plum-art" src="/assets/images/chinese-style/decorations/decoration-plum-branch.webp" mode="aspectFit" />
+    <image class="houses-art" src="/assets/images/chinese-style/decorations/decoration-baijianlou-houses.webp" mode="aspectFit" />
   </view>
-  
-  <view class="empty" wx:if="{{orders.length === 0 && !loading}}">
-    <text>暂无订单</text>
+  <view class="landscape" aria-hidden="true">
+    <image class="landscape-houses" src="/assets/images/chinese-style/decorations/decoration-baijianlou-houses.webp" mode="aspectFit" />
+    <image class="landscape-bridge" src="/assets/images/chinese-style/decorations/decoration-stone-bridge-water.webp" mode="aspectFit" />
   </view>
-  
-  <view class="login-tip" wx:if="{{!isLogin}}">
+  <view class="order-list" wx:if="{{isLogin}}">
+    <view class="order-card card" wx:for="{{orders}}" wx:key="id" bindtap="goDetail" data-id="{{item.id}}">
+      <view class="order-header">
+        <image class="header-icon" src="/images/order-detail/order.svg" mode="aspectFit" />
+        <text class="order-no">{{item.orderNo}}</text>
+        <text class="status {{item.status}}">{{statusMap[item.status] || item.status}}</text>
+      </view>
+      <view class="order-body">
+        <view class="date-part"><image class="row-icon" src="/images/order-detail/calendar.svg" mode="aspectFit" /><text class="dates">{{item.checkInDate}} 至 {{item.checkOutDate}}</text></view>
+        <view class="nights-part"><image class="row-icon" src="/images/order-detail/night.svg" mode="aspectFit" /><text>{{item.nights}} 晚</text></view>
+        <view class="price-part"><image class="row-icon" src="/images/order-detail/yuan.svg" mode="aspectFit" /><text class="price">¥{{item.displayTotalPrice}}</text></view>
+      </view>
+    </view>
+    <view class="empty" wx:if="{{orders.length === 0 && !loading}}">暂无订单</view>
+  </view>
+  <view class="login-tip" wx:else>
     <text>请先登录查看订单</text>
     <button class="btn-login btn-primary" bindtap="goLogin">去登录</button>
   </view>

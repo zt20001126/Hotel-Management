@@ -96,10 +96,6 @@ Page({
     wx.navigateTo({ url: '/pages/contact/contact' })
   },
 
-  goAbout() {
-    wx.navigateTo({ url: '/pages/about/about' })
-  },
-
   goWorkbench() {
     wx.navigateTo({ url: '/pages/employee/workbench/workbench' })
   }

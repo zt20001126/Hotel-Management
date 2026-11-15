@@ -5,6 +5,12 @@ Page({
     orderId: '',
     order: null,
     roomType: null,
+    roomImage: '',
+    nights: 1,
+    displayOriginalPrice: '0.00',
+    displayNewPrice: '0.00',
+    displayPriceDiff: '0.00',
+    displayRoomPrice: '0.00',
     today: '',
     checkInDate: '',
     checkOutDate: '',
@@ -55,11 +61,24 @@ Page({
   async loadRoomType(roomTypeId) {
     try {
       const res = await app.request({ url: `/roomType/${roomTypeId}` })
-      this.setData({ roomType: res.data })
+      const roomType = res.data
+      let images = []
+      try {
+        images = typeof roomType.images === 'string' ? JSON.parse(roomType.images) : roomType.images
+      } catch (err) {}
+      this.setData({
+        roomType,
+        roomImage: Array.isArray(images) ? (images[0] || '') : '',
+        displayRoomPrice: Number(roomType.basePrice || 0).toFixed(2)
+      })
       this.calculatePrice()
     } catch (err) {
       console.error(err)
     }
+  },
+
+  onRoomImageError() {
+    this.setData({ roomImage: '' })
   },
 
   async loadConfig() {
@@ -99,10 +118,16 @@ Page({
     const priceDiff = parseFloat((newTotalPrice - this.data.originalTotalPrice).toFixed(2))
     const absPriceDiff = Math.abs(priceDiff)
 
-    this.setData({ newTotalPrice, priceDiff, absPriceDiff })
+    this.setData({
+      nights, newTotalPrice, priceDiff, absPriceDiff,
+      displayOriginalPrice: Number(this.data.originalTotalPrice || 0).toFixed(2),
+      displayNewPrice: newTotalPrice.toFixed(2),
+      displayPriceDiff: absPriceDiff.toFixed(2)
+    })
   },
 
   async submitModify() {
+    if (this.data.submitting) return
     const { order, checkInDate, checkOutDate, newTotalPrice, priceDiff, depositRate } = this.data
 
     if (!checkInDate || !checkOutDate) {
@@ -136,7 +161,6 @@ Page({
       }, 1500)
     } catch (err) {
       console.error(err)
-    } finally {
       this.setData({ submitting: false })
     }
   }

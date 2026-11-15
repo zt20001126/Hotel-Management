@@ -11,6 +11,13 @@ Page({
       checked_out: '已退房', 
       cancelled: '已取消' 
     },
+    statusHintMap: {
+      pending: '请及时完成支付，锁定房间',
+      confirmed: '订单已确认，期待您的到来',
+      checked_in: '您已入住，祝您住得愉快',
+      checked_out: '您已退房，期待再次相见',
+      cancelled: '订单已取消'
+    },
     paymentTypeMap: {
       deposit: '保证金',
       balance: '补差价',
@@ -53,7 +60,14 @@ Page({
       const nextPayAmount = !hasPaidDeposit ? deposit : unpaidAmount
       // 判断是否已改订过（通过检查 modifyCount）
       const isModified = order.modifyCount && order.modifyCount >= 1
-      this.setData({ order, unpaidAmount, totalAmount, nextPayAmount, isModified })
+      const money = value => Number(value || 0).toFixed(2)
+      const displayMoney = {
+        roomPrice: money(order.roomPrice), roomFee: money(roomFee),
+        deposit: money(deposit), extraCharges: money(extraCharges),
+        total: money(totalAmount), paid: money(paidAmount),
+        unpaid: money(unpaidAmount), nextPay: money(nextPayAmount)
+      }
+      this.setData({ order, unpaidAmount, totalAmount, nextPayAmount, isModified, displayMoney })
       this.loadPayments(id)
     } catch (err) {
       console.error(err)
@@ -63,7 +77,7 @@ Page({
   async loadPayments(orderId) {
     try {
       const res = await app.request({ url: `/payment/order/${orderId}` })
-      this.setData({ payments: res.data || [] })
+      this.setData({ payments: (res.data || []).map(item => ({ ...item, displayAmount: Number(item.amount || 0).toFixed(2), displayTime: this.formatDate(item.createTime) })) })
     } catch (err) {
       console.error(err)
     }
