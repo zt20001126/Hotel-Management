@@ -15,16 +15,16 @@
         <image class="room-cloud" src="/images/cloud.svg" mode="aspectFit"></image>
         <view class="room-name">{{item.name}}</view>
         <view class="room-tags">
-          <text class="tag">{{item.bedType}}</text>
-          <text class="tag">{{item.area}}㎡</text>
-          <text class="tag">最多{{item.maxGuests}}人</text>
+          <view class="tag"><image class="tag-icon" src="./icon-bed.svg" mode="aspectFit"></image><text>{{item.bedType}}</text></view>
+          <view class="tag"><image class="tag-icon" src="./icon-area.svg" mode="aspectFit"></image><text>{{item.area}}㎡</text></view>
+          <view class="tag"><image class="tag-icon" src="./icon-guests.svg" mode="aspectFit"></image><text>最多{{item.maxGuests}}人</text></view>
         </view>
         <view class="room-bottom">
           <view class="price">
-            <text class="amount">¥{{item.basePrice}}</text>
+            <text class="currency">¥</text><text class="amount">{{item.basePrice}}</text>
             <text class="unit">/晚</text>
           </view>
-          <button class="btn-book" size="mini">预订</button>
+          <button class="btn-book" size="mini">预订<text class="book-arrow">›</text></button>
         </view>
       </view>
     </view>

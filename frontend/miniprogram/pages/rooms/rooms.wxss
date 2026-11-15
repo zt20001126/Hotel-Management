@@ -20,18 +20,21 @@
 .section-title { display:flex; align-items:center; margin:24rpx 0 20rpx 6rpx; font-family:"STKaiti", "KaiTi", serif; font-size:38rpx; font-weight:700; color:#392c20; }
 .section-title::before { content:""; display:block; width:8rpx; height:38rpx; margin-right:18rpx; background:#a83e2a; border-radius:8rpx; }
 .section-cloud { width:180rpx; height:60rpx; margin-left:auto; opacity:.55; }
-.room-card { padding: 0; overflow: hidden; margin-bottom: 22rpx; }
-.room-image { display: block; width: 100%; height: 330rpx; background: #e9dcc9; }
-.room-info { padding: 20rpx 24rpx 24rpx; }
-.room-info { position:relative; }
+.room-card { padding:0; overflow:hidden; margin-bottom:26rpx; background:#fff9ef; border:2rpx solid #fffaf2; border-radius:22rpx; box-shadow:0 8rpx 22rpx rgba(91,63,35,.14); }
+.room-image { display:block; width:100%; height:330rpx; background:#e9dcc9; border-radius:18rpx; }
+.room-info { position:relative; padding:20rpx 26rpx 22rpx; }
 .room-cloud { position:absolute; top:55rpx; right:0; width:140rpx; height:65rpx; opacity:.24; pointer-events:none; }
-.room-name { margin-bottom: 14rpx; font-size: 32rpx; font-weight: 600; }
-.room-tags { margin-bottom: 18rpx; }
-.room-tags .tag { display: inline-block; padding: 7rpx 14rpx; margin-right: 10rpx; background: #f1e5d3; border-radius: 999rpx; color: #806951; font-size: 22rpx; }
-.room-bottom { display: flex; justify-content: space-between; align-items: center; }
-.price .amount { color: #a83e2a; font-size: 36rpx; font-weight: 700; }
-.price .unit { color: #978a7a; font-size: 24rpx; }
-.btn-book { min-width: 150rpx; height: 68rpx; padding: 0 24rpx; background: #a83e2a; border: 0; border-radius: 999rpx; color: #fff9ef; font-size: 26rpx; }
+.room-name { position:relative; margin-bottom:14rpx; color:#30271f; font-size:32rpx; font-weight:700; overflow-wrap:anywhere; }
+.room-tags { position:relative; display:flex; flex-wrap:wrap; gap:10rpx; margin-bottom:20rpx; }
+.room-tags .tag { display:inline-flex; align-items:center; box-sizing:border-box; max-width:100%; padding:7rpx 14rpx; background:#f1e5d3; border-radius:999rpx; color:#655548; font-size:22rpx; line-height:1.4; overflow-wrap:anywhere; }
+.tag-icon { flex:none; width:25rpx; height:25rpx; margin-right:8rpx; }
+.room-bottom { position:relative; display:flex; justify-content:space-between; align-items:center; gap:16rpx; }
+.price { min-width:0; display:flex; align-items:baseline; flex-wrap:wrap; }
+.price .currency { color:#a83e2a; font-size:27rpx; font-weight:700; }
+.price .amount { color:#a83e2a; font-size:42rpx; font-weight:700; line-height:1.2; overflow-wrap:anywhere; }
+.price .unit { margin-left:4rpx; color:#655548; font-size:24rpx; white-space:nowrap; }
+.btn-book { flex:none; display:flex; align-items:center; justify-content:center; min-width:150rpx; height:68rpx; margin:0; padding:0 24rpx; background:#a83e2a; border:0; border-radius:999rpx; color:#fff9ef; font-size:26rpx; line-height:normal; }
+.book-arrow { margin-left:14rpx; font-size:36rpx; line-height:1; }
 .loading, .empty { text-align: center; padding: 100rpx 0; color: #978a7a; }
 .empty-icon, .empty-date-icon { display: block; margin-bottom: 22rpx; color: #b99462; font-size: 72rpx; }
 .empty-text, .empty-date-text { display: block; margin-bottom: 14rpx; color: #655548; font-size: 30rpx; }
