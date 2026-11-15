@@ -1,4 +1,5 @@
 const app = getApp()
+const { DEFAULT_AVATAR, resolveAvatar } = require('../../utils/avatar')
 
 Page({
   data: {
@@ -16,7 +17,7 @@ Page({
     this.setData({
       isLogin: app.checkLogin(),
       userInfo: userInfo,
-      avatarUrl: userInfo.avatar || '/images/avatar-ink.png',
+      avatarUrl: resolveAvatar(userInfo.avatar),
       isEmployee: isEmployee
     })
     // 如果已登录，刷新用户信息
@@ -32,7 +33,7 @@ Page({
   onAvatarError() {
     // 图片地址无效时回退为本地国风默认头像。
     this.setData({
-      avatarUrl: '/images/avatar-ink.png'
+      avatarUrl: DEFAULT_AVATAR
     })
   },
 
@@ -43,7 +44,7 @@ Page({
       app.login(app.globalData.token, userData)
       this.setData({ 
         userInfo: userData,
-        avatarUrl: userData.avatar || '/images/avatar-ink.png',
+        avatarUrl: resolveAvatar(userData.avatar),
         isEmployee: false
       })
     } catch (err) {
@@ -58,7 +59,7 @@ Page({
       app.login(app.globalData.token, userData)
       this.setData({ 
         userInfo: userData,
-        avatarUrl: userData.avatar || '/images/avatar-ink.png',
+        avatarUrl: resolveAvatar(userData.avatar),
         isEmployee: true
       })
     } catch (err) {

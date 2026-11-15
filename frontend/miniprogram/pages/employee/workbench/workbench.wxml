@@ -2,7 +2,7 @@
   <!-- 用户信息卡片 -->
   <view class="user-card">
     <view class="user-info">
-      <image class="avatar" src="{{userInfo.avatar || '/images/logo.png'}}" mode="aspectFill"></image>
+      <image class="avatar" src="{{avatarUrl}}" mode="aspectFill" binderror="onAvatarError"></image>
       <view class="user-details">
         <text class="name">{{userInfo.realName || userInfo.username}}</text>
         <text class="role">{{role}}</text>

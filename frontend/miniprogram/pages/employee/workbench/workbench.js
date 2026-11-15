@@ -1,8 +1,10 @@
 const app = getApp()
+const { DEFAULT_AVATAR, resolveAvatar } = require('../../../utils/avatar')
 
 Page({
   data: {
     userInfo: {},
+    avatarUrl: DEFAULT_AVATAR,
     role: '',
     statistics: {
       todayCheckIn: 0,
@@ -43,10 +45,15 @@ Page({
 
     this.setData({ 
       userInfo: userInfo,
+      avatarUrl: resolveAvatar(userInfo.avatar),
       role: userInfo.role || ''
     })
     this.initQuickActions()
     return true
+  },
+
+  onAvatarError() {
+    this.setData({ avatarUrl: DEFAULT_AVATAR })
   },
 
   initQuickActions() {
@@ -102,6 +109,7 @@ Page({
         app.login(app.globalData.token, res.data)
         this.setData({ 
           userInfo: res.data,
+          avatarUrl: resolveAvatar(res.data.avatar),
           role: res.data.role || ''
         })
         this.initQuickActions()
