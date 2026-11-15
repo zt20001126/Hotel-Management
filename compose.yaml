@@ -1,0 +1,77 @@
+services:
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env}
+      DATABASE_URL: "${DATABASE_URL:?Set DATABASE_URL in .env}"
+      TZ: Asia/Shanghai
+    entrypoint: ["/bin/sh", "/usr/local/bin/compose-entrypoint.sh"]
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "127.0.0.1:${MYSQL_PORT:-3307}:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./backend/sql/homestay_db.sql:/docker-entrypoint-initdb.d/01-homestay_db.sql:ro
+      - ./docker/mysql/entrypoint.sh:/usr/local/bin/compose-entrypoint.sh:ro
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - mysqladmin ping --protocol=tcp -h 127.0.0.1 -uroot -p"$${MYSQL_ROOT_PASSWORD}" --silent
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+  redis:
+    image: redis:7.4-alpine
+    restart: unless-stopped
+    environment:
+      REDIS_URL: "${REDIS_URL:?Set REDIS_URL in .env}"
+      TZ: Asia/Shanghai
+    command:
+      - sh
+      - -c
+      - 'case "$${REDIS_URL}" in redis://:*) ;; *) echo "Invalid REDIS_URL" >&2; exit 1 ;; esac; auth="$${REDIS_URL#redis://:}"; password="$${auth%%@*}"; case "$$auth" in *@*) ;; *) echo "Invalid REDIS_URL" >&2; exit 1 ;; esac; test -n "$$password" || exit 1; exec redis-server --appendonly yes --requirepass "$$password"'
+    ports:
+      - "127.0.0.1:${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - 'auth="$${REDIS_URL#redis://:}"; REDISCLI_AUTH="$${auth%%@*}" redis-cli -h 127.0.0.1 ping | grep -q PONG'
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "${DATABASE_URL:?Set DATABASE_URL in .env}"
+      REDIS_URL: "${REDIS_URL:?Set REDIS_URL in .env}"
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env}
+      WECHAT_MINI_PROGRAM_APP_ID: ${WECHAT_MINI_PROGRAM_APP_ID:-}
+      WECHAT_MINI_PROGRAM_APP_SECRET: ${WECHAT_MINI_PROGRAM_APP_SECRET:-}
+      UPLOAD_PATH: /app/uploads
+      UPLOAD_URL_PREFIX: /uploads
+      TZ: Asia/Shanghai
+    ports:
+      - "127.0.0.1:${API_PORT:-8080}:8080"
+    volumes:
+      - backend_uploads:/app/uploads
+
+volumes:
+  mysql_data:
+  redis_data:
+  backend_uploads:

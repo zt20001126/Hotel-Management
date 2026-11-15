@@ -1,5 +1,6 @@
 package com.homestay.module.common.controller;
 
+import com.homestay.common.constants.UploadConstants;
 import com.homestay.common.exception.BusinessException;
 import com.homestay.common.result.Result;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,9 +28,6 @@ public class FileController {
 
     @Value("${upload.path}")
     private String uploadPath;
-
-    @Value("${upload.url-prefix}")
-    private String urlPrefix;
 
     @Operation(summary = "上传单个文件")
     @PostMapping("/upload")
@@ -108,7 +106,7 @@ public class FileController {
             Path filePath = dirPath.resolve(newFilename);
             file.transferTo(filePath.toFile());
             
-            return urlPrefix + "/" + dateDir + "/" + newFilename;
+            return UploadConstants.URL_PREFIX + "/" + dateDir + "/" + newFilename;
             
         } catch (IOException e) {
             throw new BusinessException("文件上传失败: " + e.getMessage());

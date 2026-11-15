@@ -10,3 +10,8 @@
 
 # WeChat Developer Tools machine-specific settings
 **/project.private.config.json
+
+# Local deployment secrets
+.env
+.env.*
+!.env.example

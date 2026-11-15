@@ -113,27 +113,45 @@ homestay-business-management/
 - MySQL 8.0+
 - 微信开发者工具（小程序开发）
 
+### Docker 部署（后端、MySQL、Redis）
+
+项目根目录提供 `compose.yaml`，可通过 Docker Compose 启动 Spring Boot 后端、MySQL 和 Redis。首次克隆项目且本地还没有 `.env` 时，复制环境变量模板并填写配置：
+
+```powershell
+Copy-Item .env.example .env
+```
+
+编辑 `.env`，至少设置完整的 `DATABASE_URL`、MySQL root 初始化密码、`REDIS_URL` 和 JWT 密钥。数据库 URL 采用 MySQL JDBC 格式，并在查询参数中包含 `user` 和 `password`。Redis URL 格式为 `redis://:密码@redis:6379`，密码使用字母、数字或下划线。微信小程序登录还需要填写 `WECHAT_MINI_PROGRAM_APP_ID` 和 `WECHAT_MINI_PROGRAM_APP_SECRET`。`.env` 含敏感信息，不要提交到 Git。
+
+启动服务：
+
+```bash
+docker compose up -d --build
+docker compose ps
+docker compose logs -f backend
+```
+
+后端 API 地址为 `http://localhost:8080/api`。MySQL 初始化时会从 `DATABASE_URL` 解析数据库名和应用账号，并导入 `backend/sql/homestay_db.sql`；该脚本只会在 MySQL 数据卷首次初始化时执行。MySQL、Redis 和上传文件使用 Docker 命名卷持久化。`docker compose down` 会停止并移除容器，但保留这些数据卷。
+
+MySQL 和 Redis 端口只绑定到服务器/开发机的本机回环地址；本机访问 MySQL 使用 `127.0.0.1:3307`，容器内仍使用 `mysql:3306`。小程序正式发布前，需要为后端配置 HTTPS 域名和反向代理，并在微信公众平台设置对应的服务器域名。当前后端代码尚未集成 Redis 客户端，因此 Redis 容器会启动，但业务代码暂时不会访问它。
+
 ### 数据库初始化
 
 1. 创建数据库并执行SQL脚本：
 ```bash
-mysql -u root -p < backend/sql/homestay_db.sql
+mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS qianxun CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
+mysql -u root -p qianxun < backend/sql/homestay_db.sql
 ```
 
-2. 修改数据库连接配置 `backend/src/main/resources/application.yml`：
+2. 本项目默认数据库为 `qianxun`，Docker 部署时数据库连接由项目根目录 `.env` 中的 `DATABASE_URL` 提供：
 ```yaml
-spring:
-  datasource:
-    url: jdbc:mysql://localhost:3306/homestay_db
-    username: root
-    password: your_password
+DATABASE_URL=jdbc:mysql://mysql:3306/qianxun?user=qianxun&password=qianxun
 ```
 
 ### 启动后端
 
 ```bash
-cd backend
-mvn spring-boot:run
+docker compose up -d --build backend mysql redis
 ```
 
 后端启动后访问：

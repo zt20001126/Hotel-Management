@@ -1,5 +1,6 @@
 package com.homestay.common.util;
 
+import com.homestay.common.constants.JwtConstants;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -17,9 +18,6 @@ public class JwtUtil {
 
     @Value("${jwt.secret}")
     private String secret;
-
-    @Value("${jwt.expiration}")
-    private Long expiration;
 
     private SecretKey getSigningKey() {
         byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
@@ -43,7 +41,7 @@ public class JwtUtil {
                 .claims(claims)
                 .subject(subject)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + expiration))
+                .expiration(new Date(System.currentTimeMillis() + JwtConstants.TOKEN_EXPIRATION_MILLIS))
                 .signWith(getSigningKey())
                 .compact();
     }
