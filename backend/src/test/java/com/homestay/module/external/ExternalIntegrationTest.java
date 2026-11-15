@@ -29,6 +29,33 @@ class ExternalIntegrationTest {
     @Autowired private MockMvc mvc;
     @Autowired private JwtUtil jwt;
 
+    @Test @Transactional void orderUpdateViaHttpPersistsValuesAndConflictDoesNotPartiallyWrite() throws Exception {
+        String owner = "Bearer " + jwt.generateToken(1L, "owner-test", "employee", "owner");
+        Long r1 = jdbc.queryForObject("SELECT id FROM room WHERE deleted=0 ORDER BY id LIMIT 1", Long.class);
+        Long r2 = jdbc.queryForObject("SELECT id FROM room WHERE deleted=0 ORDER BY id LIMIT 1 OFFSET 1", Long.class);
+        Long p = jdbc.queryForObject("SELECT id FROM external_platform ORDER BY id LIMIT 1", Long.class);
+        String no = UUID.randomUUID().toString(), occupiedNo = UUID.randomUUID().toString();
+        mvc.perform(post("/external/orders").header("Authorization", owner).contentType(MediaType.APPLICATION_JSON)
+                .content(orderBody(p, r1, no, "2065-08-01", "2065-08-03"))).andExpect(jsonPath("$.code").value(200));
+        mvc.perform(post("/external/orders").header("Authorization", owner).contentType(MediaType.APPLICATION_JSON)
+                .content(orderBody(p, r2, occupiedNo, "2065-08-03", "2065-08-05"))).andExpect(jsonPath("$.code").value(200));
+        Long id = jdbc.queryForObject("SELECT id FROM external_order WHERE platform_order_no=?", Long.class, no);
+        String conflict = orderBody(p, r2, no, "2065-08-04", "2065-08-06").replace("\"totalAmount\":100", "\"totalAmount\":999");
+        mvc.perform(put("/external/orders/{id}", id).header("Authorization", owner).contentType(MediaType.APPLICATION_JSON)
+                .content(conflict)).andExpect(jsonPath("$.code").value(400));
+        mvc.perform(get("/external/orders/{id}", id).header("Authorization", owner))
+                .andExpect(jsonPath("$.data.roomId").value(r1)).andExpect(jsonPath("$.data.totalAmount").value(100));
+        String updated = orderBody(p, r2, no, "2065-08-05", "2065-08-06")
+                .replace("\"totalAmount\":100", "\"totalAmount\":188.88")
+                .replace("\"platformFee\":5", "\"platformFee\":8.88")
+                .replaceFirst("\\{", "{\"id\":" + id + ",\"nights\":1,\"netProfit\":180,");
+        mvc.perform(put("/external/orders/{id}", id).header("Authorization", owner).contentType(MediaType.APPLICATION_JSON)
+                .content(updated)).andExpect(jsonPath("$.code").value(200));
+        mvc.perform(get("/external/orders/{id}", id).header("Authorization", owner))
+                .andExpect(jsonPath("$.data.roomId").value(r2)).andExpect(jsonPath("$.data.totalAmount").value(188.88))
+                .andExpect(jsonPath("$.data.netProfit").value(180));
+    }
+
     @Test @Transactional void identicalAnchorNamesRemainDistinctInReport() {
         Long room = jdbc.queryForObject("SELECT id FROM room WHERE deleted=0 ORDER BY id LIMIT 1", Long.class);
         Long platform = jdbc.queryForObject("SELECT id FROM external_platform ORDER BY id LIMIT 1", Long.class);

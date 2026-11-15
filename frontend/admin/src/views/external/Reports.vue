@@ -14,7 +14,23 @@ import { getPlatforms, getAnchors, getStatistics } from '@/api/external'
 import { getAllRooms } from '@/api/room'
 const month = ref(dayjs().format('YYYY-MM')), platformId = ref(null), anchorId = ref(null), roomId = ref(null), platforms = ref([]), anchors = ref([]), rooms = ref([]), data = ref(null), loading = ref(false), tab = ref('daily')
 const columns = [{key:'name',label:'日期/名称'}, {key:'orderCount',label:'订单数'}, {key:'nights',label:'间夜'}, {key:'totalAmount',label:'营业额'}, {key:'platformFee',label:'平台手续费'}, {key:'anchorFee',label:'主播手续费'}, {key:'netProfit',label:'净利润'}]
-async function load() { loading.value = true; data.value = null; try { const date = dayjs(month.value + '-01'); data.value = (await getStatistics({ startDate: date.format('YYYY-MM-DD'), endDate: date.endOf('month').format('YYYY-MM-DD'), platformId: platformId.value || undefined, anchorId: anchorId.value || undefined, roomId: roomId.value || undefined })).data } finally { loading.value = false } }
+let requestGeneration = 0
+async function load() {
+  const current = ++requestGeneration
+  loading.value = true
+  data.value = null
+  try {
+    const date = dayjs(month.value + '-01')
+    const result = await getStatistics({ startDate: date.format('YYYY-MM-DD'), endDate: date.endOf('month').format('YYYY-MM-DD'), platformId: platformId.value || undefined, anchorId: anchorId.value || undefined, roomId: roomId.value || undefined })
+    // 只展示最近一次查询，避免较早请求延迟返回后覆盖新结果。
+    if (current === requestGeneration) data.value = result.data
+  } catch (error) {
+    // 请求工具已提示错误；仅当前请求可清空当前结果。
+    if (current === requestGeneration) data.value = null
+  } finally {
+    if (current === requestGeneration) loading.value = false
+  }
+}
 getPlatforms({ includeDisabled: true }).then(res => { platforms.value = res.data }); getAnchors({ includeDisabled: true }).then(res => { anchors.value = res.data }); getAllRooms().then(res => { rooms.value = res.data }); load()
 </script>
 <style scoped>.filters,.summary { display:flex; gap:16px; flex-wrap:wrap; margin-bottom:20px }.summary div { flex:1; min-width:120px; background:#f5f7fa; padding:15px }.summary strong { display:block; margin-top:8px; font-size:20px }</style>

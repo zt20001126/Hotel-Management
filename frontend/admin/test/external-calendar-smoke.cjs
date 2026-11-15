@@ -10,6 +10,8 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'external-calendar-qa-'))
 let chrome, vite, server, socket
 let failCalendar = false
+let statisticsRequests = 0
+const statisticsResponses = []
 
 async function waitUntil(test, description) {
   for (let attempt = 0; attempt < 150; attempt++) {
@@ -62,7 +64,8 @@ async function run() {
   await new Promise((resolve, reject) => { socket.onopen = resolve; socket.onerror = reject })
   let id = 0
   const pending = new Map()
-  socket.onmessage = event => { const result = JSON.parse(event.data); if (pending.has(result.id)) { const promise = pending.get(result.id); pending.delete(result.id); result.error ? promise.reject(new Error(result.error.message)) : promise.resolve(result.result) } }
+  const events = new Map()
+  socket.onmessage = event => { const result = JSON.parse(event.data); if (pending.has(result.id)) { const promise = pending.get(result.id); pending.delete(result.id); result.error ? promise.reject(new Error(result.error.message)) : promise.resolve(result.result) } else if (events.has(result.method)) events.get(result.method)(result.params) }
   function send(method, params = {}) { return new Promise((resolve, reject) => { const current = ++id; pending.set(current, { resolve, reject }); socket.send(JSON.stringify({ id: current, method, params })) }) }
   async function evaluate(expression) { const result = await send('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true }); if (result.exceptionDetails) throw new Error(result.exceptionDetails.text); return result.result.value }
   await send('Page.enable')
@@ -87,9 +90,42 @@ async function run() {
   await waitUntil(() => evaluate(`document.body.innerText.includes('470') && document.body.innerText.includes('2026-11-01')`), '经营统计总览和每日明细')
   await evaluate(`Array.from(document.querySelectorAll('[role="tab"]')).find(e => e.innerText.includes('主播统计')).click()`)
   await waitUntil(() => evaluate(`document.body.innerText.includes('主播甲')`), '主播维度切换')
+  events.set('Fetch.requestPaused', params => {
+    const sequence = ++statisticsRequests
+    const totalAmount = sequence === 1 ? 111 : 222
+    const bucket = { name: '测试', orderCount: 1, nights: 1, totalAmount, platformFee: 0, anchorFee: 0, netProfit: totalAmount }
+    const body = Buffer.from(JSON.stringify({ code: 200, data: { total: bucket, daily: [], platforms: [], anchors: [], rooms: [] } })).toString('base64')
+    setTimeout(async () => {
+      await send('Fetch.fulfillRequest', { requestId: params.requestId, responseCode: 200, responseHeaders: [{ name: 'Content-Type', value: 'application/json' }], body })
+      statisticsResponses.push(sequence)
+    }, sequence === 1 ? 1500 : 50)
+  })
+  await send('Fetch.enable', { patterns: [{ urlPattern: '*/api/external/statistics*', requestStage: 'Request' }] })
+  await evaluate(`Array.from(document.querySelectorAll('button')).find(e => e.innerText.trim() === '查询').click()`)
+  await waitUntil(() => statisticsRequests === 1, '第一次报表请求')
+  await evaluate(`Array.from(document.querySelectorAll('button')).find(e => e.innerText.trim() === '查询').click()`)
+  await waitUntil(() => statisticsRequests === 2, '第二次报表请求')
+  await waitUntil(() => statisticsResponses.length === 2, '两次报表响应')
+  assert.deepEqual(statisticsResponses, [2, 1], '确保测试覆盖响应乱序')
+  await sleep(100)
+  assert.equal(await evaluate(`document.querySelectorAll('.summary strong')[2]?.innerText`), '222', '应保留最后一次报表查询结果')
+  await send('Fetch.disable')
   await send('Page.navigate', { url: `http://127.0.0.1:${frontendPort}/external/settings` })
   await waitUntil(() => evaluate(`document.body.innerText.includes('携程') && document.body.innerText.includes('新增平台')`), '平台设置')
-  console.log('通过：历史房间及详情、日周月列数、失败提示、报表维度和平台设置')
+  await send('Page.navigate', { url: `http://127.0.0.1:${frontendPort}/external/orders` })
+  await waitUntil(() => evaluate(`Array.from(document.querySelectorAll('button')).some(e => e.innerText.includes('新增订单'))`), '订单页面')
+  await evaluate(`Array.from(document.querySelectorAll('button')).find(e => e.innerText.includes('新增订单')).click()`)
+  await waitUntil(() => evaluate(`document.querySelector('.el-dialog')?.innerText.includes('净利润')`), '录入订单表单')
+  async function setAmount(label, value) {
+    await evaluate(`(() => { const row = Array.from(document.querySelectorAll('.el-dialog .el-form-item')).find(e => e.querySelector('label')?.innerText.includes(${JSON.stringify(label)})); const input = row.querySelector('input'); Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(input, ${JSON.stringify(value)}); input.dispatchEvent(new Event('input', {bubbles:true})); input.dispatchEvent(new Event('change', {bubbles:true})); input.blur(); })()`)
+  }
+  await setAmount('用户付款', '100.01')
+  await setAmount('平台手续费', '0.01')
+  await waitUntil(() => evaluate(`Array.from(document.querySelectorAll('.el-dialog .el-form-item')).find(e => e.innerText.includes('净利润'))?.innerText.includes('100.00')`), '表单精确显示净利润')
+  await setAmount('用户付款', '0.01')
+  await setAmount('平台手续费', '0.02')
+  await waitUntil(() => evaluate(`Array.from(document.querySelectorAll('.el-dialog .el-form-item')).find(e => e.innerText.includes('净利润'))?.innerText.includes('-0.01')`), '表单负净利润')
+  console.log('通过：历史房间、日周月切换、失败提示、报表、平台设置及表单金额计算')
 }
 
 run().catch(error => { console.error(error); process.exitCode = 1 }).finally(async () => {
