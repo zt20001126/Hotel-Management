@@ -62,6 +62,14 @@ public class ExternalController {
     @GetMapping("/orders/{id}") public Result<ExternalOrderVO> order(@PathVariable Long id) {
         requireOwner(); return Result.success(service.order(id));
     }
+    /** 合并展示订单，不更改小程序或第三方订单。 */
+    @GetMapping("/unified-orders") public Result<PageResult<ExternalOrderVO>> unifiedOrders(@RequestParam(defaultValue="1") int page,
+            @RequestParam(defaultValue="10") int size, @RequestParam(required=false) LocalDate startDate,
+            @RequestParam(required=false) LocalDate endDate, @RequestParam(required=false) Long platformId,
+            @RequestParam(required=false) Long anchorId, @RequestParam(required=false) Long roomId,
+            @RequestParam(required=false) String status, @RequestParam(required=false) String keyword) {
+        requireOwner(); return Result.success(service.unifiedOrders(page, size, startDate, endDate, platformId, anchorId, roomId, status, keyword));
+    }
     @PostMapping("/orders") public Result<Long> create(@Valid @RequestBody ExternalOrderRequest request) {
         requireOwner(); return Result.success(service.createOrder(request));
     }

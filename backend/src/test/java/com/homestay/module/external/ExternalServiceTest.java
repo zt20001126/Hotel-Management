@@ -27,7 +27,7 @@ class ExternalServiceTest {
         ExternalPlatform platform = new ExternalPlatform(); platform.setId(2L); platform.setName("抖音");
         when(platforms.selectById(2L)).thenReturn(platform); when(rooms.findRoomNumber(3L)).thenReturn("101");
         when(orders.selectList(any())).thenReturn(List.of(order));
-        ExternalServiceImpl service = new ExternalServiceImpl(platforms, anchors, orders, rooms);
+        ExternalServiceImpl service = new ExternalServiceImpl(platforms, anchors, orders, rooms, mock(MiniProgramOrderReadMapper.class), mock(UnifiedOrderMapper.class));
         ExternalStatisticsVO report = service.statistics(LocalDate.of(2026,5,1), LocalDate.of(2026,5,31), null, null, null);
         assertEquals(1, report.total().orderCount()); assertEquals(2, report.total().nights());
         assertEquals(new BigDecimal("666.67"), report.total().totalAmount());

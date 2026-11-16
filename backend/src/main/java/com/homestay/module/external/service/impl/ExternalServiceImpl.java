@@ -33,14 +33,20 @@ public class ExternalServiceImpl implements ExternalService {
     private static final int MAX_PAGE_SIZE = 100;
     private static final long MAX_QUERY_DAYS = 366;
     private static final long MAX_STAY_DAYS = 366;
+    /** 虚拟来源标识，仅用于查询，不写入第三方平台表。 */
+    private static final long MINI_PROGRAM_SOURCE = -1L;
+    private static final String MINI_PROGRAM_NAME = "小程序";
     private final ExternalPlatformMapper platforms;
     private final ExternalAnchorMapper anchors;
     private final ExternalOrderMapper orders;
     private final ExternalRoomMapper rooms;
+    private final MiniProgramOrderReadMapper miniOrders;
+    private final UnifiedOrderMapper unifiedOrders;
 
     public ExternalServiceImpl(ExternalPlatformMapper platforms, ExternalAnchorMapper anchors,
-                               ExternalOrderMapper orders, ExternalRoomMapper rooms) {
-        this.platforms = platforms; this.anchors = anchors; this.orders = orders; this.rooms = rooms;
+                               ExternalOrderMapper orders, ExternalRoomMapper rooms, MiniProgramOrderReadMapper miniOrders,
+                               UnifiedOrderMapper unifiedOrders) {
+        this.platforms = platforms; this.anchors = anchors; this.orders = orders; this.rooms = rooms; this.miniOrders = miniOrders; this.unifiedOrders = unifiedOrders;
     }
 
     public List<ExternalCatalogVO> platforms(boolean all) {
@@ -182,16 +188,64 @@ public class ExternalServiceImpl implements ExternalService {
         mapped.setRecords(result.getRecords().stream().map(this::view).toList());
         return PageResult.of(mapped);
     }
+    /** Step 1: 校验条件；Step 2: 在数据库合并筛选并分页；Step 3: 转换当前页。 */
+    public PageResult<ExternalOrderVO> unifiedOrders(int page, int size, LocalDate start, LocalDate end, Long platform, Long anchor, Long room, String status, String keyword) {
+        if (page < 1 || size < 1 || size > MAX_PAGE_SIZE) throw new BusinessException(400, "分页参数无效");
+        if ((start == null) != (end == null)) throw new BusinessException(400, "请同时填写开始和结束日期");
+        if (start != null) range(start, end);
+        LocalDate endExclusive = end == null ? null : end.plusDays(1);
+        long total = unifiedOrders.count(start, endExclusive, platform, anchor, room, status, keyword, MINI_PROGRAM_SOURCE);
+        Page<ExternalOrderVO> result = new Page<>(page, size, total);
+        if (total > 0) {
+            long offset = ((long) page - 1) * size;
+            result.setRecords(unifiedOrders.selectPage(start, endExclusive, platform, anchor, room, status, keyword,
+                    MINI_PROGRAM_SOURCE, offset, size).stream().map(this::unifiedView).toList());
+        }
+        return PageResult.of(result);
+    }
+
+    /** 将分页投影转换为既有订单视图，保持金额和住宿天数口径。 */
+    private ExternalOrderVO unifiedView(UnifiedOrderProjection order) {
+        return new ExternalOrderVO(order.getId(), order.getOrderNo(), order.getPlatformOrderNo(), order.getPlatformId(),
+                order.getPlatformName(), order.getAnchorId(), order.getAnchorName(), order.getRoomId(), order.getRoomName(),
+                order.getCheckInDate(), order.getCheckOutDate(), ChronoUnit.DAYS.between(order.getCheckInDate(), order.getCheckOutDate()),
+                order.getGuestCount(), order.getTotalAmount(), order.getPlatformFee(), order.getAnchorFee(),
+                order.getTotalAmount().subtract(order.getPlatformFee()).subtract(order.getAnchorFee()), order.getStatus(), order.getRemark());
+    }
     public List<ExternalOrderVO> calendar(LocalDate start, LocalDate end, Long platform) {
         range(start, end);
-        return orders.selectList(filter(start, end, platform, null, null).ne(ExternalOrder::getStatus, ExternalOrderStatus.CANCELLED.name()))
-                .stream().map(this::view).toList();
+        List<ExternalOrderVO> result = new ArrayList<>();
+        if (!Objects.equals(platform, MINI_PROGRAM_SOURCE)) {
+            result.addAll(orders.selectList(filter(start, end, platform, null, null).ne(ExternalOrder::getStatus, ExternalOrderStatus.CANCELLED.name()))
+                    .stream().map(this::view).toList());
+        }
+        if (platform == null || Objects.equals(platform, MINI_PROGRAM_SOURCE)) {
+            result.addAll(miniOrders.selectOverlapping(start, end.plusDays(1)).stream().map(this::miniView).toList());
+        }
+        return result;
+    }
+    /** 将小程序订单转换为只读视图；状态以实际付款和入住结果为准。 */
+    private ExternalOrderVO miniView(MiniProgramOrderProjection order) {
+        String status;
+        if ("cancelled".equals(order.getStatus())) status = ExternalOrderStatus.CANCELLED.name();
+        else if ("checked_in".equals(order.getStatus())) status = ExternalOrderStatus.CHECKED_IN.name();
+        else if ("checked_out".equals(order.getStatus())) status = ExternalOrderStatus.CHECKED_OUT.name();
+        else if (order.getTotalPrice() != null && order.getTotalPrice().signum() > 0 && order.getPaidAmount() != null
+                && order.getPaidAmount().compareTo(order.getTotalPrice()) >= 0) status = ExternalOrderStatus.BOOKED.name();
+        else status = "AWAITING_PAYMENT";
+        String roomName = order.getRoomId() == null ? "待确认房间" : rooms.findRoomNumber(order.getRoomId());
+        if (roomName == null) roomName = "已删除房间";
+        BigDecimal amount = order.getTotalPrice() == null ? BigDecimal.ZERO : order.getTotalPrice();
+        return new ExternalOrderVO(order.getId(), order.getOrderNo(), null, MINI_PROGRAM_SOURCE, MINI_PROGRAM_NAME,
+                null, "无主播", order.getRoomId(), roomName, order.getCheckInDate(), order.getCheckOutDate(),
+                ChronoUnit.DAYS.between(order.getCheckInDate(), order.getCheckOutDate()), order.getGuestCount(),
+                amount, BigDecimal.ZERO, BigDecimal.ZERO, amount, status, null);
     }
     private static class Accumulator {
-        final String name; final Set<Long> ids = new HashSet<>(); long nights;
+        final String name; final Set<String> ids = new HashSet<>(); long nights;
         BigDecimal gross = BigDecimal.ZERO, platform = BigDecimal.ZERO, anchor = BigDecimal.ZERO;
         Accumulator(String name) { this.name = name; }
-        void add(Long id, BigDecimal gross, BigDecimal platform, BigDecimal anchor) {
+        void add(String id, BigDecimal gross, BigDecimal platform, BigDecimal anchor) {
             ids.add(id); nights++; this.gross = this.gross.add(gross); this.platform = this.platform.add(platform); this.anchor = this.anchor.add(anchor);
         }
         ExternalStatisticsVO.Bucket result() { return new ExternalStatisticsVO.Bucket(name, ids.size(), nights, gross, platform, anchor, gross.subtract(platform).subtract(anchor)); }
@@ -202,24 +256,33 @@ public class ExternalServiceImpl implements ExternalService {
     /** Step 1: 查询有效订单；Step 2: 逐晚分摊；Step 3: 按维度去重汇总。 */
     public ExternalStatisticsVO statistics(LocalDate start, LocalDate end, Long platform, Long anchor, Long room) {
         range(start, end);
-        List<ExternalOrder> data = orders.selectList(filter(start, end, platform, anchor, room)
-                .in(ExternalOrder::getStatus, ExternalOrderStatus.CHECKED_IN.name(), ExternalOrderStatus.CHECKED_OUT.name()));
+        List<ExternalOrderVO> data = new ArrayList<>();
+        if (!Objects.equals(platform, MINI_PROGRAM_SOURCE)) {
+            data.addAll(orders.selectList(filter(start, end, platform, anchor, room)
+                    .in(ExternalOrder::getStatus, ExternalOrderStatus.CHECKED_IN.name(), ExternalOrderStatus.CHECKED_OUT.name()))
+                    .stream().map(this::view).toList());
+        }
+        if ((platform == null || Objects.equals(platform, MINI_PROGRAM_SOURCE)) && anchor == null) {
+            data.addAll(miniOrders.selectOverlapping(start, end.plusDays(1)).stream()
+                    .filter(o -> "checked_in".equals(o.getStatus()) || "checked_out".equals(o.getStatus()))
+                    .filter(o -> room == null || Objects.equals(room, o.getRoomId())).map(this::miniView).toList());
+        }
         Accumulator total = new Accumulator("合计");
         Map<String, Accumulator> daily = new TreeMap<>(), byPlatform = new LinkedHashMap<>(), byAnchor = new LinkedHashMap<>(), byRoom = new LinkedHashMap<>();
-        for (ExternalOrder order : data) {
-            ExternalOrderVO info = view(order);
-            int nights = Math.toIntExact(info.nights());
-            List<BigDecimal> gross = NightlyAllocation.allocate(order.getTotalAmount(), nights);
-            List<BigDecimal> fees = NightlyAllocation.allocate(order.getPlatformFee(), nights);
-            List<BigDecimal> commissions = NightlyAllocation.allocate(order.getAnchorFee(), nights);
+        for (ExternalOrderVO order : data) {
+            int nights = Math.toIntExact(order.nights());
+            List<BigDecimal> gross = NightlyAllocation.allocate(order.totalAmount(), nights);
+            List<BigDecimal> fees = NightlyAllocation.allocate(order.platformFee(), nights);
+            List<BigDecimal> commissions = NightlyAllocation.allocate(order.anchorFee(), nights);
             for (int i = 0; i < nights; i++) {
-                LocalDate day = order.getCheckInDate().plusDays(i);
+                LocalDate day = order.checkInDate().plusDays(i);
                 if (day.isBefore(start) || day.isAfter(end)) continue;
                 List<Accumulator> groups = List.of(total, daily.computeIfAbsent(day.toString(), Accumulator::new),
-                        byPlatform.computeIfAbsent(String.valueOf(order.getPlatformId()), k -> new Accumulator(info.platformName())),
-                        byAnchor.computeIfAbsent(String.valueOf(order.getAnchorId()), k -> new Accumulator(info.anchorName())),
-                        byRoom.computeIfAbsent(String.valueOf(order.getRoomId()), k -> new Accumulator(info.roomName())));
-                for (Accumulator group : groups) group.add(order.getId(), gross.get(i), fees.get(i), commissions.get(i));
+                        byPlatform.computeIfAbsent(String.valueOf(order.platformId()), k -> new Accumulator(order.platformName())),
+                        byAnchor.computeIfAbsent(String.valueOf(order.anchorId()), k -> new Accumulator(order.anchorName())),
+                        byRoom.computeIfAbsent(String.valueOf(order.roomId()), k -> new Accumulator(order.roomName())));
+                String key = order.platformId() + ":" + order.id();
+                for (Accumulator group : groups) group.add(key, gross.get(i), fees.get(i), commissions.get(i));
             }
         }
         return new ExternalStatisticsVO(total.result(), results(daily), results(byPlatform), results(byAnchor), results(byRoom));

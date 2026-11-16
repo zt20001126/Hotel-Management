@@ -10,6 +10,8 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'external-calendar-qa-'))
 let chrome, vite, server, socket
 let failCalendar = false
+let lastCalendarPlatform = null
+let lastStatisticsPlatform = null
 let statisticsRequests = 0
 const statisticsResponses = []
 
@@ -30,14 +32,24 @@ async function run() {
       const start = url.searchParams.get('startDate')
       const end = new Date(`${url.searchParams.get('endDate')}T00:00:00Z`)
       end.setUTCDate(end.getUTCDate() + 1)
-      data = [{ id: 7, roomId: 77, roomName: '历史房间', platformName: '携程', status: 'BOOKED', checkInDate: start, checkOutDate: end.toISOString().slice(0, 10) }]
+      const checkOutDate = end.toISOString().slice(0, 10)
+      data = [{ id: 7, roomId: 77, roomName: '历史房间', platformName: '携程', status: 'BOOKED', checkInDate: start, checkOutDate },
+        { id: 7, roomId: 1, roomName: '101', platformId: -1, platformName: '小程序', orderNo: 'MINI-7', totalAmount: 100, status: 'AWAITING_PAYMENT', checkInDate: start, checkOutDate },
+        { id: 8, roomId: 1, roomName: '101', platformId: 1, platformName: '携程', status: 'BOOKED', checkInDate: start, checkOutDate }]
+      lastCalendarPlatform = url.searchParams.get('platformId')
+      if (lastCalendarPlatform) data = data.filter(order => String(order.platformId) === lastCalendarPlatform)
     } else if (url.pathname === '/api/external/statistics') {
+      lastStatisticsPlatform = url.searchParams.get('platformId')
       const bucket = { name: '携程', orderCount: 1, nights: 2, totalAmount: 500, platformFee: 20, anchorFee: 10, netProfit: 470 }
       data = { total: bucket, daily: [{ ...bucket, name: '2026-11-01' }], platforms: [bucket], anchors: [{ ...bucket, name: '主播甲' }], rooms: [{ ...bucket, name: '101' }] }
     } else if (url.pathname === '/api/external/orders/7') {
       data = { id: 7, roomId: 77, roomName: '历史房间', platformId: 1, platformName: '携程', anchorId: null, status: 'CHECKED_OUT', checkInDate: '2026-11-01', checkOutDate: '2026-11-02', totalAmount: 100, platformFee: 5, anchorFee: 0, guestCount: 1 }
+    } else if (url.pathname === '/api/external/unified-orders') {
+      data = { records: [{ id: 7, roomId: 1, roomName: '101', platformId: -1, platformName: '小程序', anchorName: '无主播', orderNo: 'MINI-7', status: 'BOOKED', checkInDate: '2026-11-01', checkOutDate: '2026-11-02', nights: 1, totalAmount: 100 },
+        { id: 8, roomId: 1, roomName: '101', platformId: 1, platformName: '携程', anchorName: '无主播', status: 'CHECKED_IN', checkInDate: '2026-11-02', checkOutDate: '2026-11-03', nights: 1, totalAmount: 100 }], total: 2 }
     } else if (url.pathname === '/api/external/orders') data = { records: [], total: 0 }
-    else if (url.pathname === '/api/room/list') data = [{ id: 1, roomNumber: '101' }]
+    else if (url.pathname === '/api/order/page') data = { records: [{ id: 7, roomId: null, roomTypeId: 1, orderNo: 'MINI-7', status: 'pending', nights: 1 }], total: 1 }
+    else if (url.pathname === '/api/room/list') data = [{ id: 1, roomNumber: '101', roomTypeId: 1 }]
     else if (url.pathname === '/api/external/platforms') data = [{ id: 1, name: '携程', status: 1 }]
     else data = []
     res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' })
@@ -72,8 +84,20 @@ async function run() {
   await send('Page.addScriptToEvaluateOnNewDocument', { source: `try { localStorage.setItem('token','qa-token'); localStorage.setItem('userInfo', JSON.stringify({role:'owner',username:'qa'})); } catch (_) {}` })
   await send('Page.navigate', { url: `http://127.0.0.1:${frontendPort}/external/calendar` })
   await waitUntil(() => evaluate(`document.body.innerText.includes('历史房间') && document.body.innerText.includes('携程')`), '历史房间和平台订单显示')
+  await waitUntil(() => evaluate(`document.body.innerText.includes('小程序') && document.body.innerText.includes('待支付')`), '小程序待支付订单显示')
+  assert.equal(await evaluate(`Array.from(document.querySelectorAll('tbody tr')).find(row => row.innerText.includes('101')).querySelector('td').innerText.includes('携程')`), true, '同日多来源订单都显示')
+  await evaluate(`Array.from(document.querySelectorAll('tbody tr')).find(row => row.innerText.includes('101')).querySelector('td > div').click()`)
+  await waitUntil(() => evaluate(`document.querySelector('.el-dialog')?.innerText.includes('MINI-7')`), '小程序订单详情')
+  await evaluate(`document.querySelector('.el-dialog .el-dialog__headerbtn').click()`)
+  await evaluate(`document.querySelector('.toolbar .el-select').click()`)
+  await waitUntil(() => evaluate(`Array.from(document.querySelectorAll('.el-select-dropdown__item')).some(e => e.innerText.trim() === '小程序')`), '平台筛选选项')
+  await evaluate(`Array.from(document.querySelectorAll('.el-select-dropdown__item')).find(e => e.innerText.trim() === '小程序').click()`)
+  await waitUntil(() => lastCalendarPlatform === '-1', '小程序来源筛选参数')
+  await waitUntil(() => evaluate(`!document.body.innerText.includes('历史房间')`), '筛选后第三方订单隐藏')
+  await send('Page.navigate', { url: `http://127.0.0.1:${frontendPort}/external/calendar` })
+  await waitUntil(() => evaluate(`document.body.innerText.includes('历史房间')`), '恢复全部来源')
   assert.equal(await evaluate(`document.querySelectorAll('thead th').length`), new Date().getDate() > 0 ? new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate() + 1 : 0)
-  await evaluate(`Array.from(document.querySelectorAll('tbody tr')).find(row => row.innerText.includes('历史房间')).querySelector('td').click()`)
+  await evaluate(`Array.from(document.querySelectorAll('tbody tr')).find(row => row.innerText.includes('历史房间')).querySelector('td > div').click()`)
   await waitUntil(() => evaluate(`location.pathname === '/external/orders' && document.body.innerText.includes('订单详情')`), '点击历史订单打开详情')
   await waitUntil(() => evaluate(`document.querySelector('.el-dialog')?.innerText.includes('历史房间')`), '详情显示已删除房间名称')
   await send('Page.navigate', { url: `http://127.0.0.1:${frontendPort}/external/calendar` })
@@ -88,6 +112,11 @@ async function run() {
   assert.equal(await evaluate(`document.querySelectorAll('.grid table').length`), 0, '接口失败时不能继续显示旧房态')
   await send('Page.navigate', { url: `http://127.0.0.1:${frontendPort}/external/reports` })
   await waitUntil(() => evaluate(`document.body.innerText.includes('470') && document.body.innerText.includes('2026-11-01')`), '经营统计总览和每日明细')
+  await evaluate(`document.querySelector('.filters .el-select').click()`)
+  await waitUntil(() => evaluate(`Array.from(document.querySelectorAll('.el-select-dropdown__item')).some(e => e.innerText.trim() === '小程序')`), '报表小程序筛选选项')
+  await evaluate(`Array.from(document.querySelectorAll('.el-select-dropdown__item')).find(e => e.innerText.trim() === '小程序').click()`)
+  await evaluate(`Array.from(document.querySelectorAll('button')).find(e => e.innerText.trim() === '查询').click()`)
+  await waitUntil(() => lastStatisticsPlatform === '-1', '报表小程序筛选参数')
   await evaluate(`Array.from(document.querySelectorAll('[role="tab"]')).find(e => e.innerText.includes('主播统计')).click()`)
   await waitUntil(() => evaluate(`document.body.innerText.includes('主播甲')`), '主播维度切换')
   events.set('Fetch.requestPaused', params => {
@@ -114,6 +143,11 @@ async function run() {
   await waitUntil(() => evaluate(`document.body.innerText.includes('携程') && document.body.innerText.includes('新增平台')`), '平台设置')
   await send('Page.navigate', { url: `http://127.0.0.1:${frontendPort}/external/orders` })
   await waitUntil(() => evaluate(`Array.from(document.querySelectorAll('button')).some(e => e.innerText.includes('新增订单'))`), '订单页面')
+  await waitUntil(() => evaluate(`Array.from(document.querySelectorAll('tbody tr')).some(e => e.innerText.includes('小程序'))`), '合并订单列表')
+  const miniButtons = await evaluate(`Array.from(document.querySelectorAll('tbody tr')).find(e => e.innerText.includes('小程序')).innerText`)
+  assert.ok(miniButtons.includes('详情') && !miniButtons.includes('编辑') && !miniButtons.includes('入住'), '小程序订单只能查看')
+  assert.equal(await evaluate(`Array.from(document.querySelectorAll('tbody tr')).find(e => e.innerText.includes('小程序')).querySelector('.el-tag')?.classList.contains('el-tag--warning')`), true, '已预订状态使用颜色')
+  assert.equal(await evaluate(`Array.from(document.querySelectorAll('tbody tr')).find(e => e.innerText.includes('携程')).querySelector('.el-tag')?.classList.contains('el-tag--success')`), true, '已入住状态使用颜色')
   await evaluate(`Array.from(document.querySelectorAll('button')).find(e => e.innerText.includes('新增订单')).click()`)
   await waitUntil(() => evaluate(`document.querySelector('.el-dialog')?.innerText.includes('净利润')`), '录入订单表单')
   async function setAmount(label, value) {
@@ -125,6 +159,8 @@ async function run() {
   await setAmount('用户付款', '0.01')
   await setAmount('平台手续费', '0.02')
   await waitUntil(() => evaluate(`Array.from(document.querySelectorAll('.el-dialog .el-form-item')).find(e => e.innerText.includes('净利润'))?.innerText.includes('-0.01')`), '表单负净利润')
+  await send('Page.navigate', { url: `http://127.0.0.1:${frontendPort}/order` })
+  await waitUntil(() => evaluate(`Array.from(document.querySelectorAll('tbody tr')).some(e => e.innerText.includes('MINI-7') && e.innerText.includes('101'))`), '小程序订单未入住显示房间号')
   console.log('通过：历史房间、日周月切换、失败提示、报表、平台设置及表单金额计算')
 }
 

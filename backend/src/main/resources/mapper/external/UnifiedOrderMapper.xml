@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.homestay.module.external.mapper.UnifiedOrderMapper">
+    <!-- 两个分支只读取筛选和排序所需字段；来源标识同时避免不同表的 ID 冲突。 -->
+    <sql id="matchingOrders">
+        SELECT e.id, e.platform_id, e.create_time, e.room_id,
+               e.status AS mapped_status
+        FROM external_order e
+        WHERE 1=1
+        <if test="platform != null">AND e.platform_id = #{platform}</if>
+        <if test="anchor != null">AND e.anchor_id = #{anchor}</if>
+        <if test="room != null">AND e.room_id = #{room}</if>
+        <if test="start != null">AND e.check_in_date &lt; #{end} AND e.check_out_date &gt; #{start}</if>
+        <if test="status != null and status.trim() != ''">AND e.status = #{status}</if>
+        <if test="keyword != null and keyword.trim() != ''">
+            AND (e.order_no LIKE CONCAT('%', #{keyword}, '%') OR e.platform_order_no LIKE CONCAT('%', #{keyword}, '%'))
+        </if>
+        UNION ALL
+        SELECT m.id, #{miniSource} AS platform_id, m.create_time,
+               COALESCE(m.room_id, unique_room.room_id) AS room_id,
+               CASE WHEN m.status = 'cancelled' THEN 'CANCELLED'
+                    WHEN m.status = 'checked_in' THEN 'CHECKED_IN'
+                    WHEN m.status = 'checked_out' THEN 'CHECKED_OUT'
+                    WHEN m.total_price &gt; 0 AND m.paid_amount &gt;= m.total_price THEN 'BOOKED'
+                    ELSE 'AWAITING_PAYMENT' END AS mapped_status
+        FROM booking_order m
+        LEFT JOIN (SELECT room_type_id, MIN(id) AS room_id FROM room WHERE deleted=0
+                   GROUP BY room_type_id HAVING COUNT(*)=1) unique_room ON unique_room.room_type_id=m.room_type_id
+        WHERE m.deleted=0 AND m.status IN ('awaiting_payment','pending','confirmed','checked_in','checked_out','cancelled')
+        <if test="platform != null and platform != miniSource">AND 1=0</if>
+        <if test="anchor != null">AND 1=0</if>
+        <if test="room != null">AND COALESCE(m.room_id, unique_room.room_id) = #{room}</if>
+        <if test="start != null">AND m.check_in_date &lt; #{end} AND m.check_out_date &gt; #{start}</if>
+        <if test="keyword != null and keyword.trim() != ''">AND LOCATE(LOWER(TRIM(#{keyword})), LOWER(m.order_no)) &gt; 0</if>
+    </sql>
+    <sql id="filteredOrders">
+        SELECT * FROM (<include refid="matchingOrders"/>) combined
+        <if test="status != null and status.trim() != ''">WHERE combined.mapped_status = #{status}</if>
+    </sql>
+    <select id="count" resultType="long">
+        SELECT COUNT(*) FROM (<include refid="filteredOrders"/>) filtered
+    </select>
+    <select id="selectPage" resultType="com.homestay.module.external.vo.UnifiedOrderProjection">
+        SELECT page.id, page.platform_id, page.room_id, page.mapped_status AS status,
+          CASE WHEN page.platform_id = #{miniSource} THEN m.order_no ELSE e.order_no END AS order_no,
+          e.platform_order_no,
+          CASE WHEN page.platform_id = #{miniSource} THEN '小程序' ELSE COALESCE(p.name, '已删除平台') END AS platform_name,
+          e.anchor_id, COALESCE(a.name, '无主播') AS anchor_name,
+          CASE WHEN page.room_id IS NULL THEN '待确认房间'
+               WHEN r.room_number IS NOT NULL THEN r.room_number
+               WHEN page.platform_id = #{miniSource} THEN '已删除房间'
+               ELSE CONCAT('已删除房间（', page.room_id, '）') END AS room_name,
+          CASE WHEN page.platform_id = #{miniSource} THEN m.check_in_date ELSE e.check_in_date END AS check_in_date,
+          CASE WHEN page.platform_id = #{miniSource} THEN m.check_out_date ELSE e.check_out_date END AS check_out_date,
+          CASE WHEN page.platform_id = #{miniSource} THEN m.guest_count ELSE e.guest_count END AS guest_count,
+          CASE WHEN page.platform_id = #{miniSource} THEN COALESCE(m.total_price, 0) ELSE e.total_amount END AS total_amount,
+          CASE WHEN page.platform_id = #{miniSource} THEN 0 ELSE e.platform_fee END AS platform_fee,
+          CASE WHEN page.platform_id = #{miniSource} THEN 0 ELSE e.anchor_fee END AS anchor_fee,
+          e.remark
+        FROM (SELECT * FROM (<include refid="filteredOrders"/>) matches
+              ORDER BY create_time DESC, platform_id ASC, id DESC LIMIT #{size} OFFSET #{offset}) page
+        LEFT JOIN external_order e ON page.platform_id != #{miniSource} AND e.id=page.id
+        LEFT JOIN booking_order m ON page.platform_id = #{miniSource} AND m.id=page.id
+        LEFT JOIN external_platform p ON p.id=e.platform_id
+        LEFT JOIN external_anchor a ON a.id=e.anchor_id
+        LEFT JOIN room r ON r.id=page.room_id
+        ORDER BY page.create_time DESC, page.platform_id ASC, page.id DESC
+    </select>
+</mapper>

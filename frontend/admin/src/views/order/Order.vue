@@ -32,6 +32,7 @@
         <el-table-column prop="orderNo" label="订单编号" width="160" />
         <el-table-column prop="guestName" label="宾客姓名" width="100" />
         <el-table-column prop="guestPhone" label="联系电话" width="120" />
+        <el-table-column label="房间号" width="110"><template #default="{ row }">{{ roomNumber(row) }}</template></el-table-column>
         <el-table-column prop="checkInDate" label="入住日期" width="110" />
         <el-table-column prop="checkOutDate" label="退房日期" width="110" />
         <el-table-column prop="nights" label="晚数" width="70" />
@@ -72,6 +73,7 @@
         </el-descriptions-item>
         <el-descriptions-item label="宾客姓名">{{ currentOrder.guestName }}</el-descriptions-item>
         <el-descriptions-item label="联系电话">{{ currentOrder.guestPhone }}</el-descriptions-item>
+        <el-descriptions-item label="房间号">{{ roomNumber(currentOrder) }}</el-descriptions-item>
         <el-descriptions-item label="入住日期">{{ currentOrder.checkInDate }}</el-descriptions-item>
         <el-descriptions-item label="退房日期">{{ currentOrder.checkOutDate }}</el-descriptions-item>
         <el-descriptions-item label="入住晚数">{{ currentOrder.nights }}晚</el-descriptions-item>
@@ -123,12 +125,13 @@
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getOrderPage, createOrder, confirmOrder as confirmOrderApi, cancelOrder as cancelOrderApi } from '@/api/order'
-import { getAvailableRoomTypes } from '@/api/room'
+import { getAvailableRoomTypes, getAllRooms } from '@/api/room'
 
 const loading = ref(false)
 const submitting = ref(false)
 const tableData = ref([])
 const roomTypes = ref([])
+const rooms = ref([])
 const detailVisible = ref(false)
 const createVisible = ref(false)
 const currentOrder = ref({})
@@ -145,9 +148,16 @@ const createRules = {
   guestPhone: [{ required: true, message: '请输入联系电话', trigger: 'blur' }]
 }
 
-onMounted(() => { loadData(); loadRoomTypes() })
+onMounted(() => { loadData(); loadRoomTypes(); loadRooms() })
 
 async function loadRoomTypes() { const res = await getAvailableRoomTypes(); roomTypes.value = res.data }
+async function loadRooms() { const res = await getAllRooms(); rooms.value = res.data }
+// 已分配时优先实际房间；未分配时仅在房型唯一对应一间房时推导。
+function roomNumber(order) {
+  if (order.roomId != null) return rooms.value.find(room => room.id === order.roomId)?.roomNumber || '待确认'
+  const matches = rooms.value.filter(room => room.roomTypeId === order.roomTypeId)
+  return matches.length === 1 ? matches[0].roomNumber : '待确认'
+}
 async function loadData() {
   loading.value = true
   try {

@@ -18,6 +18,8 @@ public interface ExternalService {
     ExternalOrderVO order(Long id);
     PageResult<ExternalOrderVO> orders(int page, int size, LocalDate startDate, LocalDate endDate,
                                        Long platformId, Long anchorId, Long roomId, String status, String keyword);
+    PageResult<ExternalOrderVO> unifiedOrders(int page, int size, LocalDate startDate, LocalDate endDate,
+                                              Long platformId, Long anchorId, Long roomId, String status, String keyword);
     List<ExternalOrderVO> calendar(LocalDate startDate, LocalDate endDate, Long platformId);
     ExternalStatisticsVO statistics(LocalDate startDate, LocalDate endDate, Long platformId, Long anchorId, Long roomId);
 }
